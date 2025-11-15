@@ -1,0 +1,43 @@
+<div class="skill-node" 
+     [class.unlocked]="skill().unlocked"
+     [class.maxed]="isMaxed()"
+     [class.can-upgrade]="canUpgrade()"
+     [class.has-prerequisites]="hasPrerequisites() && !skill().unlocked"
+     [matTooltip]="getTooltipText()"
+     matTooltipPosition="after"
+     matTooltipClass="skill-tooltip"
+     (click)="onUpgrade()">
+  
+  @if (hasPrerequisites() && !skill().unlocked) {
+    <div class="prerequisites-indicator">
+      <div class="prereq-text">
+        @if (allPrerequisitesMet()) {
+          <span class="prereq-ready">Prerequisites met</span>
+        } @else {
+          <span class="prereq-needed">⬆️ Requires:</span>
+          @for (prereq of prerequisites(); track prereq.name) {
+            <div class="prereq-item" [class.met]="prereq.maxed">
+              {{ prereq.maxed ? '✓' : '○' }} {{ prereq.name }}
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <div class="skill-header">
+    <h3>{{ skill().name }}</h3>
+    <span class="skill-level">{{ skill().level }}/{{ skill().maxLevel }}</span>
+  </div>
+  @if (!isMaxed() && skill().unlocked) {
+    <div class="skill-cost">
+      Cost: {{ upgradeCost() }} Energy
+    </div>
+  }
+  @if (isMaxed()) {
+    <div class="maxed-badge">MAX</div>
+  }
+  @if (!skill().unlocked) {
+    <div class="locked-badge">🔒 LOCKED</div>
+  }
+</div>

@@ -1,0 +1,14 @@
+<div class="skill-tree-container">
+  <h2>Stellar Network</h2>
+  <div class="skill-tree" #treeContainer>
+    @for (row of skillRows(); track row[0].id; let rowIndex = $index) {
+      <div class="skill-row">
+        @for (skill of row; track skill.id) {
+          <div class="skill-wrapper" [attr.data-skill-id]="skill.id">
+            <app-skill-node [skill]="skill" />
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

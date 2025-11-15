@@ -1,0 +1,14 @@
+<div class="resource-panel">
+  <h2>Resources</h2>
+  <div class="resources">
+    @for (resource of resources(); track resource.id) {
+      <div class="resource-item">
+        <span class="resource-name">{{ resource.displayName }}:</span>
+        <span class="resource-amount">{{ formatNumber(resource.amount) }}</span>
+        @if (resource.productionRate.gt(0)) {
+          <span class="resource-rate">(+{{ formatNumber(resource.productionRate) }}/s)</span>
+        }
+      </div>
+    }
+  </div>
+</div>

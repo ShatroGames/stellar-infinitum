@@ -1,0 +1,58 @@
+﻿<div class="game-container">
+  <header class="game-header">
+    <h1>{{ title() }}</h1>
+  </header>
+
+  <main class="game-content">
+    <aside class="sidebar">
+      <app-resource-display />
+      <app-prestige-panel />
+    </aside>
+
+    <section class="main-area">
+      <div class="tabs-container">
+        <div class="tabs-header">
+          <button 
+            class="tab-button" 
+            [class.active]="activeTab() === 'skill'"
+            (click)="activeTab.set('skill')">
+            🌌 Stellar Network
+          </button>
+          @if (ascensionService.totalPoints() > 0) {
+            <button 
+              class="tab-button" 
+              [class.active]="activeTab() === 'ascension'"
+              (click)="activeTab.set('ascension')"
+              [class.has-points]="ascensionService.points() > 0">
+              ⭐ Cosmic Nexus
+              @if (ascensionService.points() > 0) {
+                <span class="points-badge">{{ ascensionService.points() }}</span>
+              }
+            </button>
+          }
+          <button 
+            class="tab-button" 
+            [class.active]="activeTab() === 'options'"
+            (click)="activeTab.set('options')">
+            ⚙️ Options
+          </button>
+        </div>
+        <div class="tabs-content">
+          @if (activeTab() === 'skill') {
+            <app-skill-tree />
+          } @else if (activeTab() === 'ascension') {
+            <app-ascension-tree />
+          } @else if (activeTab() === 'options') {
+            <app-options />
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="game-footer">
+    <p>&copy; {{ currentYear }} ShatroGames. All rights reserved.</p>
+  </footer>
+</div>
+
+<router-outlet />

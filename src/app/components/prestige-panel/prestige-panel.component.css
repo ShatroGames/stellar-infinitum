@@ -1,0 +1,254 @@
+.prestige-panel {
+  background: #141414;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #262626;
+  color: #fafafa;
+}
+
+.prestige-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.prestige-header > div:first-of-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ascension-points-info {
+  text-align: center;
+}
+
+.btn-ascension-tree {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.btn-ascension-tree:hover {
+  background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fafafa;
+}
+
+.ascension-count {
+  text-align: right;
+  font-size: 0.813rem;
+  color: #a3a3a3;
+}
+
+.bonus-indicator {
+  display: block;
+  color: #eab308;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.tier-description {
+  font-style: italic;
+  color: #737373;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.progress-section {
+  background: #1a1a1a;
+  padding: 1.25rem;
+  border-radius: 6px;
+  border: 1px solid #262626;
+  margin-bottom: 1.25rem;
+}
+
+h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fafafa;
+  letter-spacing: -0.01em;
+}
+
+.skills-progress {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  background: #0a0a0a;
+  border-radius: 4px;
+  border: 1px solid #262626;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.skills-progress .complete {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.points-progress {
+  margin-top: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+  font-size: 0.875rem;
+  color: #a3a3a3;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #0a0a0a;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #262626;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  transition: width 0.3s ease;
+}
+
+.progress-percentage {
+  text-align: right;
+  margin-top: 0.5rem;
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: #3b82f6;
+  font-variant-numeric: tabular-nums;
+}
+
+.ascend-ready {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid #10b981;
+  padding: 1.5rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.ready-message {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #10b981;
+}
+
+.next-tier-info {
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #a3a3a3;
+}
+
+.next-tier-info strong {
+  font-size: 1rem;
+  color: #eab308;
+  font-weight: 600;
+}
+
+.bonus-info {
+  color: #eab308;
+  font-weight: 600;
+}
+
+.final-tier {
+  font-style: italic;
+  margin: 1rem 0;
+  color: #a3a3a3;
+}
+
+.btn-ascend {
+  background: #eab308;
+  color: #18181b;
+  border: none;
+  padding: 0.875rem 1.75rem;
+  border-radius: 6px;
+  font-size: 0.938rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.btn-ascend:hover {
+  background: #facc15;
+  transform: translateY(-1px);
+}
+
+.btn-ascend:active {
+  transform: translateY(0);
+}
+
+.ascension-unlock {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #ffd700;
+}
+
+.ascension-unlock strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.ascend-requirements {
+  background: #1a1a1a;
+  padding: 1.25rem;
+  border-radius: 6px;
+  border: 1px solid #262626;
+}
+
+.requirements-title {
+  font-weight: 600;
+  margin: 0 0 0.875rem 0;
+  color: #fafafa;
+  font-size: 0.875rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background: #0a0a0a;
+  border-radius: 4px;
+  border: 1px solid #262626;
+  font-size: 0.875rem;
+  color: #a3a3a3;
+}
+
+li.complete {
+  color: #10b981;
+  font-weight: 600;
+  border-color: rgba(16, 185, 129, 0.3);
+}

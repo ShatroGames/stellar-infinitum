@@ -1,0 +1,36 @@
+.skill-tree-container {
+  background: #141414;
+  border-radius: 8px;
+  border: 1px solid #262626;
+  padding: 1.5rem;
+}
+
+h2 {
+  color: #fafafa;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.skill-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  position: relative;
+}
+
+.skill-row {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-wrapper {
+  position: relative;
+}
