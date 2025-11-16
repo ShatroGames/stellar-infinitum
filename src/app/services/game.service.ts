@@ -1,14 +1,18 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Resource, INITIAL_RESOURCES } from '../models/resource.model';
 import { Decimal } from '../utils/numbers';
+import { SaveManagerService } from './save-manager.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+  private saveManager = inject(SaveManagerService);
   private resources = signal<Map<string, Resource>>(new Map());
   private lastUpdate = Date.now();
   private gameLoopInterval?: number;
+  private saveCounter = 0;
+  private readonly SAVE_INTERVAL = 100; // Save every 10 seconds (100 ticks at 100ms)
 
   constructor() {
     this.initializeResources();
@@ -33,14 +37,16 @@ export class GameService {
   }
 
   addResource(resourceId: string, amount: Decimal | number): void {
-    const resourceMap = new Map(this.resources());
-    const resource = resourceMap.get(resourceId);
-    if (resource) {
-      const amountDecimal = amount instanceof Decimal ? amount : new Decimal(amount);
-      resource.amount = resource.amount.plus(amountDecimal);
-      resourceMap.set(resourceId, resource);
-      this.resources.set(resourceMap);
-    }
+    this.resources.update(resourceMap => {
+      const newMap = new Map(resourceMap);
+      const resource = newMap.get(resourceId);
+      if (resource) {
+        const amountDecimal = amount instanceof Decimal ? amount : new Decimal(amount);
+        resource.amount = resource.amount.plus(amountDecimal);
+        newMap.set(resourceId, resource);
+      }
+      return newMap;
+    });
   }
 
   canAfford(resourceId: string, cost: Decimal | number): boolean {
@@ -59,13 +65,20 @@ export class GameService {
   }
 
   setProductionRate(resourceId: string, rate: Decimal | number): void {
-    const resourceMap = new Map(this.resources());
-    const resource = resourceMap.get(resourceId);
-    if (resource) {
-      resource.productionRate = rate instanceof Decimal ? rate : new Decimal(rate);
-      resourceMap.set(resourceId, resource);
-      this.resources.set(resourceMap);
-    }
+    this.resources.update(resourceMap => {
+      const newMap = new Map(resourceMap);
+      const resource = newMap.get(resourceId);
+      if (resource) {
+        const rateDecimal = rate instanceof Decimal ? rate : new Decimal(rate);
+        // Only update if the rate actually changed
+        if (!resource.productionRate.eq(rateDecimal)) {
+          resource.productionRate = rateDecimal;
+          newMap.set(resourceId, resource);
+          return newMap;
+        }
+      }
+      return resourceMap; // No change, return original
+    });
   }
 
   addProductionRate(resourceId: string, additionalRate: number): void {
@@ -86,18 +99,25 @@ export class GameService {
     const deltaTime = (now - this.lastUpdate) / 1000; // Convert to seconds
     this.lastUpdate = now;
 
-    // Apply production rates
-    const resourceMap = new Map(this.resources());
-    resourceMap.forEach((resource, id) => {
-      if (resource.productionRate.gt(0)) {
-        resource.amount = resource.amount.plus(resource.productionRate.times(deltaTime));
-        resourceMap.set(id, resource);
-      }
+    // Apply production rates - only update if there's actual production
+    this.resources.update(resourceMap => {
+      let hasChanges = false;
+      const newMap = new Map(resourceMap);
+      
+      newMap.forEach((resource, id) => {
+        if (resource.productionRate.gt(0)) {
+          resource.amount = resource.amount.plus(resource.productionRate.times(deltaTime));
+          hasChanges = true;
+        }
+      });
+      
+      return hasChanges ? newMap : resourceMap;
     });
-    this.resources.set(resourceMap);
 
-    // Auto-save every 10 seconds
-    if (Math.random() < 0.01) {
+    // Deterministic auto-save every 10 seconds instead of random
+    this.saveCounter++;
+    if (this.saveCounter >= this.SAVE_INTERVAL) {
+      this.saveCounter = 0;
       this.saveGameState();
     }
   }
@@ -108,7 +128,11 @@ export class GameService {
       lastUpdate: this.lastUpdate,
       timestamp: Date.now()
     };
-    localStorage.setItem('treefinite_save', JSON.stringify(state));
+    
+    // Use save manager for debounced saves
+    this.saveManager.scheduleSave('game', () => {
+      localStorage.setItem('treefinite_save', JSON.stringify(state));
+    });
   }
 
   loadGameState(): void {
@@ -149,6 +173,7 @@ export class GameService {
     if (this.gameLoopInterval) {
       clearInterval(this.gameLoopInterval);
     }
-    this.saveGameState();
+    // Force immediate save on destroy
+    this.saveManager.flushAll();
   }
 }

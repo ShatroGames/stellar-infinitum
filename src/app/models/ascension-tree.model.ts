@@ -14,7 +14,7 @@ export interface AscensionNode {
 export interface AscensionEffect {
   type: 'auto_buy' | 'bulk_buy' | 'cost_reduction' | 'production_boost' | 
         'start_bonus' | 'warp_speed' | 'skill_cap' | 'multiplier_boost' |
-        'offline_bonus' | 'prestige_keep';
+        'offline_bonus' | 'prestige_keep' | 'auto_warp';
   value: number;
 }
 
@@ -25,7 +25,7 @@ export interface AscensionState {
 }
 
 export const ASCENSION_TREE_NODES: AscensionNode[] = [
-  // Tier 1 - Core Automation
+  // === ROW 0: Root Node ===
   {
     id: 'auto_buy',
     name: 'Automated Systems',
@@ -36,7 +36,7 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     effect: { type: 'auto_buy', value: 1 }
   },
   
-  // Tier 2 - Left Branch (Efficiency)
+  // === ROW 1: Primary Upgrades (3 nodes) ===
   {
     id: 'bulk_buy_5',
     name: 'Bulk Processing I',
@@ -48,80 +48,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     effect: { type: 'bulk_buy', value: 5 }
   },
   {
-    id: 'cost_reduce_10',
-    name: 'Cost Optimization I',
-    description: 'Reduce all skill costs by 10%',
-    cost: 1,
-    purchased: false,
-    position: { x: -3, y: 2 },
-    requires: ['bulk_buy_5'],
-    effect: { type: 'cost_reduction', value: 0.10 }
-  },
-  {
-    id: 'bulk_buy_10',
-    name: 'Bulk Processing II',
-    description: 'Buy up to 10 levels at once',
-    cost: 2,
-    purchased: false,
-    position: { x: -2, y: 3 },
-    requires: ['cost_reduce_10'],
-    effect: { type: 'bulk_buy', value: 10 }
-  },
-  {
-    id: 'cost_reduce_25',
-    name: 'Cost Optimization II',
-    description: 'Reduce all skill costs by 25%',
-    cost: 3,
-    purchased: false,
-    position: { x: -3, y: 4 },
-    requires: ['bulk_buy_10'],
-    effect: { type: 'cost_reduction', value: 0.25 }
-  },
-  
-  // Tier 2 - Right Branch (Power)
-  {
-    id: 'production_25',
-    name: 'Power Enhancement I',
-    description: 'Increase all production by 25%',
-    cost: 1,
-    purchased: false,
-    position: { x: 2, y: 1 },
-    requires: ['auto_buy'],
-    effect: { type: 'production_boost', value: 0.25 }
-  },
-  {
-    id: 'production_50',
-    name: 'Power Enhancement II',
-    description: 'Increase all production by 50%',
-    cost: 2,
-    purchased: false,
-    position: { x: 3, y: 2 },
-    requires: ['production_25'],
-    effect: { type: 'production_boost', value: 0.50 }
-  },
-  {
-    id: 'multiplier_boost',
-    name: 'Multiplier Amplification',
-    description: 'All multiplier effects are 20% stronger',
-    cost: 2,
-    purchased: false,
-    position: { x: 2, y: 3 },
-    requires: ['production_50'],
-    effect: { type: 'multiplier_boost', value: 0.20 }
-  },
-  {
-    id: 'production_100',
-    name: 'Power Enhancement III',
-    description: 'Increase all production by 100%',
-    cost: 3,
-    purchased: false,
-    position: { x: 3, y: 4 },
-    requires: ['multiplier_boost'],
-    effect: { type: 'production_boost', value: 1.0 }
-  },
-  
-  // Tier 2 - Center Branch (Quality of Life)
-  {
     id: 'start_energy',
     name: 'Momentum Start',
     description: 'Start each warp with 1000 Energy instead of 10',
@@ -132,14 +58,70 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     effect: { type: 'start_bonus', value: 1000 }
   },
   {
+    id: 'production_25',
+    name: 'Power Enhancement I',
+    description: 'Increase all production by 25%',
+    cost: 1,
+    purchased: false,
+    position: { x: 2, y: 1 },
+    requires: ['auto_buy'],
+    effect: { type: 'production_boost', value: 0.25 }
+  },
+  
+  // === ROW 2: Secondary Upgrades (3 nodes) ===
+  {
+    id: 'cost_reduce_10',
+    name: 'Cost Optimization I',
+    description: 'Reduce all skill costs by 10%',
+    cost: 1,
+    purchased: false,
+    position: { x: -3, y: 2 },
+    requires: ['bulk_buy_5', 'production_25', 'start_energy'],
+    effect: { type: 'cost_reduction', value: 0.10 }
+  },
+  {
     id: 'warp_speed_1',
     name: 'Warp Acceleration I',
     description: 'Reduce warp requirements by 20%',
     cost: 2,
     purchased: false,
     position: { x: 0, y: 2 },
-    requires: ['start_energy'],
+    requires: ['bulk_buy_5', 'production_25', 'start_energy'],
     effect: { type: 'warp_speed', value: 0.20 }
+  },
+  {
+    id: 'production_50',
+    name: 'Power Enhancement II',
+    description: 'Increase all production by 50%',
+    cost: 2,
+    purchased: false,
+    position: { x: 3, y: 2 },
+    requires: ['bulk_buy_5', 'production_25', 'start_energy'],
+    effect: { type: 'production_boost', value: 0.50 }
+  },
+  
+  // === ROW 3: Auto-Warp (1 node) ===
+  {
+    id: 'auto_warp',
+    name: 'Automated Warping',
+    description: 'Automatically warp when all skills are maxed and requirements are met',
+    cost: 2,
+    purchased: false,
+    position: { x: 0, y: 3 },
+    requires: ['cost_reduce_10', 'warp_speed_1', 'production_50'],
+    effect: { type: 'auto_warp', value: 1 }
+  },
+  
+  // === ROW 4: Tertiary Upgrades (3 nodes) ===
+  {
+    id: 'bulk_buy_10',
+    name: 'Bulk Processing II',
+    description: 'Buy up to 10 levels at once',
+    cost: 2,
+    purchased: false,
+    position: { x: -2, y: 4 },
+    requires: ['cost_reduce_10', 'production_25', 'start_energy'],
+    effect: { type: 'bulk_buy', value: 10 }
   },
   {
     id: 'offline_bonus',
@@ -147,9 +129,31 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     description: 'Gain 50% more resources while offline',
     cost: 2,
     purchased: false,
-    position: { x: 0, y: 3 },
-    requires: ['warp_speed_1'],
+    position: { x: 0, y: 4 },
+    requires: ['warp_speed_1', 'production_50', 'cost_reduce_10'],
     effect: { type: 'offline_bonus', value: 0.50 }
+  },
+  {
+    id: 'multiplier_boost',
+    name: 'Multiplier Amplification',
+    description: 'All multiplier effects are 20% stronger',
+    cost: 2,
+    purchased: false,
+    position: { x: 2, y: 4 },
+    requires: ['production_50', 'bulk_buy_10', 'start_energy'],
+    effect: { type: 'multiplier_boost', value: 0.20 }
+  },
+  
+  // === ROW 5: Advanced Upgrades (3 nodes) ===
+  {
+    id: 'cost_reduce_25',
+    name: 'Cost Optimization II',
+    description: 'Reduce all skill costs by 25%',
+    cost: 3,
+    purchased: false,
+    position: { x: -3, y: 5 },
+    requires: ['bulk_buy_10', 'production_25', 'start_energy'],
+    effect: { type: 'cost_reduction', value: 0.25 }
   },
   {
     id: 'warp_speed_2',
@@ -157,20 +161,30 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     description: 'Reduce warp requirements by 40%',
     cost: 3,
     purchased: false,
-    position: { x: 0, y: 4 },
-    requires: ['offline_bonus'],
+    position: { x: 0, y: 5 },
+    requires: ['offline_bonus', 'bulk_buy_10', 'multiplier_boost'],
     effect: { type: 'warp_speed', value: 0.40 }
   },
+  {
+    id: 'production_100',
+    name: 'Power Enhancement III',
+    description: 'Increase all production by 100%',
+    cost: 3,
+    purchased: false,
+    position: { x: 3, y: 5 },
+    requires: ['multiplier_boost', 'bulk_buy_10', 'start_energy'],
+    effect: { type: 'production_boost', value: 1.0 }
+  },
   
-  // Tier 3 - Advanced (Convergence)
+  // === ROW 6: Convergence Tier (3 nodes) ===
   {
     id: 'bulk_buy_max',
     name: 'Quantum Processing',
     description: 'Buy maximum affordable levels at once',
     cost: 4,
     purchased: false,
-    position: { x: -2, y: 5 },
-    requires: ['cost_reduce_25'],
+    position: { x: -2, y: 6 },
+    requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
     effect: { type: 'bulk_buy', value: 999 }
   },
   {
@@ -179,8 +193,8 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     description: 'Increase all skill level caps by 5',
     cost: 4,
     purchased: false,
-    position: { x: 0, y: 5 },
-    requires: ['warp_speed_2'],
+    position: { x: 0, y: 6 },
+    requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
     effect: { type: 'skill_cap', value: 5 }
   },
   {
@@ -189,20 +203,20 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     description: 'Increase all production by 200%',
     cost: 4,
     purchased: false,
-    position: { x: 2, y: 5 },
-    requires: ['production_100'],
+    position: { x: 2, y: 6 },
+    requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
     effect: { type: 'production_boost', value: 2.0 }
   },
   
-  // Tier 4 - Ultimate
+  // === ROW 7: Ultimate Tier I (3 nodes) ===
   {
     id: 'prestige_keep_10',
     name: 'Energy Retention I',
     description: 'Keep 10% of Energy when warping',
     cost: 5,
     purchased: false,
-    position: { x: -1, y: 6 },
-    requires: ['bulk_buy_max', 'skill_cap_increase'],
+    position: { x: -1, y: 7 },
+    requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
     effect: { type: 'prestige_keep', value: 0.10 }
   },
   {
@@ -211,8 +225,8 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     description: 'Keep 25% of Energy when warping',
     cost: 6,
     purchased: false,
-    position: { x: 1, y: 6 },
-    requires: ['skill_cap_increase', 'production_200'],
+    position: { x: 1, y: 7 },
+    requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
     effect: { type: 'prestige_keep', value: 0.25 }
   },
   {
@@ -222,7 +236,7 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     cost: 8,
     purchased: false,
     position: { x: 0, y: 7 },
-    requires: ['prestige_keep_10', 'prestige_keep_25'],
+    requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
     effect: { type: 'production_boost', value: 5.0 }
   }
 ];

@@ -3,6 +3,7 @@ import { SkillNode, PrestigeData, SkillTreeTier } from '../models/skill-node.mod
 import { SKILL_TREE_TIERS } from '../models/skill-trees.config';
 import { GameService } from './game.service';
 import { AscensionService } from './ascension.service';
+import { SaveManagerService } from './save-manager.service';
 import { Decimal } from '../utils/numbers';
 
 @Injectable({
@@ -11,6 +12,7 @@ import { Decimal } from '../utils/numbers';
 export class SkillTreeService {
   private gameService = inject(GameService);
   private ascensionService = inject(AscensionService);
+  private saveManager = inject(SaveManagerService);
   private skills = signal<Map<string, SkillNode>>(new Map());
   private prestige = signal<PrestigeData>({
     currentTier: 1,
@@ -20,6 +22,11 @@ export class SkillTreeService {
     currentRunPrestigeBonus: 1,
     tierCompletions: new Map()
   });
+  
+  // Cache for expensive calculations
+  private productionCache: { value: number; timestamp: number } | null = null;
+  private readonly PRODUCTION_CACHE_MS = 50; // Cache production for 50ms
+  private costCache: Map<string, { cost: Decimal; level: number }> = new Map();
 
   currentTier = computed(() => this.prestige().currentTier);
   totalAscensions = computed(() => this.prestige().currentRunAscensions);
@@ -32,10 +39,18 @@ export class SkillTreeService {
     this.loadSkills();
     this.applyPrestigeBonus();
     
-    // Start auto-buy loop
+    // Start auto-buy loop with reduced frequency
     setInterval(() => {
       this.autoBuySkills(this.ascensionService);
-    }, 100);
+      
+      // Check for auto-warp
+      if (this.ascensionService.hasAutoWarp() && this.canAscend()) {
+        // Only auto-warp if not on Tier 5 (to prevent auto-ascending)
+        if (this.prestige().currentTier < 5) {
+          this.ascend(this.ascensionService);
+        }
+      }
+    }, 200); // Run every 200ms instead of 100ms
   }
 
   private initializeSkillTree(): void {
@@ -80,6 +95,12 @@ export class SkillTreeService {
     const skill = this.skills().get(skillId);
     if (!skill) return new Decimal(0);
     
+    // Check cache first
+    const cached = this.costCache.get(skillId);
+    if (cached && cached.level === skill.level) {
+      return cached.cost;
+    }
+    
     let cost = skill.cost.times(Decimal.pow(skill.costMultiplier, skill.level)).floor();
     
     // Apply ascension cost reduction
@@ -87,6 +108,9 @@ export class SkillTreeService {
     if (reduction > 0) {
       cost = cost.times(1 - reduction);
     }
+    
+    // Cache the result
+    this.costCache.set(skillId, { cost, level: skill.level });
     
     return cost;
   }
@@ -101,13 +125,17 @@ export class SkillTreeService {
 
     const cost = this.getUpgradeCost(skillId);
     if (this.gameService.spend('knowledge', cost)) {
-      const skillMap = new Map(this.skills());
-      // Create a new skill object with incremented level
-      const updatedSkill = { ...skill, level: skill.level + 1 };
-      skillMap.set(skillId, updatedSkill);
-      this.skills.set(skillMap);
+      // Invalidate cost cache for this skill
+      this.costCache.delete(skillId);
+      
+      this.skills.update(skillMap => {
+        const newMap = new Map(skillMap);
+        const updatedSkill = { ...skill, level: skill.level + 1 };
+        newMap.set(skillId, updatedSkill);
+        return newMap;
+      });
 
-      this.applySkillEffect(updatedSkill);
+      this.applySkillEffect(skill);
       this.checkUnlocks();
       this.saveSkills();
       return true;
@@ -122,6 +150,9 @@ export class SkillTreeService {
   }
 
   private recalculateProduction(): void {
+    // Clear cache when recalculating
+    this.productionCache = null;
+    
     // Calculate base production from all production skills
     let baseProduction = 0;
     this.skills().forEach(skill => {
@@ -158,39 +189,37 @@ export class SkillTreeService {
       totalMultiplier *= (1 + productionBoost);
     }
 
+    // Apply global ascension points multiplier (0.1 per total point earned)
+    const globalMultiplier = this.ascensionService.globalMultiplier();
+    totalMultiplier *= globalMultiplier;
+
     // Set final production rate
     const finalProduction = baseProduction * totalMultiplier;
+    
+    // Cache the result
+    this.productionCache = {
+      value: finalProduction,
+      timestamp: Date.now()
+    };
+    
     this.gameService.setProductionRate('knowledge', finalProduction);
   }
 
-  private calculateBaseProduction(resource: string): number {
-    // Calculate total production from all production-type skills
-    let total = 0;
-    this.skills().forEach(skill => {
-      if (skill.effect.type === 'production' && 
-          skill.effect.resource === resource) {
-        total += skill.effect.value * skill.level;
-      }
-    });
-    return total;
-  }
-
   private checkUnlocks(): void {
-    const skillMap = new Map(this.skills());
-    let hasChanges = false;
+    this.skills.update(skillMap => {
+      let hasChanges = false;
+      const newMap = new Map(skillMap);
 
-    skillMap.forEach((skill, id) => {
-      if (!skill.unlocked && this.canUnlock(skill)) {
-        // Create new skill object with updated unlocked state
-        const updatedSkill = { ...skill, unlocked: true };
-        skillMap.set(id, updatedSkill);
-        hasChanges = true;
-      }
+      newMap.forEach((skill, id) => {
+        if (!skill.unlocked && this.canUnlock(skill)) {
+          const updatedSkill = { ...skill, unlocked: true };
+          newMap.set(id, updatedSkill);
+          hasChanges = true;
+        }
+      });
+
+      return hasChanges ? newMap : skillMap; // Only return new map if there were changes
     });
-
-    if (hasChanges) {
-      this.skills.set(skillMap);
-    }
   }
 
   private canUnlock(skill: SkillNode): boolean {
@@ -206,7 +235,8 @@ export class SkillTreeService {
     }
 
     const bulkAmount = ascensionService.bulkBuyAmount();
-    let purchasedAny = false;
+    let purchasesMade = 0;
+    let shouldSave = false;
 
     // Try to buy skills in order of cost (cheapest first)
     const affordableSkills = Array.from(this.skills().values())
@@ -217,51 +247,55 @@ export class SkillTreeService {
         return costA.cmp(costB);
       });
 
+    // Batch all purchases before updating signal
+    const updates: Array<{ id: string; skill: SkillNode }> = [];
+    
     for (const skill of affordableSkills) {
       let bought = 0;
       while (bought < bulkAmount && this.canUpgrade(skill.id)) {
-        if (this.upgradeSkillInternal(skill.id, ascensionService)) {
+        const cost = this.getUpgradeCost(skill.id);
+        if (this.gameService.spend('knowledge', cost)) {
+          updates.push({
+            id: skill.id,
+            skill: { ...skill, level: skill.level + bought + 1 }
+          });
           bought++;
-          purchasedAny = true;
+          shouldSave = true;
         } else {
           break;
         }
       }
       
-      if (bought >= bulkAmount) break;
+      purchasesMade += bought;
+      if (purchasesMade >= bulkAmount) break;
     }
 
-    if (purchasedAny) {
+    // Apply all updates in a single signal update
+    if (updates.length > 0) {
+      // Clear cost cache for all updated skills
+      updates.forEach(({ id }) => this.costCache.delete(id));
+      
+      this.skills.update(skillMap => {
+        const newMap = new Map(skillMap);
+        updates.forEach(({ id, skill }) => {
+          newMap.set(id, skill);
+        });
+        return newMap;
+      });
+
+      this.recalculateProduction();
+      this.checkUnlocks();
+      
+      // Save manager will handle debouncing
       this.saveSkills();
     }
   }
 
-  private upgradeSkillInternal(skillId: string, ascensionService?: any): boolean {
-    if (!this.canUpgrade(skillId)) {
-      return false;
-    }
-
-    const skill = this.skills().get(skillId);
-    if (!skill) return false;
-
-    const cost = this.getUpgradeCost(skillId);
-    if (this.gameService.spend('knowledge', cost)) {
-      const skillMap = new Map(this.skills());
-      const updatedSkill = { ...skill, level: skill.level + 1 };
-      skillMap.set(skillId, updatedSkill);
-      this.skills.set(skillMap);
-
-      this.applySkillEffect(updatedSkill);
-      this.checkUnlocks();
-      return true;
-    }
-
-    return false;
-  }
-
   saveSkills(): void {
     const skillData = Array.from(this.skills().entries());
-    localStorage.setItem('treefinite_skills', JSON.stringify(skillData));
+    this.saveManager.scheduleSave('skills', () => {
+      localStorage.setItem('treefinite_skills', JSON.stringify(skillData));
+    });
   }
 
   loadSkills(): void {
@@ -316,7 +350,9 @@ export class SkillTreeService {
       ...this.prestige(),
       tierCompletions: Array.from(this.prestige().tierCompletions.entries())
     };
-    localStorage.setItem('treefinite_prestige', JSON.stringify(data));
+    this.saveManager.scheduleSave('prestige', () => {
+      localStorage.setItem('treefinite_prestige', JSON.stringify(data));
+    });
   }
 
   canAscend(): boolean {

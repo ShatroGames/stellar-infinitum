@@ -1,13 +1,12 @@
 import { Component, computed, inject, input, signal, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { SkillNode } from '../../models/skill-node.model';
 import { SkillTreeService } from '../../services/skill-tree.service';
 import { formatNumber } from '../../utils/numbers';
 
 @Component({
   selector: 'app-skill-node',
-  imports: [CommonModule, MatTooltipModule],
+  imports: [CommonModule],
   templateUrl: './skill-node.component.html',
   styleUrl: './skill-node.component.css'
 })
@@ -16,23 +15,23 @@ export class SkillNodeComponent {
   
   private skillTreeService = inject(SkillTreeService);
 
+  // Memoize cost calculation to prevent redundant work
   upgradeCost = computed(() => {
-    return formatNumber(this.skillTreeService.getUpgradeCost(this.skill().id));
+    const skill = this.skill();
+    return formatNumber(this.skillTreeService.getUpgradeCost(skill.id));
   });
 
   isMaxed = computed(() => {
-    return this.skill().level >= this.skill().maxLevel;
+    const skill = this.skill();
+    return skill.level >= skill.maxLevel;
   });
 
   canUpgrade = computed(() => {
-    return this.skillTreeService.canUpgrade(this.skill().id);
+    const skill = this.skill();
+    return this.skillTreeService.canUpgrade(skill.id);
   });
 
-  getTooltipText = computed(() => {
-    return this.skill().description;
-  });
-
-  // Get prerequisite nodes information
+  // Get prerequisite nodes information - only recalculate when skill changes
   prerequisites = computed(() => {
     const skill = this.skill();
     if (skill.prerequisites.length === 0) return [];

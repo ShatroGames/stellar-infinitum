@@ -10,6 +10,9 @@
 
   <div class="ascension-info">
     <p>Complete Tier 5 to earn Ascension Points. Spend them on permanent upgrades that enhance your progression!</p>
+    @if (totalPoints() > 0) {
+      <p class="global-bonus">✨ Global Production Multiplier: <strong>{{ globalMultiplier() }}x</strong></p>
+    }
   </div>
 
   <div class="tree-visualization">
@@ -98,9 +101,9 @@
         </div>
       </div>
 
-      <!-- Tier 4: Tertiary Upgrades -->
+      <!-- Tier 4: Auto-Warp -->
       <div class="tier-section">
-        <div class="tier-header">💫 Tertiary Upgrades</div>
+        <div class="tier-header">⚡ Automation</div>
         <div class="tier-nodes">
           @for (node of Array.from(nodes().values()); track node.id) {
             @if (node.position.y === 3) {
@@ -126,9 +129,9 @@
         </div>
       </div>
 
-      <!-- Tier 5: Advanced Upgrades -->
+      <!-- Tier 5: Tertiary Upgrades -->
       <div class="tier-section">
-        <div class="tier-header">🌠 Advanced Upgrades</div>
+        <div class="tier-header">💫 Tertiary Upgrades</div>
         <div class="tier-nodes">
           @for (node of Array.from(nodes().values()); track node.id) {
             @if (node.position.y === 4) {
@@ -154,9 +157,9 @@
         </div>
       </div>
 
-      <!-- Tier 6: Convergence -->
+      <!-- Tier 6: Advanced Upgrades -->
       <div class="tier-section">
-        <div class="tier-header">💎 Convergence Upgrades</div>
+        <div class="tier-header">🌠 Advanced Upgrades</div>
         <div class="tier-nodes">
           @for (node of Array.from(nodes().values()); track node.id) {
             @if (node.position.y === 5) {
@@ -182,12 +185,40 @@
         </div>
       </div>
 
-      <!-- Tier 7: Ultimate -->
+      <!-- Tier 7: Convergence -->
+      <div class="tier-section">
+        <div class="tier-header">💎 Convergence Upgrades</div>
+        <div class="tier-nodes">
+          @for (node of Array.from(nodes().values()); track node.id) {
+            @if (node.position.y === 6) {
+              <div class="ascension-node {{ getNodeClass(node) }}" [attr.data-node-id]="node.id">
+                <div class="node-icon">
+                  @if (node.purchased) { ✓ }
+                  @else if (canPurchase(node.id)) { ⭐ }
+                  @else { 🔒 }
+                </div>
+                <div class="node-info">
+                  <h4 class="node-name">{{ node.name }}</h4>
+                  <p class="node-effect">{{ getEffectDescription(node) }}</p>
+                  <div class="node-cost">Cost: {{ node.cost }} AP</div>
+                </div>
+                @if (!node.purchased && canPurchase(node.id)) {
+                  <button class="btn-purchase" (click)="onPurchase(node.id)" [disabled]="!canPurchase(node.id)">
+                    Purchase
+                  </button>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Tier 8: Ultimate -->
       <div class="tier-section">
         <div class="tier-header">👑 Ultimate Upgrades</div>
         <div class="tier-nodes">
           @for (node of Array.from(nodes().values()); track node.id) {
-            @if (node.position.y === 6 || node.position.y === 7) {
+            @if (node.position.y === 7) {
               <div class="ascension-node {{ getNodeClass(node) }}" [attr.data-node-id]="node.id">
                 <div class="node-icon">
                   @if (node.purchased) { ✓ }

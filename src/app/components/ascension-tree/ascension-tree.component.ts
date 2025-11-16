@@ -16,6 +16,7 @@ export class AscensionTreeComponent {
   points = this.ascensionService.points;
   totalPoints = this.ascensionService.totalPoints;
   nodes = this.ascensionService.nodes;
+  globalMultiplier = this.ascensionService.globalMultiplier;
   
   // Make Array available in template
   protected readonly Array = Array;
@@ -43,6 +44,8 @@ export class AscensionTreeComponent {
     switch (effect.type) {
       case 'auto_buy':
         return 'Enables automatic purchases';
+      case 'auto_warp':
+        return 'Auto-warp through Tiers 1-4';
       case 'bulk_buy':
         return effect.value === 999 ? 'Buy MAX levels' : `Buy ${effect.value} levels at once`;
       case 'cost_reduction':

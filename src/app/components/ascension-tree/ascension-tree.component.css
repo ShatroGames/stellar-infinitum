@@ -53,6 +53,24 @@
   border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
+.ascension-info p {
+  margin: 8px 0;
+}
+
+.global-bonus {
+  color: #90ee90;
+  font-size: 1.1em;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.global-bonus strong {
+  color: #ffd700;
+  font-size: 1.2em;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
 .tree-visualization {
   position: relative;
   background: rgba(0, 0, 0, 0.3);

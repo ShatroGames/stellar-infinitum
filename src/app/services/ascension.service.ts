@@ -1,11 +1,13 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import Decimal from 'break_eternity.js';
 import { AscensionNode, AscensionState, ASCENSION_TREE_NODES } from '../models/ascension-tree.model';
+import { SaveManagerService } from './save-manager.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AscensionService {
+  private saveManager = inject(SaveManagerService);
   private state = signal<AscensionState>({
     points: 0,
     totalPoints: 0,
@@ -19,6 +21,8 @@ export class AscensionService {
 
   // Computed effects
   hasAutoBuy = computed(() => this.hasNode('auto_buy'));
+  
+  hasAutoWarp = computed(() => this.hasNode('auto_warp'));
   
   bulkBuyAmount = computed(() => {
     if (this.hasNode('bulk_buy_max')) return 999;
@@ -69,6 +73,12 @@ export class AscensionService {
     if (this.hasNode('prestige_keep_25')) return 0.25;
     if (this.hasNode('prestige_keep_10')) return 0.10;
     return 0;
+  });
+
+  // Global multiplier based on total ascension points earned
+  // Each point adds 0.1 (10%) to the multiplier
+  globalMultiplier = computed(() => {
+    return 1 + (this.totalPoints() * 0.1);
   });
 
   constructor() {
@@ -165,7 +175,9 @@ export class AscensionService {
         .map(node => node.id)
     };
 
-    localStorage.setItem('ascensionTree', JSON.stringify(saveData));
+    this.saveManager.scheduleSave('ascension', () => {
+      localStorage.setItem('ascensionTree', JSON.stringify(saveData));
+    });
   }
 
   loadState(): void {
