@@ -50,12 +50,12 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'start_energy',
     name: 'Momentum Start',
-    description: 'Start each warp with 1000 Energy instead of 10',
+    description: 'Start each warp with 1M Energy instead of 10',
     cost: 1,
     purchased: false,
     position: { x: 0, y: 1 },
     requires: ['auto_buy'],
-    effect: { type: 'start_bonus', value: 1000 }
+    effect: { type: 'start_bonus', value: 1000000 }
   },
   {
     id: 'production_25',
@@ -136,12 +136,12 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'multiplier_boost',
     name: 'Multiplier Amplification',
-    description: 'All multiplier effects are 20% stronger',
+    description: 'All multiplier effects are 5% stronger',
     cost: 2,
     purchased: false,
     position: { x: 2, y: 4 },
     requires: ['production_50', 'bulk_buy_10', 'start_energy'],
-    effect: { type: 'multiplier_boost', value: 0.20 }
+    effect: { type: 'multiplier_boost', value: 0.05 }
   },
   
   // === ROW 5: Advanced Upgrades (3 nodes) ===
@@ -190,22 +190,22 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'skill_cap_increase',
     name: 'Limitless Growth',
-    description: 'Increase all skill level caps by 5',
+    description: 'Increase all skill level caps by 2',
     cost: 4,
     purchased: false,
     position: { x: 0, y: 6 },
     requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
-    effect: { type: 'skill_cap', value: 5 }
+    effect: { type: 'skill_cap', value: 2 }
   },
   {
     id: 'production_200',
     name: 'Power Enhancement IV',
-    description: 'Increase all production by 200%',
+    description: 'Increase all production by 150%',
     cost: 4,
     purchased: false,
     position: { x: 2, y: 6 },
     requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
-    effect: { type: 'production_boost', value: 2.0 }
+    effect: { type: 'production_boost', value: 1.5 }
   },
   
   // === ROW 7: Ultimate Tier I (3 nodes) ===
@@ -232,11 +232,11 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'mega_boost',
     name: 'Transcendent Power',
-    description: 'All production and multipliers increased by 500%',
+    description: 'All production and multipliers increased by 300%',
     cost: 8,
     purchased: false,
     position: { x: 0, y: 7 },
     requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
-    effect: { type: 'production_boost', value: 5.0 }
+    effect: { type: 'production_boost', value: 3.0 }
   }
 ];

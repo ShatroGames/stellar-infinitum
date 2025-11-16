@@ -42,13 +42,13 @@ export class AscensionService {
     if (this.hasNode('production_25')) boost += 0.25;
     if (this.hasNode('production_50')) boost += 0.50;
     if (this.hasNode('production_100')) boost += 1.0;
-    if (this.hasNode('production_200')) boost += 2.0;
-    if (this.hasNode('mega_boost')) boost += 5.0;
+    if (this.hasNode('production_200')) boost += 1.5;
+    if (this.hasNode('mega_boost')) boost += 3.0;
     return boost;
   });
 
   multiplierBoost = computed(() => {
-    return this.hasNode('multiplier_boost') ? 0.20 : 0;
+    return this.hasNode('multiplier_boost') ? 0.05 : 0;
   });
 
   startingEnergy = computed(() => {
@@ -66,7 +66,7 @@ export class AscensionService {
   });
 
   skillCapIncrease = computed(() => {
-    return this.hasNode('skill_cap_increase') ? 5 : 0;
+    return this.hasNode('skill_cap_increase') ? 2 : 0;
   });
 
   prestigeKeepPercent = computed(() => {

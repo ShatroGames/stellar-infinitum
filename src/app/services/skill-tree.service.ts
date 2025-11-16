@@ -161,12 +161,12 @@ export class SkillTreeService {
       }
     });
 
-    // Calculate total multiplier from all multiplier skills
+    // Calculate total multiplier from all multiplier skills (MULTIPLICATIVE)
     let totalMultiplier = 1;
     this.skills().forEach(skill => {
       if (skill.effect.type === 'multiplier' && skill.effect.resource === 'knowledge') {
-        // Each level adds (value - 1) to the multiplier
-        // e.g., 1.5x multiplier at level 3 = 1 + (0.5 * 3) = 2.5x total
+        // Each level multiplies by the effect value
+        // e.g., 1.5x multiplier at level 3 = 1.5^3 = 3.375x total
         let effectValue = skill.effect.value;
         
         // Apply ascension multiplier boost
@@ -175,7 +175,8 @@ export class SkillTreeService {
           effectValue = 1 + (effectValue - 1) * (1 + multiplierBoost);
         }
         
-        totalMultiplier += (effectValue - 1) * skill.level;
+        // Multiply by the effect value raised to the skill level
+        totalMultiplier *= Math.pow(effectValue, skill.level);
       }
     });
 
