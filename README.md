@@ -1,27 +1,24 @@
-# Treefinite 🌳
+# Stellar Infinitum
 
 An incremental/idle game built with Angular where you progress through multiple skill trees with increasing complexity via a prestige/ascension system.
 
 ## About the Game
 
-Treefinite is an idle game where you:
-- 🎯 Earn Skill Points automatically over time
-- 📚 Unlock and upgrade skills using Knowledge
+Stellar Infinitum is an idle game where you:
+- 🎯 Earn Energy automatically over time
+- 📚 Unlock and upgrade skills using Energy
 - ⚡ Build production chains through skill prerequisites
-- 🌟 **Ascend through 3 skill tree tiers** (4 skills → 6 skills → 8 skills)
-- � Gain **permanent bonuses** from each ascension (1.5x → 2x → 3x)
+- 🌟 **Ascend through 5 warp tiers** (4 skills → 6 skills → 8 skills)
+- � Gain **permanent bonuses** from each warp
 - 💤 Benefit from offline progress when you're away
 - 💾 Auto-save your progress every 10 seconds
 
 ### Current Features
 
-- **3-Tier Progression System**: 
-  - **Seedling Tree**: 4 basic skills, 10K points to ascend
-  - **Growing Tree**: 6 intermediate skills, 100K points to ascend
-  - **Ancient Tree**: 8 advanced skills, 1M points to ascend
+- **5-Tier Progression System**
 - **Prestige Mechanics**: Max all skills + reach threshold to unlock next tier
-- **Permanent Bonuses**: Each ascension multiplies production permanently
-- **Resource System**: Skill Points and Knowledge with automatic production
+- **Permanent Bonuses**: Each warp multiplies production permanently
+- **Resource System**: Energy with automatic production
 - **Idle Mechanics**: Resources accumulate in real-time and offline
 - **Persistent Saves**: All progress including ascensions saved to localStorage
 - **Responsive UI**: Clean, gradient-based design that works on mobile and desktop
