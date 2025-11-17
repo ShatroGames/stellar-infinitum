@@ -1,0 +1,17 @@
+# TODO 
+- Splash screen with quick tutorial
+- Popup explaining warp/ascension
+- Win condition screen
+- Playtesting current balance changes
+- hide prestige panel before tree isn't maxed in Tier 1 before ascension
+- Tier 2 change reqs for both nodes to be the last of Tier 1
+- Removing the words "Ascension" and "Ascend" and replace it with a thematically fitting term (similar to prestige => warp)
+- replace offline progression node from ascension tree because that would encourage offline play
+- Add Achievements (no unlocks for this project unless people like it and want more from the game)
+- Nodes that aren't just flat multipliers
+-- multi based on energy/time/num max nodes
+-- exponential boosts
+-- another rebalance would be needed
+- Maybe: Add dev tools (like immediately start with one ascension point)
+- Display the tier number instead of the amount of warps done
+- 
