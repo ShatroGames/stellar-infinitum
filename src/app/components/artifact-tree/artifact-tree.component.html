@@ -1,0 +1,147 @@
+<div class="artifact-tree-container">
+  <div class="header">
+    <h2>🔬 Ancient Tech Tree</h2>
+    <p class="subtitle">Research powerful artifacts to enhance Quanta production</p>
+  </div>
+
+  <div class="tree-grid">
+    <!-- Production Branch (Left) -->
+    <div class="branch production-branch">
+      <h3 class="branch-title">⚙ Production Technologies</h3>
+      <div class="artifacts-column">
+        @for (artifact of getArtifactsByBranch(ArtifactBranch.PRODUCTION); track artifact.id) {
+          <div class="artifact-node" 
+               [class.unlocked]="isUnlocked(artifact.id)"
+               [class.available]="canUnlock(artifact) && !isUnlocked(artifact.id)"
+               [class.locked]="!canUnlock(artifact) && !isUnlocked(artifact.id)">
+            <div class="artifact-icon">{{artifact.icon}}</div>
+            <div class="artifact-info">
+              <div class="artifact-name">{{artifact.name}}</div>
+              <div class="artifact-tier">Tier {{artifact.tier}}</div>
+              <div class="artifact-description">{{artifact.description}}</div>
+              
+              @for (effect of artifact.effects; track effect.type) {
+                <div class="artifact-effect">{{effect.description}}</div>
+              }
+              
+              @if (!isUnlocked(artifact.id)) {
+                <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
+                <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
+                <button class="unlock-button" 
+                        [disabled]="!canUnlock(artifact)"
+                        (click)="unlockArtifact(artifact)">
+                  Research
+                </button>
+              } @else {
+                <div class="unlocked-badge">✓ Researched</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Multiplier Branch (Center) -->
+    <div class="branch multiplier-branch">
+      <h3 class="branch-title">× Multiplication Techniques</h3>
+      <div class="artifacts-column">
+        @for (artifact of getArtifactsByBranch(ArtifactBranch.MULTIPLIER); track artifact.id) {
+          <div class="artifact-node" 
+               [class.unlocked]="isUnlocked(artifact.id)"
+               [class.available]="canUnlock(artifact) && !isUnlocked(artifact.id)"
+               [class.locked]="!canUnlock(artifact) && !isUnlocked(artifact.id)">
+            <div class="artifact-icon">{{artifact.icon}}</div>
+            <div class="artifact-info">
+              <div class="artifact-name">{{artifact.name}}</div>
+              <div class="artifact-tier">Tier {{artifact.tier}}</div>
+              <div class="artifact-description">{{artifact.description}}</div>
+              
+              @for (effect of artifact.effects; track effect.type) {
+                <div class="artifact-effect">{{effect.description}}</div>
+              }
+              
+              @if (!isUnlocked(artifact.id)) {
+                <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
+                <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
+                <button class="unlock-button" 
+                        [disabled]="!canUnlock(artifact)"
+                        (click)="unlockArtifact(artifact)">
+                  Research
+                </button>
+              } @else {
+                <div class="unlocked-badge">✓ Researched</div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Cross-Branch Nodes (in center column) -->
+        @for (artifact of getArtifactsByBranch(ArtifactBranch.CROSS_BRANCH); track artifact.id) {
+          <div class="artifact-node cross-branch-node" 
+               [class.unlocked]="isUnlocked(artifact.id)"
+               [class.available]="canUnlock(artifact) && !isUnlocked(artifact.id)"
+               [class.locked]="!canUnlock(artifact) && !isUnlocked(artifact.id)">
+            <div class="artifact-icon">{{artifact.icon}}</div>
+            <div class="artifact-info">
+              <div class="artifact-name">{{artifact.name}}</div>
+              <div class="artifact-tier">Cross-Branch Tier {{artifact.tier}}</div>
+              <div class="artifact-description">{{artifact.description}}</div>
+              
+              @for (effect of artifact.effects; track effect.type) {
+                <div class="artifact-effect">{{effect.description}}</div>
+              }
+              
+              @if (!isUnlocked(artifact.id)) {
+                <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
+                <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
+                <button class="unlock-button" 
+                        [disabled]="!canUnlock(artifact)"
+                        (click)="unlockArtifact(artifact)">
+                  Research
+                </button>
+              } @else {
+                <div class="unlocked-badge">✓ Researched</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Efficiency Branch (Right) -->
+    <div class="branch efficiency-branch">
+      <h3 class="branch-title">💤 Efficiency Innovations</h3>
+      <div class="artifacts-column">
+        @for (artifact of getArtifactsByBranch(ArtifactBranch.EFFICIENCY); track artifact.id) {
+          <div class="artifact-node" 
+               [class.unlocked]="isUnlocked(artifact.id)"
+               [class.available]="canUnlock(artifact) && !isUnlocked(artifact.id)"
+               [class.locked]="!canUnlock(artifact) && !isUnlocked(artifact.id)">
+            <div class="artifact-icon">{{artifact.icon}}</div>
+            <div class="artifact-info">
+              <div class="artifact-name">{{artifact.name}}</div>
+              <div class="artifact-tier">Tier {{artifact.tier}}</div>
+              <div class="artifact-description">{{artifact.description}}</div>
+              
+              @for (effect of artifact.effects; track effect.type) {
+                <div class="artifact-effect">{{effect.description}}</div>
+              }
+              
+              @if (!isUnlocked(artifact.id)) {
+                <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
+                <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
+                <button class="unlock-button" 
+                        [disabled]="!canUnlock(artifact)"
+                        (click)="unlockArtifact(artifact)">
+                  Research
+                </button>
+              } @else {
+                <div class="unlocked-badge">✓ Researched</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

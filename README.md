@@ -22,6 +22,11 @@ Stellar Infinitum is an idle game where you:
 - **Idle Mechanics**: Resources accumulate in real-time and offline
 - **Persistent Saves**: All progress including ascensions saved to localStorage
 - **Responsive UI**: Clean, gradient-based design that works on mobile and desktop
+- **Achievement System**: 70+ achievements across 7 categories with permanent rewards
+  - Track milestones, unlocks, and special accomplishments
+  - Secret achievements for expert players
+  - Visual notifications and progress tracking
+  - See [ACHIEVEMENTS.md](ACHIEVEMENTS.md) for full details
 
 ## Development server
 

@@ -102,12 +102,19 @@
   background: rgba(255, 215, 0, 0.1);
   border-radius: 6px;
   border: 1px solid rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
 .tier-nodes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
+}
+
+.tier-nodes.tier-single {
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
@@ -172,6 +179,31 @@
 .node-icon {
   font-size: 1.3em;
   margin-bottom: 5px;
+}
+
+.node-purchased .node-icon {
+  color: #4caf50;
+  filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.8));
+}
+
+.node-available .node-icon {
+  color: #ffd700;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+  animation: icon-glow 2s infinite;
+}
+
+.node-locked .node-icon {
+  color: #666;
+  filter: drop-shadow(0 0 2px rgba(100, 100, 100, 0.5));
+}
+
+@keyframes icon-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 1));
+  }
 }
 
 .node-info {

@@ -342,7 +342,7 @@ export const TIER_5_SKILLS: SkillNode[] = [
 export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   {
     id: 1,
-    name: '⚡ Energy Seed',
+    name: '◇ Energy Seed',
     description: 'The foundation of all power',
     requiredPoints: new Decimal(2000000),
     skills: TIER_1_SKILLS,
@@ -350,7 +350,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   },
   {
     id: 2,
-    name: '� Power Network',
+    name: '◈ Power Network',
     description: 'Expanding energy pathways',
     requiredPoints: new Decimal(400000000),
     skills: TIER_2_SKILLS,
@@ -358,7 +358,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   },
   {
     id: 3,
-    name: '⚙️ Synthesis Grid',
+    name: '◆ Synthesis Grid',
     description: 'Complex energy convergence',
     requiredPoints: new Decimal(250000000000),
     skills: TIER_3_SKILLS,
@@ -366,7 +366,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   },
   {
     id: 4,
-    name: '� Nexus Array',
+    name: '◉ Nexus Array',
     description: 'Unified power nexus',
     requiredPoints: new Decimal(3500000000000000),
     skills: TIER_4_SKILLS,
@@ -374,7 +374,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   },
   {
     id: 5,
-    name: '✨ Ultimate Synthesis',
+    name: '✦ Ultimate Synthesis',
     description: 'The pinnacle of energy mastery',
     requiredPoints: new Decimal(350000000000000000000),
     skills: TIER_5_SKILLS,

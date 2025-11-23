@@ -1,0 +1,127 @@
+<div class="collapse-container">
+  <div class="collapse-header">
+    <h2>🌌 Cosmic Collapse</h2>
+    <p class="subtitle">The ultimate transcendence awaits</p>
+  </div>
+
+  <div class="collapse-info">
+    <div class="info-section">
+      <h3>What is Cosmic Collapse?</h3>
+      <p>When all dimensions reach their maximum potential, the universe can undergo a <strong>Cosmic Collapse</strong> - a transformative event that resets reality and unlocks the <strong>Quantum Weaving</strong> system.</p>
+    </div>
+
+    <div class="info-section warning">
+      <h3>⚠️ Warning: This will reset</h3>
+      <ul>
+        <li>❌ All Stellar Network nodes and Energy</li>
+        <li>❌ All Stellar Nexus upgrades and Stellar Cores</li>
+        <li>❌ All Dimensional Echoes and Echo Fragments</li>
+        <li>✅ Achievements are KEPT</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h3>✨ You will gain</h3>
+      <ul>
+        <li>🌟 Access to the <strong>Quantum Weaving</strong> system</li>
+        <li>🌟 New resource: <strong>Quanta</strong> (1/sec base)</li>
+        <li>🌟 Three parallel quantum trees: Matter, Energy, and Time</li>
+        <li>🌟 Synergy system for powerful combinations</li>
+        <li>🌟 Entanglement mechanic to link nodes across trees</li>
+      </ul>
+    </div>
+
+    <div class="requirements-section">
+      <h3>Requirements</h3>
+      <div class="requirement" [class.met]="dimensionsMaxed()">
+        @if (dimensionsMaxed()) {
+          <span class="checkmark">✓</span>
+        } @else {
+          <span class="crossmark">✗</span>
+        }
+        <span>All Dimension nodes at maximum level</span>
+      </div>
+      <div class="requirement" [class.met]="allPreCollapseAchievements()">
+        @if (allPreCollapseAchievements()) {
+          <span class="checkmark">✓</span>
+        } @else {
+          <span class="crossmark">✗</span>
+        }
+        <span>All pre-collapse achievements unlocked</span>
+      </div>
+      
+      @if (!allPreCollapseAchievements() && missingAchievements().length > 0) {
+        <div class="missing-achievements">
+          <h4>Missing Achievements ({{ missingAchievements().length }}):</h4>
+          <div class="achievement-list">
+            @for (achievement of missingAchievements(); track achievement.id) {
+              <div class="missing-achievement">
+                <span class="achievement-icon">{{ achievement.icon }}</span>
+                <div class="achievement-info">
+                  <span class="achievement-name">{{ achievement.name }}</span>
+                  <span class="achievement-desc">{{ achievement.description }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="collapse-actions">
+      @if (canCollapse()) {
+        <button class="collapse-btn" (click)="initiateCollapse()">
+          🌌 Trigger Cosmic Collapse
+        </button>
+      } @else if (!dimensionsMaxed()) {
+        <button class="collapse-btn" disabled>
+          🔒 Complete All Dimensions First
+        </button>
+      } @else {
+        <button class="collapse-btn" disabled>
+          🔒 Unlock All Achievements First
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  @if (showConfirmation) {
+    <div class="modal-overlay" (click)="cancelCollapse()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h2>⚠️ Confirm Cosmic Collapse</h2>
+        <p>Are you absolutely sure you want to collapse the universe?</p>
+        <p class="warning-text">This action cannot be undone!</p>
+        
+        <div class="modal-actions">
+          <button class="confirm-btn" (click)="confirmCollapse()">
+            Yes, Collapse the Universe
+          </button>
+          <button class="cancel-btn" (click)="cancelCollapse()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Collapse Animation -->
+  @if (showCollapseAnimation) {
+    <div class="collapse-animation-overlay">
+      <div class="black-hole">
+        <div class="event-horizon"></div>
+        <div class="accretion-disk"></div>
+        <div class="singularity"></div>
+      </div>
+      <div class="particles-container">
+        @for (i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]; track i) {
+          <div class="particle" [style.animation-delay.s]="i * 0.1"></div>
+        }
+      </div>
+      <div class="collapse-text">
+        <h1>COSMIC COLLAPSE</h1>
+        <p>Reality is being rewritten...</p>
+      </div>
+    </div>
+  }
+</div>

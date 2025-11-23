@@ -60,10 +60,14 @@ export class AscensionTreeComponent {
         return `+${effect.value} max skill levels`;
       case 'multiplier_boost':
         return `+${(effect.value * 100).toFixed(0)}% stronger multipliers`;
-      case 'offline_bonus':
-        return `+${(effect.value * 100).toFixed(0)}% offline gains`;
-      case 'prestige_keep':
-        return `Keep ${(effect.value * 100).toFixed(0)}% Energy on warp`;
+      case 'skill_efficiency':
+        return `+${(effect.value * 100).toFixed(0)}% production per maxed skill`;
+      case 'stellar_core_mult':
+        return `+${(effect.value * 100).toFixed(0)}% production per Stellar Core`;
+      case 'warp_momentum':
+        return `+${(effect.value * 100).toFixed(0)}% production per warp this run`;
+      case 'remove_prerequisites':
+        return 'Unlock all skill nodes instantly';
       default:
         return '';
     }

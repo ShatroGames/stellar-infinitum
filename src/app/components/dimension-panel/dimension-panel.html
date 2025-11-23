@@ -1,0 +1,90 @@
+<div class="dimension-panel">
+  <div class="panel-header">
+    <h2>◆ Dimensional Echoes</h2>
+    <div class="echo-fragments">
+      <div class="fragments-display">
+        <span class="fragments-count">{{ echoFragments() }}</span>
+        <span class="fragments-label">Echo Fragments</span>
+      </div>
+      <div class="fragments-total">Total Earned: {{ totalEchoFragments() }}</div>
+    </div>
+  </div>
+
+  <div class="panel-info">
+    <p>Transcend Tier 5 to earn Echo Fragments. Unlock parallel dimensions to gain powerful permanent bonuses!</p>
+  </div>
+
+  @if (unlockedDimensions().length === 0 && lockedDimensions().length > 0) {
+    <div class="no-dimensions">
+      <p class="no-dims-message">◇ No dimensions unlocked yet</p>
+      <p>Complete Tier 5 to earn your first Echo Fragment and unlock a dimension!</p>
+    </div>
+  }
+
+  <!-- Unlocked Dimensions Tabs -->
+  @if (unlockedDimensions().length > 0) {
+    <div class="dimension-tabs">
+      @for (dim of getActiveDimensions(); track dim.id) {
+        <button class="tab-button" 
+                [class.active]="selectedDimension()?.id === dim.id"
+                (click)="selectDimension(dim)"
+                [style.--tab-color]="dim.color">
+          {{ dim.name }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Selected Dimension Tree -->
+  @if (selectedDimension() && !isDimensionMaxed(selectedDimension()!)) {
+    <div class="dimension-display">
+      <app-dimension-tree [dimension]="selectedDimension()!" />
+    </div>
+  }
+
+  <!-- Maxed Dimensions -->
+  @if (getMaxedDimensions().length > 0) {
+    <div class="maxed-dimensions">
+      <h3>✅ Completed Dimensions</h3>
+      <div class="maxed-grid">
+        @for (dim of getMaxedDimensions(); track dim.id) {
+          <div class="maxed-dimension-card" [style.--dim-color]="dim.color">
+            <div class="maxed-icon">✓</div>
+            <h4>{{ dim.name }}</h4>
+            <p class="maxed-desc">All nodes maxed out!</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Locked Dimensions -->
+  @if (lockedDimensions().length > 0) {
+    <div class="locked-dimensions">
+      <h3>⊗ Locked Dimensions</h3>
+      <div class="locked-grid">
+        @for (dim of lockedDimensions(); track dim.id) {
+          <div class="locked-dimension-card">
+            <h4>{{ dim.name }}</h4>
+            <p class="locked-desc">{{ dim.description }}</p>
+            <p class="locked-mechanic">{{ dim.mechanic }}</p>
+            <div class="unlock-cost">
+              <span>Cost: {{ dim.unlockCost }} Echo Fragments</span>
+            </div>
+            <button class="btn-unlock" 
+                    (click)="unlockDimension(dim.id)"
+                    [disabled]="!canUnlockDimension(dim.id)">
+              Unlock Dimension
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (unlockedDimensions().length === 5) {
+    <div class="all-unlocked">
+      <p>✦ All dimensions unlocked! Continue improving each dimension's power. ✦</p>
+    </div>
+  }
+</div>

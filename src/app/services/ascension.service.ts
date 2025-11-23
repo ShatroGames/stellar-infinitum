@@ -54,6 +54,16 @@ export class AscensionService {
   startingEnergy = computed(() => {
     return this.hasNode('start_energy') ? new Decimal(1000) : new Decimal(10);
   });
+  
+  // Check if all ascension tree nodes are purchased (unlocks dimensions)
+  isTreeComplete = computed(() => {
+    const totalNodes = ASCENSION_TREE_NODES.length;
+    let purchasedCount = 0;
+    this.state().nodes.forEach(node => {
+      if (node.purchased) purchasedCount++;
+    });
+    return purchasedCount === totalNodes;
+  });
 
   warpSpeedReduction = computed(() => {
     if (this.hasNode('warp_speed_2')) return 0.40;
@@ -61,24 +71,30 @@ export class AscensionService {
     return 0;
   });
 
-  offlineBonus = computed(() => {
-    return this.hasNode('offline_bonus') ? 0.50 : 0;
+  skillEfficiencyBonus = computed(() => {
+    return this.hasNode('skill_efficiency') ? 0.02 : 0;
   });
 
   skillCapIncrease = computed(() => {
     return this.hasNode('skill_cap_increase') ? 2 : 0;
   });
 
-  prestigeKeepPercent = computed(() => {
-    if (this.hasNode('prestige_keep_25')) return 0.25;
-    if (this.hasNode('prestige_keep_10')) return 0.10;
-    return 0;
+  stellarCoreMult = computed(() => {
+    return this.hasNode('stellar_core_mult') ? 0.20 : 0;
+  });
+
+  warpMomentumBonus = computed(() => {
+    return this.hasNode('warp_momentum') ? 0.15 : 0;
+  });
+
+  hasUnlockAll = computed(() => {
+    return this.hasNode('unlock_all');
   });
 
   // Global multiplier based on total ascension points earned
   // Each point adds 0.1 (10%) to the multiplier
   globalMultiplier = computed(() => {
-    return 1 + (this.totalPoints() * 0.1);
+    return 1 + this.totalPoints();
   });
 
   constructor() {

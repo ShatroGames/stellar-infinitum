@@ -1,0 +1,18 @@
+@if (popup()) {
+  <div class="tutorial-overlay" (click)="onDismiss()">
+    <div class="tutorial-popup" (click)="$event.stopPropagation()">
+      <div class="tutorial-header">
+        <span class="tutorial-icon">{{ popup()!.icon }}</span>
+        <h2>{{ popup()!.title }}</h2>
+      </div>
+      <div class="tutorial-content">
+        @for (line of popup()!.content; track $index) {
+          <p>{{ line }}</p>
+        }
+      </div>
+      <button class="tutorial-dismiss" (click)="onDismiss()">
+        Got it!
+      </button>
+    </div>
+  </div>
+}

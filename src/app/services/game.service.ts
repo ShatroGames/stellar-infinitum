@@ -1,18 +1,33 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, Injector } from '@angular/core';
 import { Resource, INITIAL_RESOURCES } from '../models/resource.model';
 import { Decimal } from '../utils/numbers';
 import { SaveManagerService } from './save-manager.service';
+import { QuantumService } from './quantum.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
   private saveManager = inject(SaveManagerService);
+  private injector = inject(Injector);
+  private quantumService = inject(QuantumService);
   private resources = signal<Map<string, Resource>>(new Map());
   private lastUpdate = Date.now();
   private gameLoopInterval?: number;
   private saveCounter = 0;
   private readonly SAVE_INTERVAL = 100; // Save every 10 seconds (100 ticks at 100ms)
+  private _achievementService?: any; // Lazy loaded to avoid circular dependency
+  
+  private get achievementService(): any {
+    if (!this._achievementService) {
+      try {
+        this._achievementService = this.injector.get('AchievementService' as any, null, { optional: true });
+      } catch (e) {
+        return null;
+      }
+    }
+    return this._achievementService;
+  }
 
   constructor() {
     this.initializeResources();
@@ -91,7 +106,7 @@ export class GameService {
   private startGameLoop(): void {
     this.gameLoopInterval = window.setInterval(() => {
       this.tick();
-    }, 100); // Update 10 times per second
+    }, 50); // Update 20 times per second
   }
 
   private tick(): void {
@@ -99,20 +114,25 @@ export class GameService {
     const deltaTime = (now - this.lastUpdate) / 1000; // Convert to seconds
     this.lastUpdate = now;
 
-    // Apply production rates - only update if there's actual production
-    this.resources.update(resourceMap => {
-      let hasChanges = false;
-      const newMap = new Map(resourceMap);
-      
-      newMap.forEach((resource, id) => {
-        if (resource.productionRate.gt(0)) {
-          resource.amount = resource.amount.plus(resource.productionRate.times(deltaTime));
-          hasChanges = true;
-        }
+    // If collapsed, update quantum system instead of regular resources
+    if (this.quantumService.hasCollapsed()) {
+      this.quantumService.addQuanta(deltaTime);
+    } else {
+      // Apply production rates - only update if there's actual production
+      this.resources.update(resourceMap => {
+        let hasChanges = false;
+        const newMap = new Map(resourceMap);
+        
+        newMap.forEach((resource, id) => {
+          if (resource.productionRate.gt(0)) {
+            resource.amount = resource.amount.plus(resource.productionRate.times(deltaTime));
+            hasChanges = true;
+          }
+        });
+        
+        return hasChanges ? newMap : resourceMap;
       });
-      
-      return hasChanges ? newMap : resourceMap;
-    });
+    }
 
     // Deterministic auto-save every 10 seconds instead of random
     this.saveCounter++;
@@ -157,6 +177,13 @@ export class GameService {
         
         this.resources.set(resourceMap);
         this.lastUpdate = Date.now();
+        
+        // Notify achievement service of offline time (lazy loaded to avoid circular dependency)
+        if (offlineTime > 0) {
+          setTimeout(() => {
+            this.achievementService?.recordOfflineTime(offlineTime);
+          }, 100);
+        }
       } catch (e) {
         console.error('Failed to load game state:', e);
       }

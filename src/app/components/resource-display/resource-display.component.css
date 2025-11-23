@@ -28,6 +28,12 @@ h2 {
   background: #1a1a1a;
   border-radius: 6px;
   border: 1px solid #262626;
+  transition: all 0.3s ease;
+}
+
+.resource-item:not(.special-resource):hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
 }
 
 .resource-name {
@@ -43,14 +49,92 @@ h2 {
   font-weight: 700;
   margin-left: auto;
   margin-right: 0.5rem;
-  color: #fafafa;
+  color: #3b82f6;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
 }
 
 .resource-rate {
   color: #10b981;
   font-size: 0.875rem;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 4px rgba(16, 185, 129, 0.3);
+}
+
+.resource-item.special-resource {
+  background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+  border: 1px solid #404040;
+  transition: all 0.3s ease;
+}
+
+.resource-item.special-resource:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.resource-item.special-resource .resource-name {
+  font-weight: 600;
+}
+
+/* Stellar Cores - Gold styling */
+.resource-name:has-text("★"),
+.stellar-cores {
+  color: #ffd700 !important;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+/* Echo Fragments - Pink styling */
+.resource-name:has-text("◆"),
+.echo-fragments {
+  color: #ec4899 !important;
+  text-shadow: 0 0 6px rgba(236, 72, 153, 0.4);
+}
+
+/* Fallback: Target by content for resource names */
+.resource-item.special-resource:has(.stellar-cores) .resource-name {
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+.resource-item.special-resource:has(.echo-fragments) .resource-name {
+  color: #ec4899;
+  text-shadow: 0 0 6px rgba(236, 72, 153, 0.4);
+}
+
+.resource-amount.stellar-cores {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  animation: stellar-pulse 3s ease-in-out infinite;
+}
+
+.resource-amount.echo-fragments {
+  color: #ec4899;
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+  animation: echo-pulse 3s ease-in-out infinite;
+}
+
+@keyframes stellar-pulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(255, 215, 0, 0.8);
+  }
+}
+
+@keyframes echo-pulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(236, 72, 153, 0.8);
+  }
+}
+
+.resource-total {
+  color: #737373;
+  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
 }

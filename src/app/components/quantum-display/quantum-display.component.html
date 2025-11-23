@@ -1,0 +1,23 @@
+<div class="quantum-panel">
+  <h2>Quantum Resources</h2>
+  <div class="resources">
+    <div class="resource-item quantum-resource">
+      <span class="resource-name">⚛ Quanta:</span>
+      <span class="resource-amount">{{ formatNumber(quantumService.quanta()) }}</span>
+      <span class="resource-rate">(+{{ formatNumber(quantumService.quantaPerSecond()) }}/s)</span>
+    </div>
+    
+    <div class="resource-item stat-item">
+      <span class="stat-label">Total Generated:</span>
+      <span class="stat-value">{{ formatNumber(quantumService.totalQuantaGenerated()) }}</span>
+    </div>
+  </div>
+
+  <div class="quantum-info">
+    <h3>⚛ Quantum Weaving</h3>
+    <p class="info-text">
+      You have collapsed reality into its quantum foundations. 
+      Weave quantum nodes to unlock new patterns of existence.
+    </p>
+  </div>
+</div>

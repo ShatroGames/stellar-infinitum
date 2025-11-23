@@ -1,32 +1,32 @@
 <div class="options-container">
   <div class="options-header">
-    <h2>⚙️ Options</h2>
+    <h2>⚙ Options</h2>
   </div>
 
   <div class="options-content">
     <!-- Save Management Section -->
     <section class="options-section">
-      <h3>💾 Save Management</h3>
+      <h3>▸ Save Management</h3>
       
       <div class="button-group">
         <button class="btn btn-primary" (click)="saveGame()">
-          <span class="btn-icon">💾</span>
+          <span class="btn-icon">▸</span>
           Save Game
         </button>
         
         <button class="btn btn-secondary" (click)="exportSave()">
-          <span class="btn-icon">📤</span>
+          <span class="btn-icon">↑</span>
           Export Save to Clipboard
         </button>
         
         <button class="btn btn-secondary" (click)="openImportDialog()">
-          <span class="btn-icon">📥</span>
+          <span class="btn-icon">↓</span>
           Import Save
         </button>
       </div>
 
       @if (exportMessage) {
-        <div class="message" [class.success]="exportMessage.includes('✓')" [class.error]="exportMessage.includes('✗')">
+        <div class="message" [class.success]="exportMessage.includes('[✓]')" [class.error]="exportMessage.includes('[✗]')">
           {{ exportMessage }}
         </div>
       }
@@ -40,11 +40,11 @@
 
     <!-- Danger Zone Section -->
     <section class="options-section danger-zone">
-      <h3>⚠️ Danger Zone</h3>
+      <h3>⚠ Danger Zone</h3>
       
       <div class="button-group">
         <button class="btn btn-danger" (click)="resetGame()">
-          <span class="btn-icon">🔄</span>
+          <span class="btn-icon">↻</span>
           Reset All Progress
         </button>
       </div>
@@ -56,8 +56,32 @@
           <li>All skill upgrades and tiers</li>
           <li>All warps and multipliers</li>
           <li>All ascension points and upgrades</li>
+          <li>All achievements and unlocks</li>
+          <li>All dimensions and echo fragments</li>
         </ul>
         <p>Make sure to export your save first if you want to keep a backup!</p>
+      </div>
+    </section>
+
+    <!-- Dev Tools Section -->
+    <section class="options-section dev-zone">
+      <h3>🔧 Development Tools</h3>
+      
+      <div class="button-group">
+        <button class="btn btn-special" (click)="skipToPostCollapse()">
+          <span class="btn-icon">⚛️</span>
+          Skip to Post-Collapse
+        </button>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Skip to Post-Collapse:</strong> Instantly sets up the game state as if you just completed the Cosmic Collapse.</p>
+        <p>This grants:</p>
+        <ul>
+          <li>Quantum system unlocked with starting Quanta</li>
+          <li>All previous systems (Skills, Ascension, Dimensions, Artifacts) reset</li>
+          <li>Cosmic Collapse achievement</li>
+        </ul>
       </div>
     </section>
   </div>
@@ -68,7 +92,7 @@
   <div class="dialog-overlay" (click)="closeImportDialog()">
     <div class="dialog-content" (click)="$event.stopPropagation()">
       <div class="dialog-header">
-        <h3>📥 Import Save Data</h3>
+        <h3>↓ Import Save Data</h3>
         <button class="btn-close" (click)="closeImportDialog()">×</button>
       </div>
       
@@ -81,7 +105,7 @@
           rows="8"></textarea>
         
         @if (importMessage) {
-          <div class="message" [class.success]="importMessage.includes('✓')" [class.error]="importMessage.includes('✗')">
+          <div class="message" [class.success]="importMessage.includes('[✓]')" [class.error]="importMessage.includes('[✗]')">
             {{ importMessage }}
           </div>
         }

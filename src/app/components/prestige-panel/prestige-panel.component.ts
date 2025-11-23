@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkillTreeService } from '../../services/skill-tree.service';
 import { AscensionService } from '../../services/ascension.service';
+import { DimensionService } from '../../services/dimension.service';
 import { Decimal, formatNumber } from '../../utils/numbers';
 
 @Component({
@@ -12,7 +13,8 @@ import { Decimal, formatNumber } from '../../utils/numbers';
 })
 export class PrestigePanelComponent {
   private skillTreeService = inject(SkillTreeService);
-  private ascensionService = inject(AscensionService);
+  protected ascensionService = inject(AscensionService);
+  protected dimensionService = inject(DimensionService);
 
   currentTier = computed(() => this.skillTreeService.getCurrentTierInfo());
   nextTier = computed(() => this.skillTreeService.getNextTierInfo());
@@ -20,6 +22,7 @@ export class PrestigePanelComponent {
   prestigeBonus = this.skillTreeService.prestigeBonus;
   ascensionPoints = this.ascensionService.points;
   totalAscensionPoints = this.ascensionService.totalPoints;
+  potentialEchoFragments = this.skillTreeService.potentialEchoFragments;
   
   progress = computed(() => this.skillTreeService.getAscensionProgress());
   allSkillsMaxed = computed(() => this.skillTreeService.areAllSkillsMaxed());

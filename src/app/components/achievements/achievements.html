@@ -1,0 +1,95 @@
+<div class="achievements-container">
+  <div class="achievements-header">
+    <h2>Achievements</h2>
+    <div class="progress-summary">
+      <div class="total-progress">
+        <span class="progress-label">Total Progress:</span>
+        <span class="progress-count">{{ achievementService.unlockedCount() }}/{{ achievementService.totalCount() }}</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" 
+               [style.width.%]="(achievementService.unlockedCount() / achievementService.totalCount()) * 100">
+          </div>
+        </div>
+      </div>
+      <div class="play-time">
+        <span class="time-icon">⏱</span>
+        <span>{{ formatPlayTime() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="category-tabs">
+    @for (category of categories; track category) {
+      <button 
+        class="category-tab"
+        [class.active]="selectedCategory() === category"
+        [class.complete]="getCategoryPercentage(category) === 100"
+        [attr.data-category]="category"
+        (click)="selectCategory(category)">
+        <span class="category-name">{{ category }}</span>
+        <span class="category-progress">{{ getCategoryProgress(category) }}</span>
+        <div class="category-bar">
+          <div class="category-bar-fill" 
+               [style.width.%]="getCategoryPercentage(category)">
+          </div>
+        </div>
+      </button>
+    }
+  </div>
+
+  <div class="achievements-grid">
+    <div class="category-section" [attr.data-category]="selectedCategory()">
+      <h3 class="category-title">{{ selectedCategory() }}</h3>
+      <div class="achievements-list">
+        @for (achievement of getSelectedAchievements(); track achievement.id) {
+          @if (!achievement.secret || achievement.unlocked) {
+            <div class="achievement-card" 
+                 [class.unlocked]="achievement.unlocked"
+                 [class.locked]="!achievement.unlocked"
+                 [class.has-reward]="!achievement.unlocked && achievement.reward">
+              <div class="achievement-icon">{{ achievement.icon }}</div>
+              <div class="achievement-content">
+                <div class="achievement-name">
+                  {{ achievement.name }}
+                  @if (achievement.unlocked) {
+                    <span class="unlock-check">✓</span>
+                  }
+                  @if (!achievement.unlocked && achievement.reward) {
+                    <span class="reward-badge">★</span>
+                  }
+                </div>
+                <div class="achievement-description">{{ achievement.description }}</div>
+                @if (achievement.reward) {
+                  @if (achievement.unlocked) {
+                    <div class="achievement-reward unlocked">
+                      <span class="reward-icon">★</span>
+                      {{ achievement.reward.description }}
+                    </div>
+                  } @else {
+                    <div class="achievement-reward locked">
+                      <span class="reward-icon">★</span>
+                      Reward: {{ achievement.reward.description }}
+                    </div>
+                  }
+                }
+                @if (achievement.unlockedAt && achievement.unlocked) {
+                  <div class="unlock-date">
+                    Unlocked: {{ achievement.unlockedAt | date:'short' }}
+                  </div>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="achievement-card locked secret">
+              <div class="achievement-icon">?</div>
+              <div class="achievement-content">
+                <div class="achievement-name">Secret Achievement</div>
+                <div class="achievement-description">???</div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

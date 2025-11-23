@@ -201,6 +201,31 @@
   border-color: rgba(220, 38, 38, 0.3);
 }
 
+/* Dev Zone */
+.dev-zone {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.dev-zone .info-box {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.dev-zone .info-box strong {
+  color: #c084fc;
+}
+
+.btn-special {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+  color: #fff;
+  border-color: #9333ea;
+}
+
+.btn-special:hover {
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
 /* Dialog */
 .dialog-overlay {
   position: fixed;

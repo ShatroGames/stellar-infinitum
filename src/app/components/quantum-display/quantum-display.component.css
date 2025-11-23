@@ -1,0 +1,94 @@
+.quantum-panel {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.quantum-panel h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.5em;
+  color: #c792ea;
+  text-shadow: 0 0 10px rgba(199, 146, 234, 0.5);
+}
+
+.resources {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(30, 30, 50, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(199, 146, 234, 0.2);
+}
+
+.quantum-resource {
+  background: linear-gradient(135deg, rgba(199, 146, 234, 0.15) 0%, rgba(130, 80, 200, 0.15) 100%);
+  border: 1px solid rgba(199, 146, 234, 0.4);
+  box-shadow: 0 0 15px rgba(199, 146, 234, 0.2);
+}
+
+.resource-name {
+  font-weight: 600;
+  color: #c792ea;
+  font-size: 1.1em;
+}
+
+.resource-amount {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(199, 146, 234, 0.6);
+}
+
+.resource-rate {
+  color: #82aaff;
+  font-size: 0.95em;
+  margin-left: 8px;
+}
+
+.stat-item {
+  background: rgba(20, 20, 35, 0.5);
+  border: 1px solid rgba(130, 170, 255, 0.2);
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 0.95em;
+}
+
+.stat-value {
+  color: #82aaff;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.quantum-info {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(199, 146, 234, 0.1);
+  border: 1px solid rgba(199, 146, 234, 0.3);
+  border-radius: 6px;
+}
+
+.quantum-info h3 {
+  margin: 0 0 10px 0;
+  color: #c792ea;
+  font-size: 1.1em;
+}
+
+.info-text {
+  margin: 0;
+  color: #d4d4d8;
+  font-size: 0.9em;
+  line-height: 1.5;
+  opacity: 0.9;
+}

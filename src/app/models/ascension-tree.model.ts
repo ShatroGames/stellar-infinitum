@@ -14,7 +14,8 @@ export interface AscensionNode {
 export interface AscensionEffect {
   type: 'auto_buy' | 'bulk_buy' | 'cost_reduction' | 'production_boost' | 
         'start_bonus' | 'warp_speed' | 'skill_cap' | 'multiplier_boost' |
-        'offline_bonus' | 'prestige_keep' | 'auto_warp';
+        'skill_efficiency' | 'stellar_core_mult' | 'warp_momentum' | 'auto_warp' | 
+        'remove_prerequisites';
   value: number;
 }
 
@@ -120,18 +121,18 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     cost: 2,
     purchased: false,
     position: { x: -2, y: 4 },
-    requires: ['cost_reduce_10', 'production_25', 'start_energy'],
+    requires: ['auto_warp'],
     effect: { type: 'bulk_buy', value: 10 }
   },
   {
-    id: 'offline_bonus',
-    name: 'Persistent Training',
-    description: 'Gain 50% more resources while offline',
+    id: 'skill_efficiency',
+    name: 'Skill Synergy',
+    description: 'Each maxed skill node grants +2% production to all other skills',
     cost: 2,
     purchased: false,
     position: { x: 0, y: 4 },
-    requires: ['warp_speed_1', 'production_50', 'cost_reduce_10'],
-    effect: { type: 'offline_bonus', value: 0.50 }
+    requires: ['auto_warp'],
+    effect: { type: 'skill_efficiency', value: 0.02 }
   },
   {
     id: 'multiplier_boost',
@@ -140,7 +141,7 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     cost: 2,
     purchased: false,
     position: { x: 2, y: 4 },
-    requires: ['production_50', 'bulk_buy_10', 'start_energy'],
+    requires: ['auto_warp'],
     effect: { type: 'multiplier_boost', value: 0.05 }
   },
   
@@ -162,7 +163,7 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     cost: 3,
     purchased: false,
     position: { x: 0, y: 5 },
-    requires: ['offline_bonus', 'bulk_buy_10', 'multiplier_boost'],
+    requires: ['skill_efficiency', 'bulk_buy_10', 'multiplier_boost'],
     effect: { type: 'warp_speed', value: 0.40 }
   },
   {
@@ -210,24 +211,24 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   
   // === ROW 7: Ultimate Tier I (3 nodes) ===
   {
-    id: 'prestige_keep_10',
-    name: 'Energy Retention I',
-    description: 'Keep 10% of Energy when warping',
+    id: 'stellar_core_mult',
+    name: 'Core Resonance',
+    description: 'Each Stellar Core you own increases production by 20%',
     cost: 5,
     purchased: false,
     position: { x: -1, y: 7 },
     requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
-    effect: { type: 'prestige_keep', value: 0.10 }
+    effect: { type: 'stellar_core_mult', value: 0.20 }
   },
   {
-    id: 'prestige_keep_25',
-    name: 'Energy Retention II',
-    description: 'Keep 25% of Energy when warping',
+    id: 'warp_momentum',
+    name: 'Momentum Cascade',
+    description: 'Each warp in the current run increases production by 15%',
     cost: 6,
     purchased: false,
     position: { x: 1, y: 7 },
     requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
-    effect: { type: 'prestige_keep', value: 0.25 }
+    effect: { type: 'warp_momentum', value: 0.15 }
   },
   {
     id: 'mega_boost',
@@ -238,5 +239,17 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     position: { x: 0, y: 7 },
     requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
     effect: { type: 'production_boost', value: 3.0 }
+  },
+  
+  // === ROW 8: Final Tier (1 node) ===
+  {
+    id: 'unlock_all',
+    name: 'Omnipotent Network',
+    description: 'Removes all skill node prerequisites - purchase any node at any time',
+    cost: 15,
+    purchased: false,
+    position: { x: 0, y: 8 },
+    requires: ['stellar_core_mult', 'warp_momentum', 'mega_boost'],
+    effect: { type: 'remove_prerequisites', value: 1 }
   }
 ];

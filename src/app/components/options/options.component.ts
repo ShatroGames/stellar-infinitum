@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { GameService } from '../../services/game.service';
 import { SkillTreeService } from '../../services/skill-tree.service';
 import { AscensionService } from '../../services/ascension.service';
+import { AchievementService } from '../../services/achievement.service';
+import { DimensionService } from '../../services/dimension.service';
+import { QuantumService } from '../../services/quantum.service';
+import { ArtifactService } from '../../services/artifact.service';
+import { TutorialService } from '../../services/tutorial.service';
 
 @Component({
   selector: 'app-options',
@@ -15,6 +20,11 @@ export class OptionsComponent {
   private gameService = inject(GameService);
   private skillTreeService = inject(SkillTreeService);
   private ascensionService = inject(AscensionService);
+  private achievementService = inject(AchievementService);
+  private dimensionService = inject(DimensionService);
+  private quantumService = inject(QuantumService);
+  private artifactService = inject(ArtifactService);
+  private tutorialService = inject(TutorialService);
 
   showImportDialog = false;
   importText = '';
@@ -28,30 +38,40 @@ export class OptionsComponent {
       this.skillTreeService.saveSkills();
       this.skillTreeService.savePrestige();
       this.ascensionService.saveState();
+      this.dimensionService.saveState();
+      // Note: achievements, quantum, and tutorials auto-save
 
-      // Now gather all save data from localStorage (using correct keys)
+      // Now gather all save data from localStorage
       const saveData = {
         gameState: localStorage.getItem('treefinite_save'),
         skills: localStorage.getItem('treefinite_skills'),
         prestige: localStorage.getItem('treefinite_prestige'),
-        ascension: localStorage.getItem('ascensionTree')
+        ascension: localStorage.getItem('ascensionTree'),
+        achievements: localStorage.getItem('treefinite_achievements'),
+        dimensions: localStorage.getItem('stellarInfinitum_dimensions'),
+        quantum: localStorage.getItem('stellarInfinitum_quantum'),
+        tutorials: localStorage.getItem('stellarInfinitum_tutorials')
       };
 
-      // Encode to base64
+      // Encode to base64 (handle Unicode properly)
       const jsonString = JSON.stringify(saveData);
-      const encoded = btoa(jsonString);
+      const encoded = btoa(encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode(parseInt(p1, 16));
+      }));
 
       // Copy to clipboard
       navigator.clipboard.writeText(encoded).then(() => {
-        this.exportMessage = '✓ Save data copied to clipboard!';
+        this.exportMessage = '[✓] Save data copied to clipboard!';
         setTimeout(() => this.exportMessage = '', 3000);
-      }).catch(() => {
-        this.exportMessage = '✗ Failed to copy to clipboard';
+      }).catch((err) => {
+        console.error('Clipboard error:', err);
+        this.exportMessage = '[✗] Failed to copy to clipboard';
         setTimeout(() => this.exportMessage = '', 3000);
       });
     } catch (error) {
-      this.exportMessage = '✗ Error exporting save data';
-      setTimeout(() => this.exportMessage = '', 3000);
+      console.error('Export error:', error);
+      this.exportMessage = '[✗] Error exporting save data: ' + (error as Error).message;
+      setTimeout(() => this.exportMessage = '', 5000);
     }
   }
 
@@ -70,20 +90,23 @@ export class OptionsComponent {
   importSave(): void {
     try {
       if (!this.importText.trim()) {
-        this.importMessage = '✗ Please paste save data';
+        this.importMessage = '[✗] Please paste save data';
         return;
       }
 
-      // Decode from base64
+      // Decode from base64 (handle Unicode properly)
       const decoded = atob(this.importText.trim());
-      const saveData = JSON.parse(decoded);
+      const decodedString = decodeURIComponent(decoded.split('').map((c) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      const saveData = JSON.parse(decodedString);
 
       // Validate save data structure
       if (!saveData || typeof saveData !== 'object') {
         throw new Error('Invalid save data format');
       }
 
-      // Import each piece of save data (using correct keys)
+      // Import each piece of save data
       if (saveData.gameState) {
         localStorage.setItem('treefinite_save', saveData.gameState);
       }
@@ -96,13 +119,26 @@ export class OptionsComponent {
       if (saveData.ascension) {
         localStorage.setItem('ascensionTree', saveData.ascension);
       }
+      if (saveData.achievements) {
+        localStorage.setItem('treefinite_achievements', saveData.achievements);
+      }
+      if (saveData.dimensions) {
+        localStorage.setItem('stellarInfinitum_dimensions', saveData.dimensions);
+      }
+      if (saveData.quantum) {
+        localStorage.setItem('stellarInfinitum_quantum', saveData.quantum);
+      }
+      if (saveData.tutorials) {
+        localStorage.setItem('stellarInfinitum_tutorials', saveData.tutorials);
+      }
 
-      this.importMessage = '✓ Save imported successfully! Reloading...';
+      this.importMessage = '[✓] Save imported successfully! Reloading...';
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      this.importMessage = '✗ Invalid save data format';
+      console.error('Import error:', error);
+      this.importMessage = '[✗] Invalid save data format: ' + (error as Error).message;
       console.error('Import error:', error);
     }
   }
@@ -113,7 +149,7 @@ export class OptionsComponent {
     this.skillTreeService.savePrestige();
     this.ascensionService.saveState();
     
-    this.exportMessage = '✓ Game saved successfully!';
+    this.exportMessage = '[✓] Game saved successfully!';
     setTimeout(() => this.exportMessage = '', 3000);
   }
 
@@ -123,8 +159,43 @@ export class OptionsComponent {
         this.gameService.resetGame();
         this.skillTreeService.resetAll();
         this.ascensionService.reset();
+        this.achievementService.reset();
+        this.dimensionService.reset();
+        this.quantumService.reset();
+        this.artifactService.reset();
+        this.tutorialService.reset();
         window.location.reload();
       }
+    }
+  }
+
+  skipToPostCollapse(): void {
+    if (confirm('Skip to Post-Collapse state? This will reset all progress except achievements.')) {
+      // Reset all pre-quantum systems
+      this.gameService.resetGame();
+      this.skillTreeService.resetAll();
+      this.ascensionService.reset();
+      this.dimensionService.reset();
+      this.artifactService.reset();
+      
+      // Initialize quantum state (post-collapse)
+      this.quantumService.initializeQuantumState();
+      
+      // Grant the collapse achievement
+      this.achievementService.unlockAchievement('cosmic_collapse');
+      
+      // Mark collapse tutorial as shown by dismissing it
+      this.tutorialService.dismissPopup('cosmic_collapse');
+      
+      // Save everything (quantum auto-saves)
+      this.gameService.saveGameState();
+      this.skillTreeService.saveSkills();
+      this.skillTreeService.savePrestige();
+      this.ascensionService.saveState();
+      this.dimensionService.saveState();
+      
+      // Reload to apply changes
+      window.location.reload();
     }
   }
 }

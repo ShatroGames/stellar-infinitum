@@ -19,11 +19,11 @@
   align-items: flex-start;
 }
 
-.ascension-points-info {
+.stellar-cores-info {
   text-align: center;
 }
 
-.btn-ascension-tree {
+.btn-stellar-nexus {
   padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
   color: #1a1a1a;
@@ -36,7 +36,7 @@
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
-.btn-ascension-tree:hover {
+.btn-stellar-nexus:hover {
   background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
@@ -47,10 +47,15 @@ h2 {
   font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #fafafa;
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));
 }
 
-.ascension-count {
+.warp-count {
   text-align: right;
   font-size: 0.813rem;
   color: #a3a3a3;
@@ -139,7 +144,7 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
-.ascend-ready {
+.warp-ready {
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid #10b981;
   padding: 1.5rem;
@@ -152,6 +157,7 @@ h3 {
   font-weight: 600;
   margin: 0 0 1rem 0;
   color: #10b981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
 .next-tier-info {
@@ -175,10 +181,12 @@ h3 {
 .final-tier {
   font-style: italic;
   margin: 1rem 0;
-  color: #a3a3a3;
+  color: #8b5cf6;
+  text-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
+  font-weight: 500;
 }
 
-.btn-ascend {
+.btn-warp {
   background: #eab308;
   color: #18181b;
   border: none;
@@ -192,16 +200,16 @@ h3 {
   letter-spacing: -0.01em;
 }
 
-.btn-ascend:hover {
+.btn-warp:hover {
   background: #facc15;
   transform: translateY(-1px);
 }
 
-.btn-ascend:active {
+.btn-warp:active {
   transform: translateY(0);
 }
 
-.ascension-unlock {
+.stellar-core-unlock {
   margin: 0.75rem 0;
   padding: 0.75rem;
   background: rgba(255, 215, 0, 0.1);
@@ -212,12 +220,70 @@ h3 {
   color: #ffd700;
 }
 
-.ascension-unlock strong {
+.stellar-core-unlock strong {
   color: #fff;
   font-weight: 700;
 }
 
-.ascend-requirements {
+.dimension-unlock-hint {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #a78bfa;
+}
+
+.dimension-unlock-hint strong {
+  color: #c4b5fd;
+  font-weight: 700;
+}
+
+.echo-fragments-info {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(236, 72, 153, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #f9a8d4;
+}
+
+.echo-fragments-info strong {
+  color: #fce7f3;
+  font-weight: 700;
+}
+
+.dimension-unlock-hint strong {
+  color: #c4b5fd;
+  font-weight: 700;
+}
+
+.auto-transcend-indicator {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(139, 92, 246, 0.15);
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a78bfa;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(139, 92, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+  }
+}
+
+.warp-requirements {
   background: #1a1a1a;
   padding: 1.25rem;
   border-radius: 6px;

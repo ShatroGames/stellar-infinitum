@@ -1,51 +1,59 @@
 <div class="prestige-panel">
   <div class="prestige-header">
     <h2>{{ currentTier()?.name || 'Stellar Stage' }}</h2>
-    <div class="ascension-count">
-      Warps: {{ totalAscensions() }}
+    <div class="warp-count">
+      Warp: {{ totalAscensions() + 1 }}
       @if (prestigeBonus() > 1) {
         <span class="bonus-indicator">{{ formatBonus(prestigeBonus()) }}</span>
       }
     </div>
   </div>
 
-  <div class="progress-section">
-    <h3>Warp Progress</h3>
+  @if (!dimensionService.hasAnyDimensionUnlocked()) {
+    <div class="progress-section">
+      <h3>Warp Progress</h3>
 
-    <div class="points-progress">
-      <div class="progress-label">
-        <span>Energy:</span>
-        <span>{{ formatNumber(progress().current) }} / {{ formatNumber(progress().required) }}</span>
+      <div class="points-progress">
+        <div class="progress-label">
+          <span>Energy:</span>
+          <span>{{ formatNumber(progress().current) }} / {{ formatNumber(progress().required) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="progress().percentage"></div>
+        </div>
+        <div class="progress-percentage">{{ progress().percentage.toFixed(1) }}%</div>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="progress().percentage"></div>
-      </div>
-      <div class="progress-percentage">{{ progress().percentage.toFixed(1) }}%</div>
     </div>
-  </div>
+  }
 
   @if (canAscend()) {
-    <div class="ascend-ready">
-      <p class="ready-message">🎉 Ready to Warp!</p>
+    <div class="warp-ready">
+      <p class="ready-message">✓ Ready to Warp!</p>
       @if (nextTier()) {
         <p class="next-tier-info">
           Next: <strong>{{ nextTier()!.name }}</strong><br>
           <small>{{ nextTier()!.description }}</small><br>
           <small class="bonus-info">Bonus: {{ formatBonus(nextTier()!.prestigeBonus) }} to all production</small>
         </p>
-        <button class="btn-ascend" (click)="onAscend()">
-          🌌 Warp to Next Stage
+        <button class="btn-warp" (click)="onAscend()">
+          ✦ Warp to Next Stage
         </button>
       } @else {
-        <p class="final-tier">🎊 You've completed all 5 tiers!</p>
-        <p class="ascension-unlock">Each completion of Tier 5 grants <strong>1 Ascension Point</strong> to spend on permanent upgrades!</p>
-        <button class="btn-ascend" (click)="onAscend()">
-          ⭐ Ascend
+        <p class="final-tier">▸ You've reached the pinnacle!</p>
+        <p class="stellar-core-unlock">Each completion of Tier 5 grants <strong>1 Stellar Core</strong> to spend on permanent upgrades!</p>
+        @if (ascensionService.isTreeComplete()) {
+          <p class="dimension-unlock-hint">
+            <p class="echo-fragments-info">
+              ✦ You will gain <strong>{{ potentialEchoFragments() }} Echo Fragment{{ potentialEchoFragments() > 1 ? 's' : '' }}</strong> on transcendence!
+            </p>
+        }
+        <button class="btn-warp" (click)="onAscend()">
+          {{ascensionService.isTreeComplete() ? '★ Transcend' : '✦ Ascend'}}
         </button>
       }
     </div>
-  } @else {
-    <div class="ascend-requirements">
+  } @else if (!dimensionService.hasAnyDimensionUnlocked()) {
+    <div class="warp-requirements">
       <p class="requirements-title">Requirements to Warp:</p>
       <ul>
         <li [class.complete]="allSkillsMaxed()">

@@ -1,9 +1,11 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, Injector } from '@angular/core';
 import { SkillNode, PrestigeData, SkillTreeTier } from '../models/skill-node.model';
 import { SKILL_TREE_TIERS } from '../models/skill-trees.config';
 import { GameService } from './game.service';
 import { AscensionService } from './ascension.service';
+import { DimensionService } from './dimension.service';
 import { SaveManagerService } from './save-manager.service';
+import { AchievementService } from './achievement.service';
 import { Decimal } from '../utils/numbers';
 
 @Injectable({
@@ -12,8 +14,23 @@ import { Decimal } from '../utils/numbers';
 export class SkillTreeService {
   private gameService = inject(GameService);
   private ascensionService = inject(AscensionService);
+  private dimensionService = inject(DimensionService);
+  private injector = inject(Injector);
   private saveManager = inject(SaveManagerService);
   private skills = signal<Map<string, SkillNode>>(new Map());
+  
+  // Lazy-loaded to avoid circular dependency
+  private _achievementService: AchievementService | null = null;
+  private get achievementService(): AchievementService | null {
+    if (!this._achievementService) {
+      try {
+        this._achievementService = this.injector.get(AchievementService, null, { optional: true });
+      } catch (e) {
+        return null;
+      }
+    }
+    return this._achievementService;
+  }
   private prestige = signal<PrestigeData>({
     currentTier: 1,
     totalAscensions: 0,
@@ -32,6 +49,18 @@ export class SkillTreeService {
   totalAscensions = computed(() => this.prestige().currentRunAscensions);
   allTimeAscensions = computed(() => this.prestige().totalAscensions);
   prestigeBonus = computed(() => this.prestige().currentRunPrestigeBonus);
+  
+  // Public getter for prestige data (needed by AchievementService)
+  getPrestigeData = computed(() => this.prestige());
+
+  // Calculate potential Echo Fragments from current Energy
+  potentialEchoFragments = computed(() => {
+    if (!this.ascensionService.isTreeComplete() || this.prestige().currentTier !== 5) {
+      return 0;
+    }
+    const currentEnergy = this.gameService.getResource('knowledge')?.amount || new Decimal(0);
+    return this.calculateEchoFragments(currentEnergy);
+  });
 
   constructor() {
     this.loadPrestige();
@@ -43,13 +72,15 @@ export class SkillTreeService {
     setInterval(() => {
       this.autoBuySkills(this.ascensionService);
       
-      // Check for auto-warp
-      if (this.ascensionService.hasAutoWarp() && this.canAscend()) {
-        // Only auto-warp if not on Tier 5 (to prevent auto-ascending)
+      // Check for auto-warp (Tiers 1-4) - now using achievement service
+      if (this.achievementService?.hasAutoWarp() && this.canAscend()) {
+        // Only auto-warp if not on Tier 5 (to prevent auto-transcending)
         if (this.prestige().currentTier < 5) {
           this.ascend(this.ascensionService);
         }
       }
+      
+      // No auto-transcend on Tier 5 anymore - player must manually ascend to gain Echo Fragments
     }, 200); // Run every 200ms instead of 100ms
   }
 
@@ -59,9 +90,10 @@ export class SkillTreeService {
 
     const skillMap = new Map<string, SkillNode>();
     currentTierData.skills.forEach(skill => {
-      // Apply ascension skill cap increase if available
+      // Apply skill cap increases from ascension and dimensions
       let maxLevel = skill.maxLevel;
       maxLevel += this.ascensionService.skillCapIncrease();
+      maxLevel += this.dimensionService.totalSkillCapIncrease();
       
       // Ensure cost is a Decimal when initializing
       skillMap.set(skill.id, { 
@@ -104,9 +136,15 @@ export class SkillTreeService {
     let cost = skill.cost.times(Decimal.pow(skill.costMultiplier, skill.level)).floor();
     
     // Apply ascension cost reduction
-    const reduction = this.ascensionService.costReduction();
-    if (reduction > 0) {
-      cost = cost.times(1 - reduction);
+    const ascensionReduction = this.ascensionService.costReduction();
+    if (ascensionReduction > 0) {
+      cost = cost.times(1 - ascensionReduction);
+    }
+    
+    // Apply Prism "all aspects" bonus to costs (makes them cheaper)
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+    if (prismBonus > 0) {
+      cost = cost.times(1 - prismBonus);
     }
     
     // Cache the result
@@ -149,7 +187,37 @@ export class SkillTreeService {
     this.recalculateProduction();
   }
 
-  private recalculateProduction(): void {
+  // Public method to update skill max levels when dimension/ascension bonuses change
+  updateSkillMaxLevels(): void {
+    this.skills.update(skillMap => {
+      const updatedMap = new Map(skillMap);
+      const currentTierData = SKILL_TREE_TIERS.find(t => t.id === this.prestige().currentTier);
+      if (!currentTierData) return skillMap;
+
+      // Recalculate max levels for all skills based on current bonuses
+      const ascensionBonus = this.ascensionService.skillCapIncrease();
+      const dimensionBonus = this.dimensionService.totalSkillCapIncrease();
+
+      currentTierData.skills.forEach(configSkill => {
+        const existingSkill = updatedMap.get(configSkill.id);
+        if (existingSkill) {
+          const newMaxLevel = configSkill.maxLevel + ascensionBonus + dimensionBonus;
+          // Only update if the max level changed
+          if (existingSkill.maxLevel !== newMaxLevel) {
+            updatedMap.set(configSkill.id, {
+              ...existingSkill,
+              maxLevel: newMaxLevel
+            });
+          }
+        }
+      });
+
+      return updatedMap;
+    });
+  }
+
+  // Public method to trigger production recalculation (e.g., from DimensionService)
+  recalculateProduction(): void {
     // Clear cache when recalculating
     this.productionCache = null;
     
@@ -175,6 +243,18 @@ export class SkillTreeService {
           effectValue = 1 + (effectValue - 1) * (1 + multiplierBoost);
         }
         
+        // Apply dimension multiplier power
+        const dimensionMultiplierPower = this.dimensionService.totalMultiplierPower();
+        if (dimensionMultiplierPower > 0) {
+          effectValue = 1 + (effectValue - 1) * (1 + dimensionMultiplierPower);
+        }
+        
+        // Apply Prism "all aspects" bonus
+        const prismBonus = this.dimensionService.prismAllAspectsBonus();
+        if (prismBonus > 0) {
+          effectValue = 1 + (effectValue - 1) * (1 + prismBonus);
+        }
+        
         // Multiply by the effect value raised to the skill level
         totalMultiplier *= Math.pow(effectValue, skill.level);
       }
@@ -193,6 +273,48 @@ export class SkillTreeService {
     // Apply global ascension points multiplier (0.1 per total point earned)
     const globalMultiplier = this.ascensionService.globalMultiplier();
     totalMultiplier *= globalMultiplier;
+
+    // Apply skill efficiency bonus (bonus per maxed skill)
+    const skillEfficiencyBonus = this.ascensionService.skillEfficiencyBonus();
+    if (skillEfficiencyBonus > 0) {
+      const maxedSkills = Array.from(this.skills().values()).filter(
+        skill => skill.level >= skill.maxLevel
+      ).length;
+      if (maxedSkills > 0) {
+        totalMultiplier *= (1 + skillEfficiencyBonus * maxedSkills);
+      }
+    }
+
+    // Apply stellar core multiplier (bonus per Stellar Core owned)
+    const stellarCoreMult = this.ascensionService.stellarCoreMult();
+    if (stellarCoreMult > 0) {
+      const stellarCores = this.ascensionService.totalPoints();
+      if (stellarCores > 0) {
+        totalMultiplier *= (1 + stellarCoreMult * stellarCores);
+      }
+    }
+
+    // Apply warp momentum bonus (bonus per warp in current run)
+    const warpMomentumBonus = this.ascensionService.warpMomentumBonus();
+    if (warpMomentumBonus > 0) {
+      const warpsThisRun = this.prestige().currentRunAscensions;
+      if (warpsThisRun > 0) {
+        totalMultiplier *= (1 + warpMomentumBonus * warpsThisRun);
+      }
+    }
+
+    // Apply dimension bonuses
+    const dimensionProductionBonus = this.dimensionService.totalProductionBonus();
+    totalMultiplier *= dimensionProductionBonus;
+    
+    const dimensionCrossDimensionBonus = this.dimensionService.crossDimensionBonus();
+    totalMultiplier *= dimensionCrossDimensionBonus;
+    
+    // Apply Prism "all aspects" bonus to production
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+    if (prismBonus > 0) {
+      totalMultiplier *= (1 + prismBonus);
+    }
 
     // Set final production rate
     const finalProduction = baseProduction * totalMultiplier;
@@ -224,6 +346,11 @@ export class SkillTreeService {
   }
 
   private canUnlock(skill: SkillNode): boolean {
+    // If unlock_all is purchased, all nodes can be unlocked immediately
+    if (this.ascensionService.hasUnlockAll()) {
+      return true;
+    }
+    
     return skill.prerequisites.every(prereqId => {
       const prereq = this.skills().get(prereqId);
       return prereq && prereq.level >= prereq.maxLevel;
@@ -231,11 +358,11 @@ export class SkillTreeService {
   }
 
   autoBuySkills(ascensionService?: any): void {
-    if (!ascensionService || !ascensionService.hasAutoBuy()) {
+    if (!this.achievementService?.hasAutoBuy()) {
       return;
     }
 
-    const bulkAmount = ascensionService.bulkBuyAmount();
+    const bulkAmount = ascensionService?.bulkBuyAmount() || 1;
     let purchasesMade = 0;
     let shouldSave = false;
 
@@ -249,17 +376,23 @@ export class SkillTreeService {
       });
 
     // Batch all purchases before updating signal
-    const updates: Array<{ id: string; skill: SkillNode }> = [];
+    const updates: Map<string, SkillNode> = new Map();
     
     for (const skill of affordableSkills) {
+      let currentSkill = skill;
       let bought = 0;
-      while (bought < bulkAmount && this.canUpgrade(skill.id)) {
-        const cost = this.getUpgradeCost(skill.id);
-        if (this.gameService.spend('knowledge', cost)) {
-          updates.push({
-            id: skill.id,
-            skill: { ...skill, level: skill.level + bought + 1 }
-          });
+      
+      while (bought < bulkAmount && currentSkill.level < currentSkill.maxLevel) {
+        // Calculate cost based on current level in this batch
+        let cost = currentSkill.cost.times(Decimal.pow(currentSkill.costMultiplier, currentSkill.level)).floor();
+        const reduction = this.ascensionService.costReduction();
+        if (reduction > 0) {
+          cost = cost.times(1 - reduction);
+        }
+        
+        if (this.gameService.canAfford('knowledge', cost) && this.gameService.spend('knowledge', cost)) {
+          currentSkill = { ...currentSkill, level: currentSkill.level + 1 };
+          updates.set(skill.id, currentSkill);
           bought++;
           shouldSave = true;
         } else {
@@ -272,13 +405,13 @@ export class SkillTreeService {
     }
 
     // Apply all updates in a single signal update
-    if (updates.length > 0) {
+    if (updates.size > 0) {
       // Clear cost cache for all updated skills
-      updates.forEach(({ id }) => this.costCache.delete(id));
+      updates.forEach((skill, id) => this.costCache.delete(id));
       
       this.skills.update(skillMap => {
         const newMap = new Map(skillMap);
-        updates.forEach(({ id, skill }) => {
+        updates.forEach((skill, id) => {
           newMap.set(id, skill);
         });
         return newMap;
@@ -293,9 +426,16 @@ export class SkillTreeService {
   }
 
   saveSkills(): void {
-    const skillData = Array.from(this.skills().entries());
+    // Only save node IDs, levels, and unlocked status
+    const minimalSkills = Array.from(this.skills().entries())
+      .map(([id, skill]) => ({
+        id,
+        level: skill.level,
+        unlocked: skill.unlocked
+      }));
+    
     this.saveManager.scheduleSave('skills', () => {
-      localStorage.setItem('treefinite_skills', JSON.stringify(skillData));
+      localStorage.setItem('treefinite_skills', JSON.stringify(minimalSkills));
     });
   }
 
@@ -303,22 +443,19 @@ export class SkillTreeService {
     const saved = localStorage.getItem('treefinite_skills');
     if (saved) {
       try {
-        const skillData = JSON.parse(saved);
-        const savedSkillMap = new Map<string, SkillNode>(skillData);
+        const savedSkills = JSON.parse(saved);
         
-        // Merge saved state with current skill tree structure
-        const skillMap = new Map(this.skills());
+        // Build skill map from current tier's config
+        const currentTier = SKILL_TREE_TIERS[this.prestige().currentTier - 1];
+        const skillMap = new Map<string, SkillNode>();
         
-        savedSkillMap.forEach((savedSkill, id) => {
-          const currentSkill = skillMap.get(id);
-          if (currentSkill) {
-            // Keep the structure from config, but restore level and unlocked state
-            skillMap.set(id, {
-              ...currentSkill,
-              level: savedSkill.level,
-              unlocked: savedSkill.unlocked
-            });
-          }
+        currentTier.skills.forEach(configSkill => {
+          const savedSkill = savedSkills.find((s: any) => s.id === configSkill.id);
+          skillMap.set(configSkill.id, {
+            ...configSkill,
+            level: savedSkill?.level ?? 0,
+            unlocked: savedSkill?.unlocked ?? configSkill.unlocked
+          });
         });
         
         this.skills.set(skillMap);
@@ -360,11 +497,18 @@ export class SkillTreeService {
     const currentTierData = SKILL_TREE_TIERS.find(t => t.id === this.prestige().currentTier);
     if (!currentTierData) return false;
 
-    // Calculate required points with ascension warp speed reduction
+    // Calculate required points with warp speed reductions
     let requiredPoints = currentTierData.requiredPoints;
-    const reduction = this.ascensionService.warpSpeedReduction();
-    if (reduction > 0) {
-      requiredPoints = requiredPoints.times(1 - reduction);
+    
+    const ascensionReduction = this.ascensionService.warpSpeedReduction();
+    if (ascensionReduction > 0) {
+      requiredPoints = requiredPoints.times(1 - ascensionReduction);
+    }
+    
+    // Apply Prism "all aspects" bonus to warp speed
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+    if (prismBonus > 0) {
+      requiredPoints = requiredPoints.times(1 - prismBonus);
     }
 
     // Check if we have enough skill points
@@ -390,7 +534,21 @@ export class SkillTreeService {
 
     const points = this.gameService.getResource('knowledge');
     const current = points ? points.amount : new Decimal(0);
-    const required = currentTierData.requiredPoints;
+    
+    // Apply warp speed reductions to required points
+    let required = currentTierData.requiredPoints;
+    
+    const ascensionReduction = this.ascensionService.warpSpeedReduction();
+    if (ascensionReduction > 0) {
+      required = required.times(1 - ascensionReduction);
+    }
+    
+    // Apply Prism "all aspects" bonus
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+    if (prismBonus > 0) {
+      required = required.times(1 - prismBonus);
+    }
+    
     const percentage = Math.min(100, current.div(required).times(100).toNumber());
 
     return { current, required, percentage };
@@ -409,6 +567,9 @@ export class SkillTreeService {
       return false;
     }
 
+    // Track warp completion for speed achievements
+    this.achievementService?.onWarpComplete();
+
     const currentTierData = SKILL_TREE_TIERS.find(t => t.id === this.prestige().currentTier);
     if (!currentTierData) return false;
 
@@ -421,7 +582,22 @@ export class SkillTreeService {
     // Grant ascension point if completing Tier 5
     const isTier5 = prestigeData.currentTier === 5;
     if (isTier5) {
-      this.ascensionService.grantAscensionPoint();
+      // Calculate Stellar Core bonus from dimensions
+      const stellarCoreBonus = this.dimensionService.totalStellarCoreBonus();
+      const stellarCoresGranted = Math.floor(1 * (1 + stellarCoreBonus));
+      
+      for (let i = 0; i < stellarCoresGranted; i++) {
+        this.ascensionService.grantAscensionPoint();
+      }
+      
+      // Grant Echo Fragments based on Energy (only if ascension tree is complete)
+      if (this.ascensionService.isTreeComplete()) {
+        const currentEnergy = this.gameService.getResource('knowledge')?.amount || new Decimal(0);
+        const echoFragments = this.calculateEchoFragments(currentEnergy);
+        if (echoFragments > 0) {
+          this.dimensionService.grantEchoFragments(echoFragments);
+        }
+      }
     }
 
     // After Tier 5, loop back to Tier 1 and reset run bonuses
@@ -454,15 +630,7 @@ export class SkillTreeService {
     });
 
     // Calculate starting energy
-    let startingEnergy = this.ascensionService.startingEnergy();
-    
-    // Apply energy retention if available
-    const keepPercent = this.ascensionService.prestigeKeepPercent();
-    if (keepPercent > 0) {
-      const currentEnergy = this.gameService.getResource('knowledge')?.amount || new Decimal(0);
-      const keptEnergy = currentEnergy.times(keepPercent);
-      startingEnergy = Decimal.max(startingEnergy, keptEnergy);
-    }
+    const startingEnergy = this.ascensionService.startingEnergy();
 
     // Reset knowledge to starting amount
     this.gameService.resetGame();
@@ -478,6 +646,29 @@ export class SkillTreeService {
     this.saveSkills();
 
     return true;
+  }
+
+  private calculateEchoFragments(energy: Decimal): number {
+    // Base threshold: 10 trillion (10e12)
+    const baseThreshold = new Decimal(1e35);
+    
+    // If energy is less than threshold, grant 1 EF
+    if (energy.lt(baseThreshold)) {
+      return 1;
+    }
+    
+    // Calculate bonus EF based on how much energy exceeds the threshold
+    // Formula: 1 + floor(log10(energy / baseThreshold))
+    // Examples with maxed tree (~100x base threshold):
+    // - 10T Energy: 1 EF
+    // - 100T Energy: 2 EF (10x threshold)
+    // - 1Q Energy: 3 EF (100x threshold)
+    // - 10Q Energy: 4 EF (1000x threshold)
+    const ratio = energy.div(baseThreshold);
+    const logValue = ratio.log10();
+    const bonusEF = Math.floor(logValue.toNumber());
+    
+    return Math.max(1, 1 + bonusEF);
   }
 
   private applyPrestigeBonus(): void {

@@ -11,7 +11,7 @@
         @if (allPrerequisitesMet()) {
           <span class="prereq-ready">Prerequisites met</span>
         } @else {
-          <span class="prereq-needed">⬆️ Requires:</span>
+          <span class="prereq-needed">↑ Requires:</span>
           @for (prereq of prerequisites(); track prereq.name) {
             <div class="prereq-item" [class.met]="prereq.maxed">
               {{ prereq.maxed ? '✓' : '○' }} {{ prereq.name }}
@@ -40,6 +40,6 @@
     <div class="maxed-badge">MAX</div>
   }
   @if (!skill().unlocked) {
-    <div class="locked-badge">🔒 LOCKED</div>
+    <div class="locked-badge">⊗ LOCKED</div>
   }
 </div>
