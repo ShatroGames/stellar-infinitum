@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "StellarInfinitum": {
+    "stellar-infinitum": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -57,10 +57,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "StellarInfinitum:build:production"
+              "buildTarget": "stellar-infinitum:build:production"
             },
             "development": {
-              "buildTarget": "StellarInfinitum:build:development"
+              "buildTarget": "stellar-infinitum:build:development"
             }
           },
           "defaultConfiguration": "development"
