@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Treefinite": {
+    "StellarInfinitum": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -57,10 +57,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Treefinite:build:production"
+              "buildTarget": "StellarInfinitum:build:production"
             },
             "development": {
-              "buildTarget": "Treefinite:build:development"
+              "buildTarget": "StellarInfinitum:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,5 +89,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
