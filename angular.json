@@ -27,7 +27,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "outputPath": "dist/cloudflare"
+            "outputPath": "dist/stellar-infinitum"
           },
           "configurations": {
             "production": {
