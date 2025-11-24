@@ -1,0 +1,269 @@
+<div class="probability-forge-container">
+  @if (!systemUnlocked()) {
+    <div class="locked-message">
+      <h2>🎲 Probability Forge</h2>
+      <p>The final frontier of reality manipulation...</p>
+      <p class="unlock-requirement">
+        <strong>Requirements:</strong><br>
+        • Reach <strong>1 Quintillion (1Qi)</strong> total Quanta<br>
+        • Complete all three Artifact branches (Tier 10)
+      </p>
+      <p class="lore">
+        "At the edge of existence, where certainty collapses into pure potential,
+        lies the Probability Forge - a cosmic gacha that bends the very laws of chance.
+        Only those who have mastered the ancient artifacts may enter."
+      </p>
+    </div>
+  } @else {
+    <!-- Header -->
+    <div class="forge-header">
+      <h2>🎲 Probability Forge</h2>
+      <div class="resources">
+        <div class="resource-item">
+          <span class="resource-label">Fate Tokens:</span>
+          <span class="resource-value">{{formatNumber(fateTokens())}}</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">Token Rate:</span>
+          <span class="resource-value">{{tokenGenerationRate().toFixed(2)}}/s</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">Total Pulls:</span>
+          <span class="resource-value">{{formatNumber(totalPulls())}}</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">Collection:</span>
+          <span class="resource-value">{{discoveredCount()}}/100</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">Streak:</span>
+          <span class="resource-value">{{currentStreak()}}🔥</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">Total Multiplier:</span>
+          <span class="resource-value highlight">{{formatNumber(totalMultiplier())}}x</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button 
+        class="tab" 
+        [class.active]="selectedTab === 'pull'"
+        (click)="selectedTab = 'pull'">
+        🎰 Pull
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="selectedTab === 'collection'"
+        (click)="selectedTab = 'collection'">
+        📚 Collection
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="selectedTab === 'weights'"
+        (click)="selectedTab = 'weights'">
+        ⚖️ Fate Weights
+      </button>
+      <button 
+        class="tab" 
+        [class.active]="selectedTab === 'stats'"
+        (click)="selectedTab = 'stats'">
+        📊 Statistics
+      </button>
+    </div>
+
+    <!-- Pull Tab -->
+    @if (selectedTab === 'pull') {
+      <div class="pull-section">
+        <div class="probabilities">
+          <h3>Current Drop Rates</h3>
+          <div class="prob-list">
+            @for (entry of currentProbabilities() | keyvalue; track entry.key) {
+              <div class="prob-item" [style.border-color]="getRarityColor(entry.key)">
+                <span class="rarity-name" [style.color]="getRarityColor(entry.key)">
+                  {{getRarityName(entry.key)}}
+                </span>
+                <span class="prob-value">{{entry.value.toFixed(2)}}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="pull-area">
+          <button 
+            class="pull-button" 
+            (click)="performPull()"
+            [disabled]="!canAffordPull()">
+            <span class="button-icon">🎲</span>
+            <span class="button-text">PULL FROM FATE</span>
+            <span class="button-subtext">
+              Cost: {{formatNumber(pullCost())}} Tokens
+              @if (!canAffordPull()) {
+                <span class="insufficient"> • Insufficient Tokens</span>
+              }
+            </span>
+          </button>
+
+          @if (showPullAnimation && lastPull) {
+            <div class="pull-result" [class.animating]="showPullAnimation">
+              <div class="result-card" [style.border-color]="getRarityColor(lastPull.outcome.rarity)">
+                <div class="card-rarity" [style.color]="getRarityColor(lastPull.outcome.rarity)">
+                  {{getRarityName(lastPull.outcome.rarity)}}
+                  @if (lastPull.isNew) {
+                    <span class="new-badge">✨ NEW!</span>
+                  }
+                </div>
+                <div class="card-icon">{{lastPull.outcome.icon}}</div>
+                <div class="card-name">{{lastPull.outcome.name}}</div>
+                <div class="card-description">{{lastPull.outcome.description}}</div>
+                <div class="card-multiplier">
+                  {{formatNumber(lastPull.finalMultiplier)}}x Quanta Multiplier
+                  @if (lastPull.streakBonus > 0) {
+                    <span class="streak-indicator">(+{{lastPull.streakBonus}}% streak bonus)</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Collection Tab -->
+    @if (selectedTab === 'collection') {
+      <div class="collection-section">
+        <div class="collection-header">
+          <h3>Discovered Outcomes</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="collectionProgress().percentage"></div>
+            <span class="progress-text">
+              {{collectionProgress().discovered}}/{{collectionProgress().total}} 
+              ({{collectionProgress().percentage.toFixed(1)}}%)
+            </span>
+          </div>
+        </div>
+
+        @for (rarity of [OutcomeRarity.MYTHIC, OutcomeRarity.EPIC, OutcomeRarity.RARE, OutcomeRarity.UNCOMMON, OutcomeRarity.COMMON]; track rarity) {
+          <div class="rarity-section">
+            <h4 [style.color]="getRarityColor(rarity)">{{getRarityName(rarity)}}</h4>
+            <div class="outcome-grid">
+              @for (outcome of outcomes(); track outcome.id) {
+                @if (outcome.rarity === rarity) {
+                  <div 
+                    class="outcome-card" 
+                    [class.discovered]="outcome.discovered"
+                    [style.border-color]="getRarityColor(rarity)">
+                    @if (outcome.discovered) {
+                      <div class="outcome-icon">{{outcome.icon}}</div>
+                      <div class="outcome-name">{{outcome.name}}</div>
+                      <div class="outcome-multiplier">{{formatNumber(outcome.multiplier)}}x</div>
+                      <div class="outcome-count">Obtained: {{outcome.obtainedCount}}</div>
+                    } @else {
+                      <div class="outcome-unknown">
+                        <div class="unknown-icon">❓</div>
+                        <div class="unknown-text">???</div>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Fate Weights Tab -->
+    @if (selectedTab === 'weights') {
+      <div class="weights-section">
+        <h3>Fate Weights - Manipulate Probability</h3>
+        <p class="weights-description">
+          Unlock and upgrade weights to permanently shift odds in your favor.
+        </p>
+
+        <div class="weights-grid">
+          @for (weight of fateWeights(); track weight.id) {
+            <div class="weight-card" [class.unlocked]="weight.unlocked">
+              <div class="weight-header">
+                <h4>{{weight.name}}</h4>
+                <span class="weight-level">
+                  @if (weight.unlocked) {
+                    Lv {{weight.level}}/{{weight.maxLevel}}
+                  } @else {
+                    🔒 Locked
+                  }
+                </span>
+              </div>
+              <p class="weight-description">{{weight.description}}</p>
+              <div class="weight-cost">
+                @if (!weight.unlocked) {
+                  <button 
+                    class="unlock-button" 
+                    (click)="unlockWeight(weight.id)"
+                    [disabled]="fateTokens() < weight.cost">
+                    Unlock ({{formatNumber(weight.cost)}} Fate Tokens)
+                  </button>
+                } @else if (weight.level < weight.maxLevel) {
+                  <button 
+                    class="upgrade-button" 
+                    (click)="upgradeWeight(weight.id)"
+                    [disabled]="fateTokens() < weight.cost * Math.pow(2, weight.level)">
+                    Upgrade ({{formatNumber(weight.cost * Math.pow(2, weight.level))}} Fate Tokens)
+                  </button>
+                } @else {
+                  <span class="max-level">✓ MAX LEVEL</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Statistics Tab -->
+    @if (selectedTab === 'stats') {
+      <div class="stats-section">
+        <h3>Pull Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Pulls</div>
+            <div class="stat-value">{{formatNumber(totalPulls())}}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Collection Progress</div>
+            <div class="stat-value">{{collectionProgress().percentage.toFixed(1)}}%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Current Streak</div>
+            <div class="stat-value">{{currentStreak()}} 🔥</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Multiplier</div>
+            <div class="stat-value highlight">{{formatNumber(totalMultiplier())}}x</div>
+          </div>
+        </div>
+
+        <h4>Rarity Distribution</h4>
+        <div class="rarity-stats">
+          @for (entry of currentProbabilities() | keyvalue; track entry.key) {
+            <div class="rarity-stat">
+              <span class="rarity-label" [style.color]="getRarityColor(entry.key)">
+                {{getRarityName(entry.key)}}
+              </span>
+              <div class="rarity-bar-container">
+                <div 
+                  class="rarity-bar" 
+                  [style.width.%]="entry.value"
+                  [style.background-color]="getRarityColor(entry.key)">
+                </div>
+              </div>
+              <span class="rarity-percent">{{entry.value.toFixed(2)}}%</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

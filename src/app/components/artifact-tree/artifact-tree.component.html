@@ -108,11 +108,11 @@
       </div>
     </div>
 
-    <!-- Efficiency Branch (Right) -->
-    <div class="branch efficiency-branch">
-      <h3 class="branch-title">💤 Efficiency Innovations</h3>
+    <!-- Resonance Branch (Right) -->
+    <div class="branch resonance-branch">
+      <h3 class="branch-title">� Harmonic Resonance</h3>
       <div class="artifacts-column">
-        @for (artifact of getArtifactsByBranch(ArtifactBranch.EFFICIENCY); track artifact.id) {
+        @for (artifact of getArtifactsByBranch(ArtifactBranch.RESONANCE); track artifact.id) {
           <div class="artifact-node" 
                [class.unlocked]="isUnlocked(artifact.id)"
                [class.available]="canUnlock(artifact) && !isUnlocked(artifact.id)"

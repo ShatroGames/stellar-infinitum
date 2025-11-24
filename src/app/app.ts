@@ -7,16 +7,19 @@ import { AscensionTreeComponent } from './components/ascension-tree/ascension-tr
 import { DimensionPanelComponent } from './components/dimension-panel/dimension-panel';
 import { QuantumDisplayComponent } from './components/quantum-display/quantum-display.component';
 import { ArtifactTreeComponent } from './components/artifact-tree/artifact-tree.component';
+import { ProbabilityForgeComponent } from './components/probability-forge/probability-forge';
 import { OptionsComponent } from './components/options/options.component';
 import { Achievements } from './components/achievements/achievements';
 import { QuantumTree } from './components/quantum-tree/quantum-tree';
 import { CollapsePanel } from './components/collapse-panel/collapse-panel';
 import { TutorialPopup } from './components/tutorial-popup/tutorial-popup';
+import { VictoryScreen } from './components/victory-screen/victory-screen';
 import { AscensionService } from './services/ascension.service';
 import { DimensionService } from './services/dimension.service';
 import { AchievementService } from './services/achievement.service';
 import { QuantumService } from './services/quantum.service';
 import { ArtifactService } from './services/artifact.service';
+import { ProbabilityForgeService } from './services/probability-forge.service';
 import { TutorialService } from './services/tutorial.service';
 import { SkillTreeService } from './services/skill-tree.service';
 import { DevPanelComponent } from "./components/dev-panel/dev-panel.component";
@@ -34,10 +37,12 @@ import { DevPanelComponent } from "./components/dev-panel/dev-panel.component";
     QuantumTree, 
     CollapsePanel, 
     QuantumDisplayComponent, 
-    ArtifactTreeComponent, 
+    ArtifactTreeComponent,
+    ProbabilityForgeComponent,
     OptionsComponent, 
     Achievements, 
-    TutorialPopup
+    TutorialPopup,
+    VictoryScreen
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -49,11 +54,12 @@ export class App {
   protected achievementService = inject(AchievementService); // Initialize to start achievement tracking
   protected quantumService = inject(QuantumService);
   protected artifactService = inject(ArtifactService);
+  protected probabilityForgeService = inject(ProbabilityForgeService);
   protected tutorialService = inject(TutorialService);
   protected skillTreeService = inject(SkillTreeService);
   public currentYear = new Date().getFullYear();
 
-  activeTab = signal<'skill' | 'ascension' | 'dimensions' | 'quantum' | 'artifacts' | 'collapse' | 'achievements' | 'options'>('skill');
+  activeTab = signal<'skill' | 'ascension' | 'dimensions' | 'quantum' | 'artifacts' | 'forge' | 'collapse' | 'achievements' | 'options'>('skill');
   
   // Check if universe has collapsed
   hasCollapsed = computed(() => this.quantumService.hasCollapsed());

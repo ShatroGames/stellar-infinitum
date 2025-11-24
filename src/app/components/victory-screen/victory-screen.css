@@ -1,0 +1,261 @@
+.victory-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.victory-modal {
+  background: linear-gradient(135deg, rgba(20, 20, 40, 0.98), rgba(40, 20, 60, 0.98));
+  border: 3px solid #ffc107;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 0 50px rgba(255, 193, 7, 0.5),
+    0 0 100px rgba(139, 92, 246, 0.3),
+    inset 0 0 50px rgba(255, 193, 7, 0.1);
+  animation: modalAppear 0.8s ease-out 0.5s backwards;
+}
+
+@keyframes modalAppear {
+  from {
+    transform: scale(0.8) translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.victory-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: headerGlow 3s ease-in-out infinite;
+}
+
+@keyframes headerGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(255, 193, 7, 1);
+  }
+}
+
+.victory-icon {
+  font-size: 6em;
+  margin-bottom: 20px;
+  animation: iconSpin 4s ease-in-out infinite;
+}
+
+@keyframes iconSpin {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+}
+
+.victory-title {
+  font-size: 3em;
+  font-weight: bold;
+  color: #ffc107;
+  margin: 0 0 10px 0;
+  letter-spacing: 4px;
+}
+
+.victory-subtitle {
+  font-size: 1.5em;
+  color: #8b5cf6;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.victory-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.victory-message {
+  text-align: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.message-primary {
+  font-size: 1.5em;
+  color: #ffc107;
+  margin: 0 0 20px 0;
+  font-weight: bold;
+}
+
+.message-secondary {
+  font-size: 1.1em;
+  color: #999;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.victory-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: #999;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: 2em;
+  font-weight: bold;
+  color: #8b5cf6;
+}
+
+.victory-quote {
+  text-align: center;
+  padding: 30px;
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 4px solid #8b5cf6;
+  border-radius: 8px;
+}
+
+.quote-text {
+  font-size: 1.3em;
+  font-style: italic;
+  color: #ccc;
+  margin: 0 0 15px 0;
+  line-height: 1.6;
+}
+
+.quote-author {
+  font-size: 1em;
+  color: #8b5cf6;
+  margin: 0;
+}
+
+.victory-thanks {
+  text-align: center;
+  padding: 20px;
+  border-top: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.victory-thanks p {
+  margin: 10px 0;
+  font-size: 1.1em;
+  color: #999;
+}
+
+.victory-thanks strong {
+  color: #ffc107;
+}
+
+.thanks-sub {
+  font-size: 0.9em !important;
+  color: #666 !important;
+}
+
+.victory-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.continue-button {
+  padding: 15px 40px;
+  font-size: 1.2em;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.5);
+}
+
+.continue-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 30px rgba(255, 193, 7, 0.7);
+  background: linear-gradient(135deg, #ffd54f, #ffb74d);
+}
+
+.continue-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .victory-modal {
+    padding: 30px 20px;
+  }
+
+  .victory-title {
+    font-size: 2em;
+  }
+
+  .victory-subtitle {
+    font-size: 1.2em;
+  }
+
+  .victory-icon {
+    font-size: 4em;
+  }
+
+  .message-primary {
+    font-size: 1.2em;
+  }
+
+  .message-secondary {
+    font-size: 1em;
+  }
+
+  .victory-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 1.5em;
+  }
+
+  .quote-text {
+    font-size: 1.1em;
+  }
+}

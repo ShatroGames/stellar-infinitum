@@ -217,6 +217,25 @@
   text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
 }
 
+/* Special styling for forge tab */
+.tab-button.forge-tab {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(156, 39, 176, 0.2));
+  border-color: rgba(255, 193, 7, 0.5);
+}
+
+.tab-button.forge-tab:hover {
+  color: #ffc107;
+  border-color: #ffc107;
+  text-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+}
+
+.tab-button.forge-tab.active {
+  color: #ffc107;
+  border-color: #ffc107;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(156, 39, 176, 0.3));
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+}
+
 /* Special styling for collapse trigger tab */
 .tab-button.collapse-trigger {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15));

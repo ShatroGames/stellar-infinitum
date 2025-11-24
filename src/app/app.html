@@ -88,6 +88,14 @@
                 🔬 Artifacts
               </button>
             }
+            @if (probabilityForgeService.systemUnlocked()) {
+              <button 
+                class="tab-button forge-tab" 
+                [class.active]="activeTab() === 'forge'"
+                (click)="activeTab.set('forge')">
+                🎲 Probability Forge
+              </button>
+            }
           }
           
           <!-- Always Available Tabs -->
@@ -117,6 +125,8 @@
             <app-quantum-tree />
           } @else if (activeTab() === 'artifacts' && hasCollapsed()) {
             <app-artifact-tree />
+          } @else if (activeTab() === 'forge' && hasCollapsed()) {
+            <app-probability-forge />
           } @else if (activeTab() === 'achievements') {
             <app-achievements />
           } @else if (activeTab() === 'options') {
@@ -170,6 +180,9 @@
 
 <!-- Tutorial Popups -->
 <app-tutorial-popup />
+
+<!-- Victory Screen -->
+<app-victory-screen />
 
 <app-dev-panel />
 

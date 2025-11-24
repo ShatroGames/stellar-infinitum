@@ -42,8 +42,8 @@
   border-color: rgba(233, 30, 99, 0.3);
 }
 
-.efficiency-branch {
-  border-color: rgba(76, 175, 80, 0.3);
+.resonance-branch {
+  border-color: rgba(156, 39, 176, 0.3);
 }
 
 .branch-title {
@@ -64,9 +64,9 @@
   border-color: rgba(233, 30, 99, 0.3);
 }
 
-.efficiency-branch .branch-title {
-  color: #4caf50;
-  border-color: rgba(76, 175, 80, 0.3);
+.resonance-branch .branch-title {
+  color: #9c27b0;
+  border-color: rgba(156, 39, 176, 0.3);
 }
 
 .artifacts-column {

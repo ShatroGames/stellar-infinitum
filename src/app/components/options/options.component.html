@@ -47,18 +47,20 @@
           <span class="btn-icon">↻</span>
           Reset All Progress
         </button>
+        
+        <button class="btn btn-extreme-danger" (click)="fullReset()">
+          <span class="btn-icon">💀</span>
+          FULL RESET (Including Achievements)
+        </button>
       </div>
 
       <div class="warning-box">
-        <p><strong>Warning:</strong> Resetting will permanently delete:</p>
-        <ul>
-          <li>All resources and progress</li>
-          <li>All skill upgrades and tiers</li>
-          <li>All warps and multipliers</li>
-          <li>All ascension points and upgrades</li>
-          <li>All achievements and unlocks</li>
-          <li>All dimensions and echo fragments</li>
-        </ul>
+        <p><strong>Reset All Progress:</strong> Permanently deletes all game progress but keeps achievements.</p>
+        
+        <p><strong>FULL RESET:</strong> Completely erases EVERYTHING including achievements and tutorials.</p>
+        @if (hasEverWon()) {
+          <p class="eternal-note">✨ <strong>Eternal Progress:</strong> You have completed {{totalVictories()}} victory reset(s). This count persists across full resets for potential future features.</p>
+        }
         <p>Make sure to export your save first if you want to keep a backup!</p>
       </div>
     </section>

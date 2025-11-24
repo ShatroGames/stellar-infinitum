@@ -2,12 +2,14 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { QuantumNode, QuantumState, Synergy, QuantumTreeType, CollapseRequirements } from '../models/quantum.model';
 import { QUANTUM_NODES, QUANTUM_SYNERGIES } from '../models/quantum-trees.config';
 import { ArtifactService } from './artifact.service';
+import { EternalProgress } from './eternal-progress';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuantumService {
   private artifactService = inject(ArtifactService);
+  private eternalProgress = inject(EternalProgress);
 
   // State
   private state = signal<QuantumState>({
@@ -19,12 +21,20 @@ export class QuantumService {
     collapseTime: 0,
     hasCollapsed: false
   });
+  
+  private victoryState = signal<{hasWon: boolean, victoryDismissed: boolean}>({
+    hasWon: false,
+    victoryDismissed: false
+  });
+  
+  private readonly VICTORY_THRESHOLD = 1e170; // 1e170 Quanta
 
   // Computed signals
   quanta = computed(() => this.state().quanta);
   totalQuantaGenerated = computed(() => this.state().totalQuantaGenerated);
   quantaPerSecond = computed(() => this.state().quantaPerSecond);
   hasCollapsed = computed(() => this.state().hasCollapsed);
+  hasWon = computed(() => this.victoryState().hasWon && !this.victoryState().victoryDismissed);
 
   // Milestone constants
   private readonly MILESTONES = [100000, 1000000, 10000000];
@@ -133,10 +143,10 @@ export class QuantumService {
   }
 
   // Add Quanta over time
-  addQuanta(deltaTime: number): void {
+  addQuanta(deltaTime: number, multiplier: number = 1): void {
     if (!this.state().hasCollapsed) return;
 
-    const amount = this.state().quantaPerSecond * deltaTime;
+    const amount = this.state().quantaPerSecond * deltaTime * multiplier;
     
     this.state.update(s => ({
       ...s,
@@ -148,6 +158,35 @@ export class QuantumService {
     
     // Check if artifacts should be unlocked
     this.artifactService.checkUnlock(this.state().totalQuantaGenerated);
+    
+    // Check victory condition
+    this.checkVictory();
+  }
+  
+  // Check if player has won
+  private checkVictory(): void {
+    if (this.victoryState().hasWon) return; // Already won
+    
+    if (this.state().totalQuantaGenerated >= this.VICTORY_THRESHOLD) {
+      this.victoryState.update(v => ({
+        ...v,
+        hasWon: true
+      }));
+      
+      // Record eternal victory
+      this.eternalProgress.recordVictory();
+      
+      this.saveState();
+    }
+  }
+  
+  // Dismiss victory screen (allow continuing to play)
+  dismissVictory(): void {
+    this.victoryState.update(v => ({
+      ...v,
+      victoryDismissed: true
+    }));
+    this.saveState();
   }
 
   // Spend Quanta (for artifacts, etc.)
@@ -356,6 +395,7 @@ export class QuantumService {
   // Save state to localStorage
   private saveState(): void {
     const state = this.state();
+    const victory = this.victoryState();
     // Only save node IDs and levels (level 0 = locked)
     const minimalNodes = Array.from(state.nodes.entries())
       .filter(([_, node]) => node.level > 0) // Only save nodes with levels
@@ -370,7 +410,9 @@ export class QuantumService {
       nodes: minimalNodes,
       milestonesReached: state.milestonesReached,
       collapseTime: state.collapseTime,
-      hasCollapsed: state.hasCollapsed
+      hasCollapsed: state.hasCollapsed,
+      hasWon: victory.hasWon,
+      victoryDismissed: victory.victoryDismissed
     };
 
     localStorage.setItem('stellarInfinitum_quantum', JSON.stringify(saveData));
@@ -407,6 +449,14 @@ export class QuantumService {
         collapseTime: data.collapseTime || 0,
         hasCollapsed: data.hasCollapsed || false
       });
+      
+      // Restore victory state
+      if (data.hasWon !== undefined) {
+        this.victoryState.set({
+          hasWon: data.hasWon || false,
+          victoryDismissed: data.victoryDismissed || false
+        });
+      }
 
       if (this.state().hasCollapsed) {
         // Re-check all node unlocks based on current prerequisites

@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Artifact, ArtifactState, ArtifactEffectType } from '../models/artifact.model';
+import { Artifact, ArtifactState, ArtifactEffectType, ArtifactBranch } from '../models/artifact.model';
 import { ARTIFACTS } from '../models/artifact-tree.config';
 
 @Injectable({
@@ -146,6 +146,17 @@ export class ArtifactService {
             productionMultiplier *= effectValue;
             break;
 
+          case ArtifactEffectType.RESONANCE:
+            // Resonance: +X% per artifact from OTHER branches (not counting resonance artifacts)
+            const otherBranchArtifacts = Array.from(this.state().unlockedArtifacts)
+              .map(id => this.getArtifact(id))
+              .filter(a => a && a.branch !== ArtifactBranch.RESONANCE)
+              .length;
+            
+            const resonanceBonus = otherBranchArtifacts * effectValue;
+            productionMultiplier *= (1 + resonanceBonus / 100);
+            break;
+
           case ArtifactEffectType.IDLE_BONUS:
             idleBonus += effectValue;
             break;
@@ -198,6 +209,17 @@ export class ArtifactService {
     });
 
     return Array.from(branchHighest.values());
+  }
+  
+  // Check if all three branches have reached tier 10
+  hasAllBranchesTier10(): boolean {
+    const highestTiers = this.getHighestTierArtifacts();
+    
+    // Need all 3 branches (production, multiplier, resonance)
+    if (highestTiers.length < 3) return false;
+    
+    // Check if all branches are at tier 10
+    return highestTiers.every(artifact => artifact.tier >= 10);
   }
 
   // Update persistent bonus (called before session ends)

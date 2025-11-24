@@ -66,7 +66,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Accelerates fundamental forces to produce vast energy',
     branch: ArtifactBranch.PRODUCTION,
     tier: 5,
-    cost: 1000000000000, // 1T
+    cost: 100000000000, // 100B
     requiredTotalQuanta: 1000000000, // 1B
     prerequisites: ['prod_4'],
     effects: [
@@ -80,7 +80,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Bends reality itself to maximize production',
     branch: ArtifactBranch.PRODUCTION,
     tier: 6,
-    cost: 10000000000000, // 10T
+    cost: 1000000000000, // 1T
     requiredTotalQuanta: 2500000000, // 2.5B
     prerequisites: ['prod_5'],
     effects: [
@@ -108,7 +108,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Taps into infinite energy sources',
     branch: ArtifactBranch.PRODUCTION,
     tier: 8,
-    cost: 1000000000000000, // 1Qa
+    cost: 10000000000000000, // 10Qa
     requiredTotalQuanta: 10000000000, // 10B
     prerequisites: ['prod_7'],
     effects: [
@@ -122,7 +122,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Draws power from the multiverse itself',
     branch: ArtifactBranch.PRODUCTION,
     tier: 9,
-    cost: 10000000000000000, // 10Qa
+    cost: 1000000000000000000, // 1Qi
     requiredTotalQuanta: 25000000000, // 25B
     prerequisites: ['prod_8'],
     effects: [
@@ -136,7 +136,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'The ultimate source of all production',
     branch: ArtifactBranch.PRODUCTION,
     tier: 10,
-    cost: 100000000000000000, // 100Qa
+    cost: 100000000000000000000, // 100Qi
     requiredTotalQuanta: 50000000000, // 50B
     prerequisites: ['prod_9'],
     effects: [
@@ -210,7 +210,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Compresses energy like a black hole for extreme density',
     branch: ArtifactBranch.MULTIPLIER,
     tier: 5,
-    cost: 1000000000000, // 1T
+    cost: 100000000000, // 100B
     requiredTotalQuanta: 1000000000, // 1B
     prerequisites: ['mult_4'],
     effects: [
@@ -224,7 +224,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Time dilation effects multiply output exponentially',
     branch: ArtifactBranch.MULTIPLIER,
     tier: 6,
-    cost: 10000000000000, // 10T
+    cost: 1000000000000, // 1T
     requiredTotalQuanta: 2500000000, // 2.5B
     prerequisites: ['mult_5'],
     effects: [
@@ -252,7 +252,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Energy loops through time, multiplying infinitely',
     branch: ArtifactBranch.MULTIPLIER,
     tier: 8,
-    cost: 1000000000000000, // 1Qa
+    cost: 10000000000000000, // 10Qa
     requiredTotalQuanta: 10000000000, // 10B
     prerequisites: ['mult_7'],
     effects: [
@@ -266,7 +266,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'Makes unlikely outcomes certain',
     branch: ArtifactBranch.MULTIPLIER,
     tier: 9,
-    cost: 10000000000000000, // 10Qa
+    cost: 1000000000000000000, // 1Qi
     requiredTotalQuanta: 25000000000, // 25B
     prerequisites: ['mult_8'],
     effects: [
@@ -280,7 +280,7 @@ export const ARTIFACTS: Artifact[] = [
     description: 'All timelines converge to maximum output',
     branch: ArtifactBranch.MULTIPLIER,
     tier: 10,
-    cost: 100000000000000000, // 100Qa
+    cost: 100000000000000000000, // 100Qi
     requiredTotalQuanta: 50000000000, // 50B
     prerequisites: ['mult_9'],
     effects: [
@@ -290,145 +290,146 @@ export const ARTIFACTS: Artifact[] = [
   },
 
   // ========================================
-  // EFFICIENCY BRANCH (10 tiers)
+  // RESONANCE BRANCH (10 tiers)
+  // Synergy bonus: Scales with artifacts from OTHER branches
   // ========================================
   {
-    id: 'eff_1',
-    name: 'Idle Optimizer',
-    description: 'Improves idle production efficiency',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_1',
+    name: 'Harmonic Resonator I',
+    description: 'Creates weak resonance between artifacts (+5% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 1,
     cost: 50000000, // 50M
     requiredTotalQuanta: 50000000, // 50M
     prerequisites: [],
     effects: [
-      { type: ArtifactEffectType.IDLE_BONUS, value: 50, description: '+50% production while idle' }
+      { type: ArtifactEffectType.RESONANCE, value: 5, description: '+5% production per artifact from other branches' }
     ],
     position: { x: 2, y: 0 }
   },
   {
-    id: 'eff_2',
-    name: 'Scaling Converter',
-    description: 'Production scales with node upgrades',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_2',
+    name: 'Harmonic Resonator II',
+    description: 'Strengthens resonance between artifacts (+10% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 2,
     cost: 100000000, // 100M
     requiredTotalQuanta: 100000000, // 100M
-    prerequisites: ['eff_1'],
+    prerequisites: ['res_1'],
     effects: [
-      { type: ArtifactEffectType.SCALING_BONUS, value: 2, description: '+2% production per quantum node level' }
+      { type: ArtifactEffectType.RESONANCE, value: 10, description: '+10% production per artifact from other branches' }
     ],
     position: { x: 2, y: 1 }
   },
   {
-    id: 'eff_3',
-    name: 'Bank Multiplier',
-    description: 'Stored Quanta increases production',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_3',
+    name: 'Harmonic Resonator III',
+    description: 'Amplifies resonance significantly (+20% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 3,
     cost: 1000000000, // 1B
     requiredTotalQuanta: 250000000, // 250M
-    prerequisites: ['eff_2'],
+    prerequisites: ['res_2'],
     effects: [
-      { type: ArtifactEffectType.STORED_QUANTA_BONUS, value: 2, description: '+2% production per 10M stored Quanta' }
+      { type: ArtifactEffectType.RESONANCE, value: 20, description: '+20% production per artifact from other branches' }
     ],
     position: { x: 2, y: 2 }
   },
   {
-    id: 'eff_4',
-    name: 'Persistent Engine',
-    description: 'Production increases gradually over time',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_4',
+    name: 'Harmonic Resonator IV',
+    description: 'Powerful resonance effects (+35% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 4,
     cost: 10000000000, // 10B
     requiredTotalQuanta: 500000000, // 500M
-    prerequisites: ['eff_3'],
+    prerequisites: ['res_3'],
     effects: [
-      { type: ArtifactEffectType.PERSISTENT_BONUS, value: 10, description: '+10% production per minute of active play (max 500%)' }
+      { type: ArtifactEffectType.RESONANCE, value: 35, description: '+35% production per artifact from other branches' }
     ],
     position: { x: 2, y: 3 }
   },
   {
-    id: 'eff_5',
-    name: 'Quantum Catalyst',
-    description: 'Boosts effectiveness of all other artifacts',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_5',
+    name: 'Harmonic Resonator V',
+    description: 'Intense resonance cascade (+60% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 5,
-    cost: 1000000000000, // 1T
+    cost: 100000000000, // 100B
     requiredTotalQuanta: 1000000000, // 1B
-    prerequisites: ['eff_4'],
+    prerequisites: ['res_4'],
     effects: [
-      { type: ArtifactEffectType.EFFECTIVENESS_BONUS, value: 25, description: 'All artifact bonuses are 25% more effective' }
+      { type: ArtifactEffectType.RESONANCE, value: 60, description: '+60% production per artifact from other branches' }
     ],
     position: { x: 2, y: 4 }
   },
   {
-    id: 'eff_6',
-    name: 'Advanced Scaling',
-    description: 'Further enhanced node-based scaling',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_6',
+    name: 'Harmonic Resonator VI',
+    description: 'Extreme resonance synergy (+100% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 6,
-    cost: 10000000000000, // 10T
+    cost: 1000000000000, // 1T
     requiredTotalQuanta: 2500000000, // 2.5B
-    prerequisites: ['eff_5'],
+    prerequisites: ['res_5'],
     effects: [
-      { type: ArtifactEffectType.SCALING_BONUS, value: 5, description: '+5% production per quantum node level' }
+      { type: ArtifactEffectType.RESONANCE, value: 100, description: '+100% per artifact from other branches (doubles per artifact!)' }
     ],
     position: { x: 2, y: 5 }
   },
   {
-    id: 'eff_7',
-    name: 'Deep Storage Bonus',
-    description: 'Massive Quanta reserves provide huge bonuses',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_7',
+    name: 'Harmonic Resonator VII',
+    description: 'Overwhelming resonance power (+200% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 7,
     cost: 100000000000000, // 100T
     requiredTotalQuanta: 5000000000, // 5B
-    prerequisites: ['eff_6'],
+    prerequisites: ['res_6'],
     effects: [
-      { type: ArtifactEffectType.STORED_QUANTA_BONUS, value: 5, description: '+5% production per 10M stored Quanta' }
+      { type: ArtifactEffectType.RESONANCE, value: 200, description: '+200% per artifact from other branches (triples per artifact!)' }
     ],
     position: { x: 2, y: 6 }
   },
   {
-    id: 'eff_8',
-    name: 'Compound Interest',
-    description: 'Bonuses compound with each other',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_8',
+    name: 'Harmonic Resonator VIII',
+    description: 'Massive resonance amplification (+400% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 8,
-    cost: 1000000000000000, // 1Qa
+    cost: 10000000000000000, // 10Qa
     requiredTotalQuanta: 10000000000, // 10B
-    prerequisites: ['eff_7'],
+    prerequisites: ['res_7'],
     effects: [
-      { type: ArtifactEffectType.COMPOUND_BONUS, value: 2, description: '+2% compound production per minute (no cap)' }
+      { type: ArtifactEffectType.RESONANCE, value: 400, description: '+400% per artifact from other branches (5x per artifact!)' }
     ],
     position: { x: 2, y: 7 }
   },
   {
-    id: 'eff_9',
-    name: 'Hyper Catalyst',
-    description: 'Dramatically boosts artifact effectiveness',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_9',
+    name: 'Harmonic Resonator IX',
+    description: 'Transcendent resonance cascade (+1000% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 9,
-    cost: 10000000000000000, // 10Qa
+    cost: 1000000000000000000, // 1Qi
     requiredTotalQuanta: 25000000000, // 25B
-    prerequisites: ['eff_8'],
+    prerequisites: ['res_8'],
     effects: [
-      { type: ArtifactEffectType.EFFECTIVENESS_BONUS, value: 75, description: 'All artifact bonuses are 75% more effective' }
+      { type: ArtifactEffectType.RESONANCE, value: 1000, description: '+1000% per artifact from other branches (11x per artifact!)' }
     ],
     position: { x: 2, y: 8 }
   },
   {
-    id: 'eff_10',
-    name: 'Infinite Compounding',
-    description: 'Bonuses grow exponentially without limit',
-    branch: ArtifactBranch.EFFICIENCY,
+    id: 'res_10',
+    name: 'Perfect Harmonic Convergence',
+    description: 'Ultimate resonance - artifacts achieve perfect synergy (+5000% per other artifact)',
+    branch: ArtifactBranch.RESONANCE,
     tier: 10,
-    cost: 100000000000000000, // 100Qa
+    cost: 100000000000000000000, // 100Qi
     requiredTotalQuanta: 50000000000, // 50B
-    prerequisites: ['eff_9'],
+    prerequisites: ['res_9'],
     effects: [
-      { type: ArtifactEffectType.COMPOUND_BONUS, value: 10, description: '+10% compound production per minute (no cap)' }
+      { type: ArtifactEffectType.RESONANCE, value: 5000, description: '+5000% per artifact from other branches (51x per artifact!)' }
     ],
     position: { x: 2, y: 9 }
   }

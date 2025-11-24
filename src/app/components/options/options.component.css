@@ -106,6 +106,40 @@
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
+.btn-extreme-danger {
+  background: linear-gradient(135deg, #7c2d12, #991b1b);
+  color: #fff;
+  border: 2px solid #dc2626;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-extreme-danger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.3), transparent);
+  animation: danger-shine 3s infinite;
+}
+
+@keyframes danger-shine {
+  0%, 100% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+}
+
+.btn-extreme-danger:hover {
+  background: linear-gradient(135deg, #991b1b, #7c2d12);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
+  transform: scale(1.02);
+}
+
 /* Messages */
 .message {
   padding: 0.75rem 1rem;
@@ -194,6 +228,15 @@
 
 .warning-box li {
   margin: 0.25rem 0;
+}
+
+.eternal-note {
+  color: #fbbf24 !important;
+  font-weight: 600 !important;
+  background: rgba(251, 191, 36, 0.1);
+  padding: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid #fbbf24;
 }
 
 /* Danger Zone */

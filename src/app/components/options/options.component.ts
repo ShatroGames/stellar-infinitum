@@ -8,7 +8,9 @@ import { AchievementService } from '../../services/achievement.service';
 import { DimensionService } from '../../services/dimension.service';
 import { QuantumService } from '../../services/quantum.service';
 import { ArtifactService } from '../../services/artifact.service';
+import { ProbabilityForgeService } from '../../services/probability-forge.service';
 import { TutorialService } from '../../services/tutorial.service';
+import { EternalProgress } from '../../services/eternal-progress';
 
 @Component({
   selector: 'app-options',
@@ -24,12 +26,18 @@ export class OptionsComponent {
   private dimensionService = inject(DimensionService);
   private quantumService = inject(QuantumService);
   private artifactService = inject(ArtifactService);
+  private probabilityForgeService = inject(ProbabilityForgeService);
   private tutorialService = inject(TutorialService);
+  private eternalProgress = inject(EternalProgress);
 
   showImportDialog = false;
   importText = '';
   exportMessage = '';
   importMessage = '';
+  
+  // Expose eternal stats for template
+  totalVictories = this.eternalProgress.totalVictories;
+  hasEverWon = this.eternalProgress.hasEverWon;
 
   exportSave(): void {
     try {
@@ -163,7 +171,40 @@ export class OptionsComponent {
         this.dimensionService.reset();
         this.quantumService.reset();
         this.artifactService.reset();
+        this.probabilityForgeService.reset();
         this.tutorialService.reset();
+        window.location.reload();
+      }
+    }
+  }
+  
+  fullReset(): void {
+    const hasWon = this.quantumService.hasWon();
+    const totalVictories = this.totalVictories();
+    
+    let message = 'FULL RESET: This will erase EVERYTHING including achievements and tutorials.\n';
+    if (totalVictories > 0) {
+      message += `\nYou have ${totalVictories} victory reset(s). This count will be preserved for future features.\n`;
+    }
+    message += '\nAre you absolutely sure?';
+    
+    if (confirm(message)) {
+      if (confirm('FINAL WARNING: This cannot be undone! Continue with full reset?')) {
+        // Record the reset in eternal progress
+        this.eternalProgress.recordReset();
+        
+        // Reset all game systems
+        this.gameService.resetGame();
+        this.skillTreeService.resetAll();
+        this.ascensionService.reset();
+        this.achievementService.reset();
+        this.dimensionService.reset();
+        this.quantumService.reset();
+        this.artifactService.reset();
+        this.probabilityForgeService.reset();
+        this.tutorialService.reset();
+        
+        // Reload to start fresh
         window.location.reload();
       }
     }

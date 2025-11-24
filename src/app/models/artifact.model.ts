@@ -1,13 +1,14 @@
 export enum ArtifactBranch {
   PRODUCTION = 'production',
   MULTIPLIER = 'multiplier',
-  EFFICIENCY = 'efficiency',
+  RESONANCE = 'resonance',
   CROSS_BRANCH = 'cross-branch'
 }
 
 export enum ArtifactEffectType {
   FLAT_PRODUCTION = 'flat_production',
   MULTIPLIER = 'multiplier',
+  RESONANCE = 'resonance',
   IDLE_BONUS = 'idle_bonus',
   SCALING_BONUS = 'scaling_bonus',
   STORED_QUANTA_BONUS = 'stored_quanta_bonus',

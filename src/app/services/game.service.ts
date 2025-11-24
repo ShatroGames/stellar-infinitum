@@ -3,6 +3,7 @@ import { Resource, INITIAL_RESOURCES } from '../models/resource.model';
 import { Decimal } from '../utils/numbers';
 import { SaveManagerService } from './save-manager.service';
 import { QuantumService } from './quantum.service';
+import { ProbabilityForgeService } from './probability-forge.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class GameService {
   private saveManager = inject(SaveManagerService);
   private injector = inject(Injector);
   private quantumService = inject(QuantumService);
+  private probabilityForgeService = inject(ProbabilityForgeService);
   private resources = signal<Map<string, Resource>>(new Map());
   private lastUpdate = Date.now();
   private gameLoopInterval?: number;
@@ -116,7 +118,15 @@ export class GameService {
 
     // If collapsed, update quantum system instead of regular resources
     if (this.quantumService.hasCollapsed()) {
-      this.quantumService.addQuanta(deltaTime);
+      const quantaPerSecond = this.quantumService.quantaPerSecond();
+      
+      // Update Probability Forge with time-based token generation
+      this.probabilityForgeService.checkUnlock(this.quantumService.totalQuantaGenerated());
+      this.probabilityForgeService.generateFateTokens(deltaTime);
+      
+      // Apply Probability Forge multiplier to Quanta generation
+      const forgeMultiplier = this.probabilityForgeService.totalMultiplier();
+      this.quantumService.addQuanta(deltaTime, forgeMultiplier);
     } else {
       // Apply production rates - only update if there's actual production
       this.resources.update(resourceMap => {
