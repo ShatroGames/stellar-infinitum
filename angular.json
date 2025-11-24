@@ -13,8 +13,6 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "baseHref": "/stellar-infinitum/",
-            "deployUrl": "/stellar-infinitum/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -24,11 +22,6 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "_redirects",
-                "input": ".",
-                "output": "/"
               }
             ],
             "styles": [
