@@ -22,14 +22,12 @@ import { ArtifactService } from './services/artifact.service';
 import { ProbabilityForgeService } from './services/probability-forge.service';
 import { TutorialService } from './services/tutorial.service';
 import { SkillTreeService } from './services/skill-tree.service';
-import { DevPanelComponent } from "./components/dev-panel/dev-panel.component";
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet, 
-    ResourceDisplayComponent, 
-    DevPanelComponent, 
+    ResourceDisplayComponent,
     SkillTreeComponent, 
     PrestigePanelComponent, 
     AscensionTreeComponent, 
