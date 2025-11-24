@@ -1,4 +1,4 @@
 # Cloudflare Pages redirect rules for Angular SPA
-# This ensures all routes are handled by index.html for client-side routing
-
-/stellar-infinitum/* /stellar-infinitum/index.html 200
+# Only redirect HTML navigation requests to index.html
+# Let static assets load normally
+/* /index.html 200

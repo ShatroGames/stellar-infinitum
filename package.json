@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build stellar-infinitum --base-href /stellar-infinitum/",
+    "build": "ng build stellar-infinitum",
+    "build:subpath": "ng build stellar-infinitum --base-href /stellar-infinitum/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
