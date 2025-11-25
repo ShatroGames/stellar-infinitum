@@ -1,8 +1,8 @@
-<div class="game-container">
+﻿<div class="game-container">
   <header class="game-header">
     <div class="header-content">
       <div class="logo-section">
-        <div class="logo-icon">?</div>
+        <div class="logo-icon">✦</div>
         <div class="title-wrapper">
           <h1>{{ title() }}</h1>
           <p class="subtitle">An Incremental Journey Through the Stars</p>
@@ -11,13 +11,13 @@
       <div class="header-stats">
         @if (ascensionService.totalPoints() > 0) {
           <div class="stat-badge stellar">
-            <span class="stat-icon">?</span>
+            <span class="stat-icon">⭐</span>
             <span class="stat-value">{{ ascensionService.totalPoints() }}</span>
           </div>
         }
         @if (dimensionService.totalEchoFragments() > 0) {
           <div class="stat-badge dimensional">
-            <span class="stat-icon">?</span>
+            <span class="stat-icon">◈</span>
             <span class="stat-value">{{ dimensionService.totalEchoFragments() }}</span>
           </div>
         }
@@ -41,14 +41,14 @@
               class="tab-button" 
               [class.active]="activeTab() === 'skill'"
               (click)="activeTab.set('skill')">
-              ? Stellar Network
+              ✪ Stellar Network
             </button>
             @if (ascensionService.totalPoints() > 0) {
               <button 
                 class="tab-button" 
                 [class.active]="activeTab() === 'ascension'"
                 (click)="activeTab.set('ascension')">
-                ? Stellar Nexus
+                ⭐ Stellar Nexus
               </button>
             }
             @if (ascensionService.isTreeComplete()) {
@@ -56,14 +56,14 @@
                 class="tab-button" 
                 [class.active]="activeTab() === 'dimensions'"
                 (click)="activeTab.set('dimensions')">
-                ? Dimensional Echoes
+                ◈ Dimensional Echoes
               </button>
               @if (canAccessCollapse()) {
                 <button 
                   class="tab-button collapse-trigger" 
                   [class.active]="activeTab() === 'collapse'"
                   (click)="activeTab.set('collapse')">
-                  ?? Cosmic Collapse
+                  🎆 Cosmic Collapse
                 </button>
               }
             }
@@ -73,14 +73,14 @@
               class="tab-button quantum-tab" 
               [class.active]="activeTab() === 'quantum'"
               (click)="activeTab.set('quantum')">
-              ? Quantum Weaving
+              ⚛ Quantum Weaving
             </button>
             @if (artifactService.systemUnlocked()) {
               <button 
                 class="tab-button artifact-tab" 
                 [class.active]="activeTab() === 'artifacts'"
                 (click)="activeTab.set('artifacts')">
-                ?? Artifacts
+                🗼 Artifacts
               </button>
             }
             @if (probabilityForgeService.systemUnlocked()) {
@@ -88,7 +88,7 @@
                 class="tab-button forge-tab" 
                 [class.active]="activeTab() === 'forge'"
                 (click)="activeTab.set('forge')">
-                ?? Probability Forge
+                🎲 Probability Forge
               </button>
             }
           }
@@ -96,13 +96,13 @@
               class="tab-button" 
               [class.active]="activeTab() === 'achievements'"
               (click)="activeTab.set('achievements')">
-              ?? Achievements
+              🏅 Achievements
             </button>
           <button 
             class="tab-button" 
             [class.active]="activeTab() === 'options'"
             (click)="activeTab.set('options')">
-            ? Options
+            ⚙ Options
           </button>
         </div>
         <div class="tabs-content">
@@ -132,20 +132,20 @@
   <footer class="game-footer">
     <div class="footer-content">
       <div class="footer-left">
-        <div class="footer-logo">? Stellar Infinitum</div>
+        <div class="footer-logo">✦ Stellar Infinitum</div>
         <p class="footer-tagline">Reach for the infinite</p>
       </div>
       <div class="footer-center">
         <p class="copyright">&copy; {{ currentYear }} Shatro</p>
         <p class="version">v1.0.0
-        <span class="separator"> � </span>
+        <span class="separator"> • </span>
         <a href="https://shatro.games" target="_blank" class="footer-link">shatro.games</a>
         </p>
       </div>
       <div class="footer-right">
         <div class="footer-links">
           <a href="https://www.patreon.com/shatro" target="_blank" class="footer-link">Patreon</a>
-          <span class="separator">�</span>
+          <span class="separator">•</span>
           <a href="https://github.com/ShatroGames" target="_blank" class="footer-link">GitHub</a>
         </div>
       </div>

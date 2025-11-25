@@ -3,23 +3,20 @@
      [class.maxed]="isMaxed()"
      [class.can-upgrade]="canUpgrade()"
      [class.has-prerequisites]="hasPrerequisites() && !skill().unlocked"
+     [class.choice-left]="skill().choiceGroup === 'tier1_choice1' && skill().id.includes('left')"
+     [class.choice-right]="skill().choiceGroup === 'tier1_choice1' && skill().id.includes('right')"
+     [class.tier2-choice-left]="skill().choiceGroup === 'tier2_choice1' && skill().id.includes('left')"
+     [class.tier2-choice-right]="skill().choiceGroup === 'tier2_choice1' && skill().id.includes('right')"
+     [class.tier3-choice-left]="skill().choiceGroup === 'tier3_choice1' && skill().id.includes('left')"
+     [class.tier3-choice-right]="skill().choiceGroup === 'tier3_choice1' && skill().id.includes('right')"
+     [class.synergy-left]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't1_choice_left'"
+     [class.synergy-right]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't1_choice_right'"
+     [class.tier2-synergy-left]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't2_choice_left'"
+     [class.tier2-synergy-right]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't2_choice_right'"
+     [class.tier3-synergy-left]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't3_choice_left'"
+     [class.tier3-synergy-right]="skill().effect.type === 'synergy' && skill().effect.synergyWith === 't3_choice_right'"
+     [class.locked-by-choice]="skill().lockedByChoice"
      (click)="onUpgrade()">
-  @if (hasPrerequisites() && !skill().unlocked) {
-    <div class="prerequisites-indicator">
-      <div class="prereq-text">
-        @if (allPrerequisitesMet()) {
-          <span class="prereq-ready">Prerequisites met</span>
-        } @else {
-          <span class="prereq-needed">↑ Requires:</span>
-          @for (prereq of prerequisites(); track prereq.name) {
-            <div class="prereq-item" [class.met]="prereq.maxed">
-              {{ prereq.maxed ? '✓' : '○' }} {{ prereq.name }}
-            </div>
-          }
-        }
-      </div>
-    </div>
-  }
   <div class="skill-header">
     <h3>{{ skill().name }}</h3>
     <span class="skill-level">{{ skill().level }}/{{ skill().maxLevel }}</span>
@@ -35,7 +32,10 @@
   @if (isMaxed()) {
     <div class="maxed-badge">MAX</div>
   }
-  @if (!skill().unlocked) {
+  @if (!skill().unlocked && !skill().lockedByChoice) {
     <div class="locked-badge">⊗ LOCKED</div>
+  }
+  @if (skill().lockedByChoice) {
+    <div class="locked-badge">🚫 LOCKED BY CHOICE</div>
   }
 </div>

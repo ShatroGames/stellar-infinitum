@@ -18,7 +18,8 @@ export class TutorialService {
       title: 'Welcome to Stellar Infinitum!',
       content: [
         '⚡ Click on skill nodes to upgrade them and increase Energy production',
-        '🎯 Max out all skills and reach the Energy goal to unlock Warp',
+        '🎯 Reach the Energy goal to unlock Warp',
+        '🔀 Make strategic choices - some paths lock others permanently!',
         '✦ Warping resets progress but doubles your production multiplier',
         '📈 Progress through 5 expanding tiers, each adding new skills'
       ],

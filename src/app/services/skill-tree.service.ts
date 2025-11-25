@@ -89,7 +89,7 @@ export class SkillTreeService {
   }
   canUpgrade(skillId: string): boolean {
     const skill = this.skills().get(skillId);
-    if (!skill || !skill.unlocked || skill.level >= skill.maxLevel) {
+    if (!skill || !skill.unlocked || skill.level >= skill.maxLevel || skill.lockedByChoice) {
       return false;
     }
     const cost = this.getUpgradeCost(skillId);
@@ -103,6 +103,18 @@ export class SkillTreeService {
       return cached.cost;
     }
     let cost = skill.cost.times(Decimal.pow(skill.costMultiplier, skill.level)).floor();
+    
+    let costReduction = 0;
+    this.skills().forEach(s => {
+      if (s.effect.type === 'cost_reduction') {
+        costReduction += s.effect.value * s.level;
+      }
+    });
+    
+    if (costReduction > 0) {
+      cost = cost.times(1 - Math.min(costReduction, 0.75));
+    }
+    
     const ascensionReduction = this.ascensionService.costReduction();
     if (ascensionReduction > 0) {
       cost = cost.times(1 - ascensionReduction);
@@ -127,6 +139,16 @@ export class SkillTreeService {
         const newMap = new Map(skillMap);
         const updatedSkill = { ...skill, level: skill.level + 1 };
         newMap.set(skillId, updatedSkill);
+        
+        if (skill.level === 0 && skill.mutuallyExclusive) {
+          skill.mutuallyExclusive.forEach(excludedId => {
+            const excludedSkill = newMap.get(excludedId);
+            if (excludedSkill) {
+              newMap.set(excludedId, { ...excludedSkill, lockedByChoice: true, unlocked: false });
+            }
+          });
+        }
+        
         return newMap;
       });
       this.applySkillEffect(skill);
@@ -164,11 +186,21 @@ export class SkillTreeService {
   recalculateProduction(): void {
     this.productionCache = null;
     let baseProduction = 0;
+    let xpBoostMultiplier = 1;
+    let costReductionTotal = 0;
+    
     this.skills().forEach(skill => {
       if (skill.effect.type === 'production' && skill.effect.resource === 'knowledge') {
         baseProduction += skill.effect.value * skill.level;
       }
+      if (skill.effect.type === 'xp_boost' && skill.effect.resource === 'knowledge') {
+        xpBoostMultiplier += skill.effect.value * skill.level;
+      }
+      if (skill.effect.type === 'cost_reduction') {
+        costReductionTotal += skill.effect.value * skill.level;
+      }
     });
+    
     let totalMultiplier = 1;
     this.skills().forEach(skill => {
       if (skill.effect.type === 'multiplier' && skill.effect.resource === 'knowledge') {
@@ -187,7 +219,19 @@ export class SkillTreeService {
         }
         totalMultiplier *= Math.pow(effectValue, skill.level);
       }
+      if (skill.effect.type === 'synergy' && skill.effect.resource === 'knowledge' && skill.effect.synergyWith) {
+        const synergySkill = this.skills().get(skill.effect.synergyWith);
+        if (synergySkill && synergySkill.level > 0) {
+          const synergyBonus = 0.05 * synergySkill.level;
+          let effectValue = skill.effect.value * (1 + synergyBonus);
+          totalMultiplier *= Math.pow(effectValue, skill.level);
+        } else {
+          totalMultiplier *= Math.pow(skill.effect.value, skill.level);
+        }
+      }
     });
+    
+    totalMultiplier *= xpBoostMultiplier;
     const prestigeBonus = this.prestige().currentRunPrestigeBonus;
     totalMultiplier *= prestigeBonus;
     const productionBoost = this.ascensionService.productionBoost();
@@ -254,7 +298,7 @@ export class SkillTreeService {
     }
     return skill.prerequisites.every(prereqId => {
       const prereq = this.skills().get(prereqId);
-      return prereq && prereq.level >= prereq.maxLevel;
+      return prereq && prereq.level >= 1;
     });
   }
   autoBuySkills(ascensionService?: any): void {
@@ -379,11 +423,13 @@ export class SkillTreeService {
     if (!points || points.amount.lt(requiredPoints)) {
       return false;
     }
-    return this.areAllSkillsMaxed();
+    return true;
   }
   areAllSkillsMaxed(): boolean {
     const skills = Array.from(this.skills().values());
-    return skills.length > 0 && skills.every(skill => skill.level >= skill.maxLevel);
+    return skills.length > 0 && skills.every(skill => 
+      skill.level >= skill.maxLevel || skill.lockedByChoice
+    );
   }
   getAscensionProgress(): { current: Decimal; required: Decimal; percentage: number } {
     const currentTierData = SKILL_TREE_TIERS.find(t => t.id === this.prestige().currentTier);

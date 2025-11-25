@@ -53,9 +53,6 @@
     <div class="warp-requirements">
       <p class="requirements-title">Requirements to Warp:</p>
       <ul>
-        <li [class.complete]="allSkillsMaxed()">
-          {{ allSkillsMaxed() ? '✓' : '○' }} Max out all systems
-        </li>
         <li [class.complete]="progress().percentage >= 100">
           {{ progress().percentage >= 100 ? '✓' : '○' }} 
           Reach {{ formatNumber(progress().required) }} Energy

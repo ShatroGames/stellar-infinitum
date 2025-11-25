@@ -8,14 +8,18 @@ export interface SkillNode {
   cost: Decimal;
   costMultiplier: number;
   unlocked: boolean;
-  prerequisites: string[]; // IDs of prerequisite skills
-  position: { x: number; y: number }; // For visual layout
+  prerequisites: string[];
+  position: { x: number; y: number };
   effect: SkillEffect;
+  mutuallyExclusive?: string[];
+  lockedByChoice?: boolean;
+  choiceGroup?: string;
 }
 export interface SkillEffect {
-  type: 'production' | 'multiplier' | 'unlock' | 'automation';
+  type: 'production' | 'multiplier' | 'unlock' | 'automation' | 'cost_reduction' | 'xp_boost' | 'synergy';
   value: number;
   resource?: string;
+  synergyWith?: string;
 }
 export interface SkillTreeTier {
   id: number;

@@ -24,11 +24,11 @@ export const TIER_1_SKILLS: SkillNode[] = [
     description: '1.2x Energy multiplier',
     level: 0,
     maxLevel: 10,
-    cost: new Decimal(1000), // ~5s at 200/s
+    cost: new Decimal(1000),
     costMultiplier: 1.35,
     unlocked: false,
     prerequisites: ['t1_root'],
-    position: { x: -1, y: 1 },
+    position: { x: -1.5, y: 1 },
     effect: {
       type: 'multiplier',
       value: 1.2,
@@ -41,14 +41,122 @@ export const TIER_1_SKILLS: SkillNode[] = [
     description: '1.2x Energy multiplier',
     level: 0,
     maxLevel: 10,
-    cost: new Decimal(8000), // ~6s at 1,238/s
+    cost: new Decimal(8000),
     costMultiplier: 1.35,
     unlocked: false,
     prerequisites: ['t1_root'],
-    position: { x: 1, y: 1 },
+    position: { x: 1.5, y: 1 },
     effect: {
       type: 'multiplier',
       value: 1.2,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't1_middle',
+    name: 'Stabilizer',
+    description: 'Adds +400 Energy/s',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(3500),
+    costMultiplier: 1.3,
+    unlocked: false,
+    prerequisites: ['t1_right', 't1_left'],
+    position: { x: 0, y: 1.5 },
+    effect: {
+      type: 'production',
+      value: 400,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't1_choice_left',
+    name: 'Efficient Research',
+    description: 'Reduces all node costs by 5% per level',
+    level: 0,
+    maxLevel: 5,
+    cost: new Decimal(25000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t1_middle'],
+    position: { x: -2.5, y: 2.5 },
+    mutuallyExclusive: ['t1_choice_right'],
+    choiceGroup: 'tier1_choice1',
+    effect: {
+      type: 'cost_reduction',
+      value: 0.05,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't1_choice_right',
+    name: 'Rapid Advancement',
+    description: '+50% Energy production, but costs increase by 20%',
+    level: 0,
+    maxLevel: 5,
+    cost: new Decimal(25000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t1_middle'],
+    position: { x: 2.5, y: 2.5 },
+    mutuallyExclusive: ['t1_choice_left'],
+    choiceGroup: 'tier1_choice1',
+    effect: {
+      type: 'xp_boost',
+      value: 0.5,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't1_left_synergy',
+    name: 'Harmonic Amplifier',
+    description: '1.15x multiplier, +5% per Efficient Research level',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(80000),
+    costMultiplier: 1.4,
+    unlocked: false,
+    prerequisites: ['t1_choice_left'],
+    position: { x: -3, y: 3.5 },
+    effect: {
+      type: 'synergy',
+      value: 1.15,
+      resource: 'knowledge',
+      synergyWith: 't1_choice_left'
+    }
+  },
+  {
+    id: 't1_right_synergy',
+    name: 'Exponential Surge',
+    description: '1.25x multiplier, +3% per Rapid Advancement level',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(80000),
+    costMultiplier: 1.4,
+    unlocked: false,
+    prerequisites: ['t1_choice_right'],
+    position: { x: 3, y: 3.5 },
+    effect: {
+      type: 'synergy',
+      value: 1.25,
+      resource: 'knowledge',
+      synergyWith: 't1_choice_right'
+    }
+  },
+  {
+    id: 't1_middle_path',
+    name: 'Focused Production',
+    description: 'Adds +800 Energy/s',
+    level: 0,
+    maxLevel: 10,
+    cost: new Decimal(50000),
+    costMultiplier: 1.35,
+    unlocked: false,
+    prerequisites: ['t1_middle'],
+    position: { x: 0, y: 3 },
+    effect: {
+      type: 'production',
+      value: 800,
       resource: 'knowledge'
     }
   },
@@ -58,11 +166,11 @@ export const TIER_1_SKILLS: SkillNode[] = [
     description: '1.3x Energy multiplier',
     level: 0,
     maxLevel: 8,
-    cost: new Decimal(60000), // ~8s at 7,663/s
+    cost: new Decimal(150000),
     costMultiplier: 1.4,
     unlocked: false,
-    prerequisites: ['t1_left', 't1_right'],
-    position: { x: 0, y: 2 },
+    prerequisites: ['t1_middle_path'],
+    position: { x: 0, y: 4 },
     effect: {
       type: 'multiplier',
       value: 1.3,
@@ -78,10 +186,10 @@ export const TIER_2_SKILLS: SkillNode[] = [
     description: '1.25x Energy multiplier',
     level: 0,
     maxLevel: 10,
-    cost: new Decimal(500000), // ~8s at 62,530/s
+    cost: new Decimal(500000),
     costMultiplier: 1.4,
     unlocked: false,
-    prerequisites: ['t1_left'],
+    prerequisites: ['t1_middle'],
     position: { x: -2.5, y: 2 },
     effect: {
       type: 'multiplier',
@@ -95,14 +203,190 @@ export const TIER_2_SKILLS: SkillNode[] = [
     description: '1.25x Energy multiplier',
     level: 0,
     maxLevel: 10,
-    cost: new Decimal(5000000), // ~9s at 582,155/s
+    cost: new Decimal(5000000),
     costMultiplier: 1.4,
     unlocked: false,
-    prerequisites: ['t1_right'],
+    prerequisites: ['t1_middle'],
     position: { x: 2.5, y: 2 },
     effect: {
       type: 'multiplier',
       value: 1.25,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_middle',
+    name: 'Energy Matrix',
+    description: 'Adds +2000 Energy/s',
+    level: 0,
+    maxLevel: 9,
+    cost: new Decimal(2000000),
+    costMultiplier: 1.38,
+    unlocked: false,
+    prerequisites: ['t1_final'],
+    position: { x: 0, y: 4.5 },
+    effect: {
+      type: 'production',
+      value: 2000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_choice_left',
+    name: 'Parallel Processing',
+    description: '+100% to all production nodes',
+    level: 0,
+    maxLevel: 5,
+    cost: new Decimal(15000000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t2_amplifier_b', 't2_middle'],
+    position: { x: -3.5, y: 5 },
+    mutuallyExclusive: ['t2_choice_right'],
+    choiceGroup: 'tier2_choice1',
+    effect: {
+      type: 'xp_boost',
+      value: 1.0,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_choice_right',
+    name: 'Quantum Efficiency',
+    description: 'Multipliers are 50% more effective',
+    level: 0,
+    maxLevel: 5,
+    cost: new Decimal(15000000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t2_generator_b', 't2_middle'],
+    position: { x: 3.5, y: 5 },
+    mutuallyExclusive: ['t2_choice_left'],
+    choiceGroup: 'tier2_choice1',
+    effect: {
+      type: 'xp_boost',
+      value: 0.5,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_left_branch',
+    name: 'Mass Fabrication',
+    description: 'Adds +5000 Energy/s',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(40000000),
+    costMultiplier: 1.42,
+    unlocked: false,
+    prerequisites: ['t2_middle'],
+    position: { x: -4.5, y: 6 },
+    effect: {
+      type: 'production',
+      value: 5000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_right_branch',
+    name: 'Exponential Core',
+    description: '1.35x Energy multiplier',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(40000000),
+    costMultiplier: 1.42,
+    unlocked: false,
+    prerequisites: ['t2_middle'],
+    position: { x: 4.5, y: 6 },
+    effect: {
+      type: 'multiplier',
+      value: 1.35,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_left_synergy',
+    name: 'Production Overload',
+    description: '1.2x multiplier, +8% per Parallel Processing level',
+    level: 0,
+    maxLevel: 7,
+    cost: new Decimal(80000000),
+    costMultiplier: 1.45,
+    unlocked: false,
+    prerequisites: ['t2_left_branch', "t2_right_branch"],
+    position: { x: -5, y: 7 },
+    effect: {
+      type: 'synergy',
+      value: 1.2,
+      resource: 'knowledge',
+      synergyWith: 't2_choice_left'
+    }
+  },
+  {
+    id: 't2_right_synergy',
+    name: 'Efficiency Cascade',
+    description: '1.4x multiplier, +6% per Quantum Efficiency level',
+    level: 0,
+    maxLevel: 7,
+    cost: new Decimal(80000000),
+    costMultiplier: 1.45,
+    unlocked: false,
+    prerequisites: ['t2_right_branch'],
+    position: { x: 5, y: 7 },
+    effect: {
+      type: 'synergy',
+      value: 1.4,
+      resource: 'knowledge',
+      synergyWith: 't2_choice_right'
+    }
+  },
+  {
+    id: 't2_middle_path',
+    name: 'Energy Condenser',
+    description: 'Adds +8000 Energy/s',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(100000000),
+    costMultiplier: 1.4,
+    unlocked: false,
+    prerequisites: ['t2_middle'],
+    position: { x: 0, y: 6 },
+    effect: {
+      type: 'production',
+      value: 8000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_convergence',
+    name: 'Unified Field',
+    description: '1.3x Energy multiplier',
+    level: 0,
+    maxLevel: 7,
+    cost: new Decimal(250000000),
+    costMultiplier: 1.48,
+    unlocked: false,
+    prerequisites: ['t2_middle_path'],
+    position: { x: 0, y: 7.5 },
+    effect: {
+      type: 'multiplier',
+      value: 1.3,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't2_final',
+    name: 'Power Synthesis',
+    description: '1.35x Energy multiplier',
+    level: 0,
+    maxLevel: 6,
+    cost: new Decimal(500000000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t2_convergence'],
+    position: { x: 0, y: 8.5 },
+    effect: {
+      type: 'multiplier',
+      value: 1.35,
       resource: 'knowledge'
     }
   }
@@ -115,11 +399,11 @@ export const TIER_3_SKILLS: SkillNode[] = [
     description: '1.3x Energy multiplier',
     level: 0,
     maxLevel: 8,
-    cost: new Decimal(50000000), // ~9s at 5.4M/s
+    cost: new Decimal(1000000000),
     costMultiplier: 1.45,
     unlocked: false,
-    prerequisites: ['t2_amplifier_b'],
-    position: { x: -3.5, y: 3 },
+    prerequisites: ['t2_final'],
+    position: { x: -2, y: 9 },
     effect: {
       type: 'multiplier',
       value: 1.3,
@@ -132,11 +416,11 @@ export const TIER_3_SKILLS: SkillNode[] = [
     description: '1.3x Energy multiplier',
     level: 0,
     maxLevel: 8,
-    cost: new Decimal(400000000), // ~9s at 44M/s
+    cost: new Decimal(1000000000),
     costMultiplier: 1.45,
     unlocked: false,
-    prerequisites: ['t2_generator_b'],
-    position: { x: 3.5, y: 3 },
+    prerequisites: ['t2_final'],
+    position: { x: 2, y: 9 },
     effect: {
       type: 'multiplier',
       value: 1.3,
@@ -144,19 +428,178 @@ export const TIER_3_SKILLS: SkillNode[] = [
     }
   },
   {
-    id: 't3_convergence',
-    name: 'Convergence Hub',
-    description: '1.4x Energy multiplier',
+    id: 't3_middle',
+    name: 'Harmonic Resonator',
+    description: 'Adds +20000 Energy/s',
+    level: 0,
+    maxLevel: 8,
+    cost: new Decimal(3000000000),
+    costMultiplier: 1.42,
+    unlocked: false,
+    prerequisites: ['t2_final'],
+    position: { x: 0, y: 9.5 },
+    effect: {
+      type: 'production',
+      value: 20000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_choice_left',
+    name: 'Temporal Compression',
+    description: 'All costs scale 10% slower',
+    level: 0,
+    maxLevel: 4,
+    cost: new Decimal(15000000000),
+    costMultiplier: 1.55,
+    unlocked: false,
+    prerequisites: ['t3_amplifier_c', 't3_middle'],
+    position: { x: -3.5, y: 10.5 },
+    mutuallyExclusive: ['t3_choice_right'],
+    choiceGroup: 'tier3_choice1',
+    effect: {
+      type: 'cost_reduction',
+      value: 0.1,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_choice_right',
+    name: 'Dimensional Breakthrough',
+    description: '+200% base multiplier effectiveness',
+    level: 0,
+    maxLevel: 4,
+    cost: new Decimal(15000000000),
+    costMultiplier: 1.55,
+    unlocked: false,
+    prerequisites: ['t3_generator_c', 't3_middle'],
+    position: { x: 3.5, y: 10.5 },
+    mutuallyExclusive: ['t3_choice_left'],
+    choiceGroup: 'tier3_choice1',
+    effect: {
+      type: 'xp_boost',
+      value: 2.0,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_left_branch',
+    name: 'Stabilized Field',
+    description: 'Adds +50000 Energy/s',
     level: 0,
     maxLevel: 7,
-    cost: new Decimal(3500000000), // ~10s at 359M/s
+    cost: new Decimal(50000000000),
+    costMultiplier: 1.48,
+    unlocked: false,
+    prerequisites: ['t3_amplifier_c'],
+    position: { x: -4.5, y: 11.5 },
+    effect: {
+      type: 'production',
+      value: 50000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_right_branch',
+    name: 'Multiplicative Cascade',
+    description: '1.45x Energy multiplier',
+    level: 0,
+    maxLevel: 7,
+    cost: new Decimal(50000000000),
+    costMultiplier: 1.48,
+    unlocked: false,
+    prerequisites: ['t3_amplifier_c'],
+    position: { x: 4.5, y: 11.5 },
+    effect: {
+      type: 'multiplier',
+      value: 1.45,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_left_synergy',
+    name: 'Efficient Compression',
+    description: '1.25x multiplier, +10% per Temporal Compression level',
+    level: 0,
+    maxLevel: 6,
+    cost: new Decimal(150000000000),
     costMultiplier: 1.5,
     unlocked: false,
-    prerequisites: ['t3_amplifier_c', 't3_generator_c'],
-    position: { x: 0, y: 3.5 },
+    prerequisites: ['t3_convergence'],
+    position: { x: -5.5, y: 12.5 },
+    effect: {
+      type: 'synergy',
+      value: 1.25,
+      resource: 'knowledge',
+      synergyWith: 't3_choice_left'
+    }
+  },
+  {
+    id: 't3_right_synergy',
+    name: 'Breakthrough Amplifier',
+    description: '1.5x multiplier, +8% per Dimensional Breakthrough level',
+    level: 0,
+    maxLevel: 6,
+    cost: new Decimal(150000000000),
+    costMultiplier: 1.5,
+    unlocked: false,
+    prerequisites: ['t3_convergence'],
+    position: { x: 5.5, y: 12.5 },
+    effect: {
+      type: 'synergy',
+      value: 1.5,
+      resource: 'knowledge',
+      synergyWith: 't3_choice_right'
+    }
+  },
+  {
+    id: 't3_middle_path',
+    name: 'Resonance Amplifier',
+    description: 'Adds +100000 Energy/s',
+    level: 0,
+    maxLevel: 7,
+    cost: new Decimal(100000000000),
+    costMultiplier: 1.45,
+    unlocked: false,
+    prerequisites: ['t3_middle'],
+    position: { x: 0, y: 11 },
+    effect: {
+      type: 'production',
+      value: 100000,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_convergence',
+    name: 'Unified Resonance',
+    description: '1.4x Energy multiplier',
+    level: 0,
+    maxLevel: 6,
+    cost: new Decimal(400000000000),
+    costMultiplier: 1.52,
+    unlocked: false,
+    prerequisites: ['t3_middle_path'],
+    position: { x: 0, y: 12 },
     effect: {
       type: 'multiplier',
       value: 1.4,
+      resource: 'knowledge'
+    }
+  },
+  {
+    id: 't3_final',
+    name: 'Synthesis Nexus',
+    description: '1.45x Energy multiplier',
+    level: 0,
+    maxLevel: 5,
+    cost: new Decimal(800000000000),
+    costMultiplier: 1.55,
+    unlocked: false,
+    prerequisites: ['t3_convergence'],
+    position: { x: 0, y: 13 },
+    effect: {
+      type: 'multiplier',
+      value: 1.45,
       resource: 'knowledge'
     }
   }

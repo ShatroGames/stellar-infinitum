@@ -47,6 +47,182 @@
   box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
   transform: translateY(-2px);
 }
+.skill-node.choice-left {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+.skill-node.choice-left.unlocked {
+  border-color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+}
+.skill-node.choice-left.can-upgrade {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+.skill-node.choice-right {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+.skill-node.choice-right.unlocked {
+  border-color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+}
+.skill-node.choice-right.can-upgrade {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+}
+.skill-node.tier2-choice-left {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+.skill-node.tier2-choice-left.unlocked {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+}
+.skill-node.tier2-choice-left.can-upgrade {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+.skill-node.tier2-choice-right {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+.skill-node.tier2-choice-right.unlocked {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+}
+.skill-node.tier2-choice-right.can-upgrade {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+.skill-node.locked-by-choice {
+  opacity: 0.2;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+.skill-node.locked-by-choice:hover {
+  transform: none;
+}
+.skill-node.synergy-left {
+  border-color: #60a5fa;
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.2);
+}
+.skill-node.synergy-left.unlocked {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+.skill-node.synergy-left.can-upgrade {
+  border-color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+.skill-node.synergy-right {
+  border-color: #f87171;
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.2);
+}
+.skill-node.synergy-right.unlocked {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+.skill-node.synergy-right.can-upgrade {
+  border-color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+.skill-node.tier2-synergy-left {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.05);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.2);
+}
+.skill-node.tier2-synergy-left.unlocked {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+.skill-node.tier2-synergy-left.can-upgrade {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+.skill-node.tier2-synergy-right {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.05);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.2);
+}
+.skill-node.tier2-synergy-right.unlocked {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+.skill-node.tier2-synergy-right.can-upgrade {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+.skill-node.tier3-choice-left {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.08);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+}
+.skill-node.tier3-choice-left.unlocked {
+  border-color: #c084fc;
+  background: rgba(168, 85, 247, 0.12);
+}
+.skill-node.tier3-choice-left.can-upgrade {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+}
+.skill-node.tier3-choice-right {
+  border-color: #ec4899;
+  background: rgba(236, 72, 153, 0.08);
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.3);
+}
+.skill-node.tier3-choice-right.unlocked {
+  border-color: #f472b6;
+  background: rgba(236, 72, 153, 0.12);
+}
+.skill-node.tier3-choice-right.can-upgrade {
+  border-color: #ec4899;
+  background: rgba(236, 72, 153, 0.15);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
+}
+.skill-node.tier3-synergy-left {
+  border-color: #c084fc;
+  background: rgba(168, 85, 247, 0.05);
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.2);
+}
+.skill-node.tier3-synergy-left.unlocked {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+}
+.skill-node.tier3-synergy-left.can-upgrade {
+  border-color: #c084fc;
+  background: rgba(168, 85, 247, 0.12);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+.skill-node.tier3-synergy-right {
+  border-color: #f472b6;
+  background: rgba(236, 72, 153, 0.05);
+  box-shadow: 0 0 6px rgba(236, 72, 153, 0.2);
+}
+.skill-node.tier3-synergy-right.unlocked {
+  border-color: #ec4899;
+  background: rgba(236, 72, 153, 0.1);
+}
+.skill-node.tier3-synergy-right.can-upgrade {
+  border-color: #f472b6;
+  background: rgba(236, 72, 153, 0.12);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+}
 .skill-header {
   display: flex;
   justify-content: space-between;
