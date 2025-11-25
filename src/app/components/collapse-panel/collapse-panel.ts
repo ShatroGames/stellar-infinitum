@@ -44,6 +44,17 @@ export class CollapsePanel {
   // Check if all dimensions are maxed
   dimensionsMaxed = computed(() => {
     const dimensions = this.dimensionService.dimensions();
+    const allDimensions = ['void', 'crystal', 'quantum', 'temporal', 'prism'];
+    
+    // First check: All 5 dimensions must be unlocked
+    const allUnlocked = allDimensions.every(id => {
+      const dim = dimensions.get(id);
+      return dim?.unlocked ?? false;
+    });
+    
+    if (!allUnlocked) return false;
+    
+    // Second check: All nodes in all dimensions must be maxed
     return Array.from(dimensions.values()).every(dim => 
       dim.nodes.every(node => node.level >= node.maxLevel)
     );

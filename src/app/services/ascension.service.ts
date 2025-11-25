@@ -20,10 +20,6 @@ export class AscensionService {
   nodes = computed(() => this.state().nodes);
 
   // Computed effects
-  hasAutoBuy = computed(() => this.hasNode('auto_buy'));
-  
-  hasAutoWarp = computed(() => this.hasNode('auto_warp'));
-  
   bulkBuyAmount = computed(() => {
     if (this.hasNode('bulk_buy_max')) return 999;
     if (this.hasNode('bulk_buy_10')) return 10;
@@ -52,7 +48,7 @@ export class AscensionService {
   });
 
   startingEnergy = computed(() => {
-    return this.hasNode('start_energy') ? new Decimal(1000) : new Decimal(10);
+    return this.hasNode('start_energy') ? new Decimal(1000000) : new Decimal(10);
   });
   
   // Check if all ascension tree nodes are purchased (unlocks dimensions)

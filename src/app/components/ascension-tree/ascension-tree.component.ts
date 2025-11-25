@@ -42,10 +42,6 @@ export class AscensionTreeComponent {
   getEffectDescription(node: AscensionNode): string {
     const effect = node.effect;
     switch (effect.type) {
-      case 'auto_buy':
-        return 'Enables automatic purchases';
-      case 'auto_warp':
-        return 'Auto-warp through Tiers 1-4';
       case 'bulk_buy':
         return effect.value === 999 ? 'Buy MAX levels' : `Buy ${effect.value} levels at once`;
       case 'cost_reduction':

@@ -645,6 +645,9 @@ export class SkillTreeService {
     this.savePrestige();
     this.saveSkills();
 
+    // Start tracking time for speed achievement (after everything is reset)
+    this.achievementService?.onWarpStart();
+
     return true;
   }
 

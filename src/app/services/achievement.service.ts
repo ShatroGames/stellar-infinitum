@@ -163,6 +163,9 @@ export class AchievementService {
     this.loadSaveDataInternal();
     this.startTracking();
     
+    // Initialize warp timer for current run
+    this.warpStartTime = Date.now();
+    
     // Welcome achievement
     setTimeout(() => this.checkAchievement('welcome'), 1000);
   }
