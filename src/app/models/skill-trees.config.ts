@@ -1,7 +1,5 @@
 import { SkillNode, SkillTreeTier } from './skill-node.model';
 import { Decimal } from '../utils/numbers';
-
-// Tier 1: Basic foundation (4 nodes) - Diamond shape
 export const TIER_1_SKILLS: SkillNode[] = [
   {
     id: 't1_root',
@@ -72,12 +70,8 @@ export const TIER_1_SKILLS: SkillNode[] = [
     }
   }
 ];
-
-// Tier 2: Adds 2 more nodes (6 total) - Same 4 from Tier 1 + 2 new nodes
 export const TIER_2_SKILLS: SkillNode[] = [
-  // Include all Tier 1 nodes
   ...TIER_1_SKILLS,
-  // New Tier 2 nodes
   {
     id: 't2_amplifier_b',
     name: 'Advanced Amplifier',
@@ -113,12 +107,8 @@ export const TIER_2_SKILLS: SkillNode[] = [
     }
   }
 ];
-
-// Tier 3: Adds 3 more nodes (9 total) - Tier 2 nodes + 3 new nodes
 export const TIER_3_SKILLS: SkillNode[] = [
-  // Include all Tier 2 nodes (which already includes Tier 1)
   ...TIER_2_SKILLS,
-  // New Tier 3 nodes
   {
     id: 't3_amplifier_c',
     name: 'Resonance Amplifier',
@@ -171,12 +161,8 @@ export const TIER_3_SKILLS: SkillNode[] = [
     }
   }
 ];
-
-// Tier 4: Adds 4 more nodes (13 total) - Tier 3 nodes + 4 new nodes
 export const TIER_4_SKILLS: SkillNode[] = [
-  // Include all Tier 3 nodes (which already includes Tier 1 & 2)
   ...TIER_3_SKILLS,
-  // New Tier 4 nodes
   {
     id: 't4_amplifier_d',
     name: 'Quantum Amplifier',
@@ -246,12 +232,8 @@ export const TIER_4_SKILLS: SkillNode[] = [
     }
   }
 ];
-
-// Tier 5: Adds 5 more nodes (18 total) - Tier 4 nodes + 5 new nodes
 export const TIER_5_SKILLS: SkillNode[] = [
-  // Include all Tier 4 nodes (which already includes Tier 1, 2 & 3)
   ...TIER_4_SKILLS,
-  // New Tier 5 nodes
   {
     id: 't5_amplifier_e',
     name: 'Cosmic Amplifier',
@@ -338,7 +320,6 @@ export const TIER_5_SKILLS: SkillNode[] = [
     }
   }
 ];
-
 export const SKILL_TREE_TIERS: SkillTreeTier[] = [
   {
     id: 1,
@@ -381,5 +362,3 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
     prestigeBonus: 2.0  // Warping grants another 2x multiplier (total 32x)
   }
 ];
-
-

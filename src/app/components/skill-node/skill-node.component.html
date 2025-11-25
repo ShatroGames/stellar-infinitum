@@ -4,7 +4,6 @@
      [class.can-upgrade]="canUpgrade()"
      [class.has-prerequisites]="hasPrerequisites() && !skill().unlocked"
      (click)="onUpgrade()">
-  
   @if (hasPrerequisites() && !skill().unlocked) {
     <div class="prerequisites-indicator">
       <div class="prereq-text">
@@ -21,16 +20,13 @@
       </div>
     </div>
   }
-
   <div class="skill-header">
     <h3>{{ skill().name }}</h3>
     <span class="skill-level">{{ skill().level }}/{{ skill().maxLevel }}</span>
   </div>
-  
   <div class="skill-description">
     {{ skill().description }}
   </div>
-  
   @if (!isMaxed() && skill().unlocked) {
     <div class="skill-cost">
       Cost: {{ upgradeCost() }} Energy

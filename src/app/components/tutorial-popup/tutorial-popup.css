@@ -12,7 +12,6 @@
   z-index: 10000;
   animation: fadeIn 0.3s ease-out;
 }
-
 .tutorial-popup {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border: 2px solid #4a9eff;
@@ -26,7 +25,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-
 .tutorial-header {
   display: flex;
   align-items: center;
@@ -35,24 +33,20 @@
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(74, 158, 255, 0.3);
 }
-
 .tutorial-icon {
   font-size: 3rem;
   line-height: 1;
   filter: drop-shadow(0 0 10px rgba(74, 158, 255, 0.5));
 }
-
 .tutorial-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: #4a9eff;
   text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
 }
-
 .tutorial-content {
   margin-bottom: 1.5rem;
 }
-
 .tutorial-content p {
   margin: 0.75rem 0;
   line-height: 1.6;
@@ -61,15 +55,12 @@
   padding-left: 0.5rem;
   border-left: 2px solid rgba(74, 158, 255, 0.2);
 }
-
 .tutorial-content p:first-child {
   margin-top: 0;
 }
-
 .tutorial-content p:last-child {
   margin-bottom: 0;
 }
-
 .tutorial-dismiss {
   width: 100%;
   padding: 0.75rem;
@@ -83,17 +74,14 @@
   transition: all 0.2s ease;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-
 .tutorial-dismiss:hover {
   background: linear-gradient(135deg, #5db3ff 0%, #4a9eff 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
 }
-
 .tutorial-dismiss:active {
   transform: translateY(0);
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -102,7 +90,6 @@
     opacity: 1;
   }
 }
-
 @keyframes popIn {
   0% {
     opacity: 0;
@@ -113,21 +100,17 @@
     transform: scale(1) translateY(0);
   }
 }
-
 @media (max-width: 600px) {
   .tutorial-popup {
     padding: 1.5rem;
     max-width: 95%;
   }
-
   .tutorial-header h2 {
     font-size: 1.25rem;
   }
-
   .tutorial-icon {
     font-size: 2.5rem;
   }
-
   .tutorial-content p {
     font-size: 0.9rem;
   }

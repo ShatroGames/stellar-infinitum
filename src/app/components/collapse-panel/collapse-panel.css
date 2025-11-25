@@ -3,7 +3,6 @@
   margin: 0 auto;
   padding: 20px;
 }
-
 .collapse-header {
   text-align: center;
   margin-bottom: 30px;
@@ -12,7 +11,6 @@
   border-radius: 16px;
   border: 3px solid rgba(139, 92, 246, 0.5);
 }
-
 .collapse-header h2 {
   margin: 0 0 10px 0;
   font-size: 32px;
@@ -21,44 +19,37 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .subtitle {
   margin: 0;
   font-size: 16px;
   color: #999;
   font-style: italic;
 }
-
 .collapse-info {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
 .info-section {
   background: rgba(255, 255, 255, 0.03);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 20px;
 }
-
 .info-section.warning {
   border-color: rgba(255, 165, 0, 0.5);
   background: rgba(255, 165, 0, 0.05);
 }
-
 .info-section h3 {
   margin: 0 0 15px 0;
   font-size: 18px;
   color: #fff;
 }
-
 .info-section p {
   margin: 0;
   line-height: 1.6;
   color: #ccc;
 }
-
 .info-section ul {
   margin: 10px 0 0 0;
   padding-left: 20px;
@@ -66,23 +57,19 @@
   flex-direction: column;
   gap: 8px;
 }
-
 .info-section li {
   color: #ccc;
   line-height: 1.5;
 }
-
 .requirements-section {
   background: rgba(139, 92, 246, 0.1);
   border: 2px solid rgba(139, 92, 246, 0.3);
   border-radius: 12px;
   padding: 20px;
 }
-
 .requirements-section h3 {
   margin: 0 0 15px 0;
 }
-
 .requirement {
   display: flex;
   align-items: center;
@@ -93,22 +80,18 @@
   border: 2px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 10px;
 }
-
 .requirement.met {
   border-color: rgba(16, 185, 129, 0.5);
   background: rgba(16, 185, 129, 0.1);
 }
-
 .checkmark {
   font-size: 24px;
   color: #10b981;
 }
-
 .crossmark {
   font-size: 24px;
   color: #ef4444;
 }
-
 .missing-achievements {
   margin-top: 20px;
   padding: 15px;
@@ -116,13 +99,11 @@
   border: 2px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
 }
-
 .missing-achievements h4 {
   margin: 0 0 12px 0;
   color: #ef4444;
   font-size: 16px;
 }
-
 .achievement-list {
   display: flex;
   flex-direction: column;
@@ -130,7 +111,6 @@
   max-height: 300px;
   overflow-y: auto;
 }
-
 .missing-achievement {
   display: flex;
   align-items: center;
@@ -140,36 +120,30 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .achievement-icon {
   font-size: 20px;
   flex-shrink: 0;
 }
-
 .achievement-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
 }
-
 .achievement-name {
   font-weight: bold;
   color: #fff;
   font-size: 14px;
 }
-
 .achievement-desc {
   font-size: 12px;
   color: #999;
 }
-
 .collapse-actions {
   display: flex;
   justify-content: center;
   padding: 20px;
 }
-
 .collapse-btn {
   padding: 16px 40px;
   font-size: 18px;
@@ -182,20 +156,16 @@
   transition: all 0.3s;
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
 }
-
 .collapse-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6);
   background: linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(236, 72, 153, 1));
 }
-
 .collapse-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   box-shadow: none;
 }
-
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -209,12 +179,10 @@
   z-index: 2000;
   animation: fadeIn 0.3s;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 .modal-content {
   background: linear-gradient(135deg, #1a1a1a 0%, #2a1a2a 100%);
   border: 3px solid rgba(139, 92, 246, 0.8);
@@ -226,7 +194,6 @@
   animation: slideUp 0.3s;
   box-shadow: 0 10px 50px rgba(139, 92, 246, 0.5);
 }
-
 @keyframes slideUp {
   from {
     transform: translateY(50px);
@@ -237,32 +204,27 @@
     opacity: 1;
   }
 }
-
 .modal-content h2 {
   margin: 0 0 20px 0;
   font-size: 24px;
   color: #ffa500;
 }
-
 .modal-content p {
   margin: 0 0 15px 0;
   font-size: 16px;
   color: #ccc;
 }
-
 .warning-text {
   color: #ef4444;
   font-weight: bold;
   font-size: 18px;
 }
-
 .modal-actions {
   display: flex;
   gap: 15px;
   justify-content: center;
   margin-top: 30px;
 }
-
 .confirm-btn {
   padding: 12px 30px;
   background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -274,12 +236,10 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .confirm-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
 }
-
 .cancel-btn {
   padding: 12px 30px;
   background: rgba(255, 255, 255, 0.1);
@@ -291,37 +251,29 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .cancel-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.05);
 }
-
 @media (max-width: 768px) {
   .collapse-header h2 {
     font-size: 24px;
   }
-  
   .collapse-btn {
     padding: 12px 30px;
     font-size: 16px;
   }
-  
   .modal-content {
     padding: 30px 20px;
   }
-  
   .modal-actions {
     flex-direction: column;
   }
-  
   .confirm-btn,
   .cancel-btn {
     width: 100%;
   }
 }
-
-/* Collapse Animation */
 .collapse-animation-overlay {
   position: fixed;
   top: 0;
@@ -335,7 +287,6 @@
   justify-content: center;
   animation: fadeInBlack 0.5s ease-out;
 }
-
 .black-hole {
   position: absolute;
   width: 300px;
@@ -345,7 +296,6 @@
   transform: translate(-50%, -50%);
   animation: growBlackHole 2s ease-out forwards;
 }
-
 .singularity {
   position: absolute;
   width: 40px;
@@ -362,7 +312,6 @@
     inset 0 0 20px rgba(0, 0, 0, 1);
   animation: pulseCore 1s ease-in-out infinite;
 }
-
 .event-horizon {
   position: absolute;
   width: 100%;
@@ -377,7 +326,6 @@
     transparent 70%);
   animation: rotateEventHorizon 3s linear infinite;
 }
-
 .accretion-disk {
   position: absolute;
   width: 120%;
@@ -398,14 +346,12 @@
   animation: rotateDisk 2s linear infinite;
   opacity: 0.7;
 }
-
 .particles-container {
   position: absolute;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
-
 .particle {
   position: absolute;
   width: 4px;
@@ -416,8 +362,6 @@
   animation: suckIntoBlackHole 2s ease-in forwards;
   opacity: 0;
 }
-
-/* Randomize particle starting positions */
 .particle:nth-child(1) { top: 10%; left: 20%; }
 .particle:nth-child(2) { top: 15%; left: 80%; }
 .particle:nth-child(3) { top: 30%; left: 10%; }
@@ -438,7 +382,6 @@
 .particle:nth-child(18) { top: 95%; left: 50%; }
 .particle:nth-child(19) { top: 50%; left: 30%; }
 .particle:nth-child(20) { top: 50%; left: 70%; }
-
 .collapse-text {
   position: absolute;
   text-align: center;
@@ -446,7 +389,6 @@
   animation: fadeInText 1s ease-out 1s forwards, fadeOutText 0.5s ease-in 3s forwards;
   opacity: 0;
 }
-
 .collapse-text h1 {
   font-size: 48px;
   margin: 0 0 20px 0;
@@ -458,15 +400,12 @@
   letter-spacing: 8px;
   font-weight: bold;
 }
-
 .collapse-text p {
   font-size: 20px;
   color: #ccc;
   margin: 0;
   font-style: italic;
 }
-
-/* Animations */
 @keyframes fadeInBlack {
   from {
     opacity: 0;
@@ -475,7 +414,6 @@
     opacity: 1;
   }
 }
-
 @keyframes growBlackHole {
   0% {
     width: 0;
@@ -491,7 +429,6 @@
     opacity: 1;
   }
 }
-
 @keyframes pulseCore {
   0%, 100% {
     transform: translate(-50%, -50%) scale(1);
@@ -508,7 +445,6 @@
       0 0 120px 40px rgba(139, 92, 246, 0.6);
   }
 }
-
 @keyframes rotateEventHorizon {
   from {
     transform: rotate(0deg);
@@ -517,7 +453,6 @@
     transform: rotate(360deg);
   }
 }
-
 @keyframes rotateDisk {
   from {
     transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg);
@@ -526,7 +461,6 @@
     transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg);
   }
 }
-
 @keyframes suckIntoBlackHole {
   0% {
     opacity: 0;
@@ -540,7 +474,6 @@
     transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0);
   }
 }
-
 @keyframes fadeInText {
   from {
     opacity: 0;
@@ -551,7 +484,6 @@
     transform: translateY(0);
   }
 }
-
 @keyframes fadeOutText {
   from {
     opacity: 1;
@@ -560,18 +492,15 @@
     opacity: 0;
   }
 }
-
 @media (max-width: 768px) {
   .black-hole {
     width: 200px;
     height: 200px;
   }
-  
   .collapse-text h1 {
     font-size: 32px;
     letter-spacing: 4px;
   }
-  
   .collapse-text p {
     font-size: 16px;
   }

@@ -3,7 +3,6 @@
   max-width: 1800px;
   margin: 0 auto;
 }
-
 .quantum-header {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
   border-radius: 12px;
@@ -11,46 +10,38 @@
   margin-bottom: 20px;
   border: 2px solid rgba(139, 92, 246, 0.3);
 }
-
 .quantum-header h2 {
   margin: 0 0 15px 0;
   font-size: 24px;
   color: #8b5cf6;
   text-align: center;
 }
-
 .quantum-stats {
   display: flex;
   gap: 30px;
   justify-content: center;
   flex-wrap: wrap;
 }
-
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
 }
-
 .stat-label {
   font-size: 12px;
   color: #999;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .stat-value {
   font-size: 20px;
   font-weight: bold;
   color: #fff;
 }
-
 .stat-value.production {
   color: #10b981;
 }
-
-/* Artifact Unlock Progress */
 .artifact-unlock-progress {
   margin-top: 20px;
   padding: 15px;
@@ -58,7 +49,6 @@
   border: 2px solid rgba(100, 181, 246, 0.3);
   border-radius: 8px;
 }
-
 .progress-label {
   display: flex;
   justify-content: space-between;
@@ -67,12 +57,10 @@
   font-size: 0.95em;
   color: #bbb;
 }
-
 .progress-percent {
   font-weight: 600;
   color: #64b5f6;
 }
-
 .progress-bar-container {
   width: 100%;
   height: 20px;
@@ -81,15 +69,12 @@
   overflow: hidden;
   border: 1px solid rgba(100, 181, 246, 0.3);
 }
-
 .progress-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #2196f3, #64b5f6);
   transition: width 0.3s ease;
   box-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
 }
-
-/* Milestone Progress */
 .milestone-progress {
   margin-top: 20px;
   padding: 15px;
@@ -97,14 +82,12 @@
   border: 2px solid rgba(139, 92, 246, 0.4);
   border-radius: 10px;
 }
-
 .milestone-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
-
 .milestone-label {
   font-size: 14px;
   font-weight: 600;
@@ -112,13 +95,11 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .milestone-values {
   font-size: 14px;
   font-weight: bold;
   color: #fff;
 }
-
 .milestone-bar {
   height: 20px;
   background: rgba(0, 0, 0, 0.4);
@@ -128,7 +109,6 @@
   margin-bottom: 8px;
   position: relative;
 }
-
 .milestone-fill {
   height: 100%;
   background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 100%);
@@ -136,13 +116,11 @@
   transition: width 0.5s ease;
   box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
 }
-
 .milestone-info {
   font-size: 12px;
   color: #d1d5db;
   text-align: center;
 }
-
 .milestone-complete {
   margin-top: 15px;
   padding: 12px;
@@ -153,8 +131,6 @@
   text-align: center;
   font-weight: 600;
 }
-
-/* Help Panel */
 .help-panel {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
   border: 2px solid rgba(99, 102, 241, 0.3);
@@ -162,20 +138,17 @@
   padding: 20px;
   margin-bottom: 20px;
 }
-
 .help-panel h3 {
   margin: 0 0 15px 0;
   font-size: 18px;
   color: #8b5cf6;
   text-align: center;
 }
-
 .help-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 15px;
 }
-
 .help-item {
   display: flex;
   gap: 12px;
@@ -185,14 +158,12 @@
   border-radius: 8px;
   transition: all 0.3s ease;
 }
-
 .help-item:hover {
   background: rgba(139, 92, 246, 0.1);
   border-color: rgba(139, 92, 246, 0.4);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
-
 .help-icon {
   font-size: 28px;
   flex-shrink: 0;
@@ -202,32 +173,26 @@
   width: 40px;
   height: 40px;
 }
-
 .help-content {
   flex: 1;
 }
-
 .help-content strong {
   display: block;
   font-size: 14px;
   color: #a78bfa;
   margin-bottom: 4px;
 }
-
 .help-content p {
   margin: 0;
   font-size: 13px;
   color: #d1d5db;
   line-height: 1.5;
 }
-
 .help-content em {
   color: #fbbf24;
   font-style: normal;
   font-weight: 600;
 }
-
-/* Synergies Panel */
 .synergies-panel {
   background: rgba(255, 215, 0, 0.1);
   border: 2px solid rgba(255, 215, 0, 0.3);
@@ -235,19 +200,16 @@
   padding: 15px;
   margin-bottom: 20px;
 }
-
 .synergies-panel h3 {
   margin: 0 0 10px 0;
   font-size: 16px;
   color: #ffd700;
 }
-
 .synergies-list {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
-
 .synergy-card {
   display: flex;
   align-items: center;
@@ -257,29 +219,23 @@
   border-radius: 8px;
   border: 1px solid rgba(255, 215, 0, 0.4);
 }
-
 .synergy-icon {
   font-size: 24px;
 }
-
 .synergy-content {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .synergy-name {
   font-size: 14px;
   font-weight: bold;
   color: #ffd700;
 }
-
 .synergy-effect {
   font-size: 12px;
   color: #ffa500;
 }
-
-/* Entanglement UI */
 .entanglement-info {
   background: rgba(139, 92, 246, 0.2);
   border: 2px solid rgba(139, 92, 246, 0.5);
@@ -291,16 +247,13 @@
   gap: 10px;
   animation: pulse 2s infinite;
 }
-
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
   50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
 }
-
 .info-icon {
   font-size: 24px;
 }
-
 .cancel-btn {
   margin-left: auto;
   padding: 6px 12px;
@@ -311,11 +264,9 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .cancel-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-
 .entanglements-panel {
   background: rgba(236, 72, 153, 0.1);
   border: 2px solid rgba(236, 72, 153, 0.3);
@@ -323,19 +274,16 @@
   padding: 15px;
   margin-bottom: 20px;
 }
-
 .entanglements-panel h3 {
   margin: 0 0 10px 0;
   font-size: 16px;
   color: #ec4899;
 }
-
 .entanglements-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .entanglement-card {
   display: flex;
   align-items: center;
@@ -345,7 +293,6 @@
   border-radius: 8px;
   border: 1px solid rgba(236, 72, 153, 0.4);
 }
-
 .entanglement-nodes {
   display: flex;
   align-items: center;
@@ -354,18 +301,15 @@
   font-size: 12px;
   color: #ec4899;
 }
-
 .link-icon {
   font-size: 18px;
   color: #8b5cf6;
 }
-
 .entanglement-effect {
   flex: 1;
   font-size: 13px;
   color: #fff;
 }
-
 .remove-btn {
   padding: 4px 8px;
   background: rgba(255, 0, 0, 0.3);
@@ -375,18 +319,14 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .remove-btn:hover {
   background: rgba(255, 0, 0, 0.5);
 }
-
-/* Trees Container */
 .trees-container {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
 }
-
 .tree-column {
   flex: 1;
   background: rgba(255, 255, 255, 0.02);
@@ -394,19 +334,15 @@
   padding: 15px;
   border: 2px solid rgba(255, 255, 255, 0.1);
 }
-
 .tree-column.matter {
   border-color: rgba(59, 130, 246, 0.5);
 }
-
 .tree-column.energy {
   border-color: rgba(168, 85, 247, 0.5);
 }
-
 .tree-column.time {
   border-color: rgba(236, 72, 153, 0.5);
 }
-
 .tree-title {
   margin: 0 0 15px 0;
   font-size: 18px;
@@ -414,20 +350,15 @@
   padding-bottom: 10px;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
-
 .tree-column.matter .tree-title {
   color: #3b82f6;
 }
-
 .tree-column.energy .tree-title {
   color: #a855f7;
 }
-
 .tree-column.time .tree-title {
   color: #ec4899;
 }
-
-/* Tree Grid */
 .tree-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -435,8 +366,6 @@
   gap: 10px;
   min-height: 500px;
 }
-
-/* Quantum Nodes */
 .quantum-node {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -451,34 +380,28 @@
   position: relative;
   min-height: 140px;
 }
-
 .quantum-node:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
-
 .quantum-node.locked {
   opacity: 0.4;
   filter: grayscale(100%);
   cursor: not-allowed;
 }
-
 .quantum-node.locked:hover {
   transform: none;
   box-shadow: none;
 }
-
 .quantum-node.maxed {
   background: rgba(255, 215, 0, 0.15);
   border-color: rgba(255, 215, 0, 0.5);
 }
-
 .quantum-node.selected {
   border-color: #8b5cf6;
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
   background: rgba(139, 92, 246, 0.2);
 }
-
 .quantum-node.entangled::after {
   content: '⚡';
   position: absolute;
@@ -487,13 +410,10 @@
   font-size: 16px;
   animation: sparkle 1.5s infinite;
 }
-
 @keyframes sparkle {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.2); }
 }
-
-/* Synergy Indicators */
 .synergy-indicator {
   position: absolute;
   top: 5px;
@@ -503,18 +423,15 @@
   filter: grayscale(100%);
   animation: pulse-synergy 2s infinite;
 }
-
 .synergy-indicator.active {
   opacity: 1;
   filter: grayscale(0%);
   animation: sparkle-synergy 1.5s infinite;
 }
-
 @keyframes pulse-synergy {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
-
 @keyframes sparkle-synergy {
   0%, 100% { 
     opacity: 1; 
@@ -527,16 +444,13 @@
     filter: brightness(1.5);
   }
 }
-
 .quantum-node.synergy-node {
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
 }
-
 .quantum-node.synergy-active {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
   background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
 }
-
 .node-synergies {
   position: absolute;
   bottom: 100%;
@@ -553,61 +467,46 @@
   z-index: 100;
   margin-bottom: 8px;
 }
-
 .quantum-node:hover .node-synergies {
   opacity: 1;
 }
-
 .synergy-hint {
   font-size: 11px;
   color: #fbbf24;
   padding: 4px 0;
   border-bottom: 1px solid rgba(255, 215, 0, 0.2);
 }
-
 .synergy-hint:last-child {
   border-bottom: none;
 }
-
 .synergy-hint.unlocked {
   color: #10b981;
   font-weight: bold;
 }
-
-/* Node Type Colors */
 .quantum-node.type-production {
   border-color: rgba(16, 185, 129, 0.5);
 }
-
 .quantum-node.type-multiplier {
   border-color: rgba(249, 115, 22, 0.5);
 }
-
 .quantum-node.type-synergy {
   border-color: rgba(255, 215, 0, 0.5);
 }
-
 .quantum-node.type-special {
   border-color: rgba(168, 85, 247, 0.5);
 }
-
-/* Tree-specific node colors */
 .tree-column.matter .quantum-node:not(.locked) {
   background: rgba(59, 130, 246, 0.1);
 }
-
 .tree-column.energy .quantum-node:not(.locked) {
   background: rgba(168, 85, 247, 0.1);
 }
-
 .tree-column.time .quantum-node:not(.locked) {
   background: rgba(236, 72, 153, 0.1);
 }
-
 .node-icon {
   font-size: 32px;
 }
-
 .node-name {
   font-size: 12px;
   font-weight: bold;
@@ -618,12 +517,10 @@
   display: flex;
   align-items: center;
 }
-
 .node-level {
   font-size: 11px;
   color: #999;
 }
-
 .node-effect {
   font-size: 12px;
   color: #10b981;
@@ -632,7 +529,6 @@
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .upgrade-btn {
   padding: 6px 12px;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
@@ -644,17 +540,14 @@
   transition: all 0.2s;
   width: 100%;
 }
-
 .upgrade-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(236, 72, 153, 0.5));
   transform: scale(1.05);
 }
-
 .upgrade-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .max-badge {
   padding: 4px 8px;
   background: rgba(255, 215, 0, 0.3);
@@ -663,12 +556,9 @@
   font-weight: bold;
   color: #ffd700;
 }
-
 .locked-badge {
   font-size: 20px;
 }
-
-/* Legend */
 .legend {
   display: flex;
   gap: 20px;
@@ -678,7 +568,6 @@
   background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
 }
-
 .legend-item {
   display: flex;
   align-items: center;
@@ -686,40 +575,33 @@
   font-size: 12px;
   color: #999;
 }
-
 .legend-icon {
   width: 24px;
   height: 24px;
   border-radius: 6px;
   border: 2px solid;
 }
-
 .legend-icon.type-production {
   border-color: rgba(16, 185, 129, 0.5);
   background: rgba(16, 185, 129, 0.2);
 }
-
 .legend-icon.type-multiplier {
   border-color: rgba(249, 115, 22, 0.5);
   background: rgba(249, 115, 22, 0.2);
 }
-
 .legend-icon.type-synergy {
   border-color: rgba(255, 215, 0, 0.5);
   background: rgba(255, 215, 0, 0.2);
 }
-
 .legend-icon.type-special {
   border-color: rgba(168, 85, 247, 0.5);
   background: rgba(168, 85, 247, 0.2);
 }
-
 .legend-icon.entangled {
   border-color: rgba(139, 92, 246, 0.5);
   background: rgba(139, 92, 246, 0.2);
   position: relative;
 }
-
 .legend-icon.entangled::after {
   content: '⚡';
   position: absolute;
@@ -728,37 +610,29 @@
   transform: translate(-50%, -50%);
   font-size: 12px;
 }
-
-/* Responsive Design */
 @media (max-width: 1400px) {
   .trees-container {
     flex-direction: column;
   }
-  
   .tree-grid {
     grid-template-columns: repeat(13, 1fr);
     min-height: auto;
   }
 }
-
 @media (max-width: 768px) {
   .quantum-stats {
     gap: 15px;
   }
-  
   .stat-value {
     font-size: 16px;
   }
-  
   .quantum-node {
     min-height: 120px;
     padding: 8px;
   }
-  
   .node-icon {
     font-size: 24px;
   }
-  
   .node-name {
     font-size: 10px;
     min-height: 24px;

@@ -1,5 +1,4 @@
 import Decimal from 'break_eternity.js';
-
 export interface AscensionNode {
   id: string;
   name: string;
@@ -10,7 +9,6 @@ export interface AscensionNode {
   requires?: string[]; // IDs of nodes that must be purchased first
   effect: AscensionEffect;
 }
-
 export interface AscensionEffect {
   type: 'bulk_buy' | 'cost_reduction' | 'production_boost' | 
         'start_bonus' | 'warp_speed' | 'skill_cap' | 'multiplier_boost' |
@@ -18,15 +16,12 @@ export interface AscensionEffect {
         'remove_prerequisites';
   value: number;
 }
-
 export interface AscensionState {
   points: number;
   totalPoints: number;
   nodes: Map<string, AscensionNode>;
 }
-
 export const ASCENSION_TREE_NODES: AscensionNode[] = [
-  // === ROW 0: Root Nodes (3 nodes) ===
   {
     id: 'bulk_buy_5',
     name: 'Bulk Processing I',
@@ -54,8 +49,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     position: { x: 2, y: 0 },
     effect: { type: 'production_boost', value: 0.25 }
   },
-  
-  // === ROW 1: Secondary Upgrades (3 nodes) ===
   {
     id: 'cost_reduce_10',
     name: 'Cost Optimization I',
@@ -86,8 +79,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     requires: ['bulk_buy_5', 'production_25', 'start_energy'],
     effect: { type: 'production_boost', value: 0.50 }
   },
-  
-  // === ROW 2: Tertiary Upgrades (3 nodes) ===
   {
     id: 'bulk_buy_10',
     name: 'Bulk Processing II',
@@ -118,8 +109,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     requires: ['cost_reduce_10', 'warp_speed_1', 'production_50'],
     effect: { type: 'multiplier_boost', value: 0.05 }
   },
-  
-  // === ROW 3: Advanced Upgrades (3 nodes) ===
   {
     id: 'cost_reduce_25',
     name: 'Cost Optimization II',
@@ -150,8 +139,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     requires: ['multiplier_boost', 'bulk_buy_10', 'skill_efficiency'],
     effect: { type: 'production_boost', value: 1.0 }
   },
-  
-  // === ROW 4: Convergence Tier (3 nodes) ===
   {
     id: 'bulk_buy_max',
     name: 'Quantum Processing',
@@ -182,8 +169,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     requires: ['warp_speed_2', 'cost_reduce_25', 'production_100'],
     effect: { type: 'production_boost', value: 1.5 }
   },
-  
-  // === ROW 5: Ultimate Tier I (3 nodes) ===
   {
     id: 'stellar_core_mult',
     name: 'Core Resonance',
@@ -214,8 +199,6 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
     requires: ['bulk_buy_max', 'skill_cap_increase', 'production_200'],
     effect: { type: 'production_boost', value: 3.0 }
   },
-  
-  // === ROW 6: Final Tier (1 node) ===
   {
     id: 'unlock_all',
     name: 'Omnipotent Network',

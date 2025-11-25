@@ -3,9 +3,7 @@
     <h2>🔬 Ancient Tech Tree</h2>
     <p class="subtitle">Research powerful artifacts to enhance Quanta production</p>
   </div>
-
   <div class="tree-grid">
-    <!-- Production Branch (Left) -->
     <div class="branch production-branch">
       <h3 class="branch-title">⚙ Production Technologies</h3>
       <div class="artifacts-column">
@@ -19,11 +17,9 @@
               <div class="artifact-name">{{artifact.name}}</div>
               <div class="artifact-tier">Tier {{artifact.tier}}</div>
               <div class="artifact-description">{{artifact.description}}</div>
-              
               @for (effect of artifact.effects; track effect.type) {
                 <div class="artifact-effect">{{effect.description}}</div>
               }
-              
               @if (!isUnlocked(artifact.id)) {
                 <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
                 <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
@@ -40,8 +36,6 @@
         }
       </div>
     </div>
-
-    <!-- Multiplier Branch (Center) -->
     <div class="branch multiplier-branch">
       <h3 class="branch-title">× Multiplication Techniques</h3>
       <div class="artifacts-column">
@@ -55,11 +49,9 @@
               <div class="artifact-name">{{artifact.name}}</div>
               <div class="artifact-tier">Tier {{artifact.tier}}</div>
               <div class="artifact-description">{{artifact.description}}</div>
-              
               @for (effect of artifact.effects; track effect.type) {
                 <div class="artifact-effect">{{effect.description}}</div>
               }
-              
               @if (!isUnlocked(artifact.id)) {
                 <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
                 <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
@@ -74,8 +66,6 @@
             </div>
           </div>
         }
-
-        <!-- Cross-Branch Nodes (in center column) -->
         @for (artifact of getArtifactsByBranch(ArtifactBranch.CROSS_BRANCH); track artifact.id) {
           <div class="artifact-node cross-branch-node" 
                [class.unlocked]="isUnlocked(artifact.id)"
@@ -86,11 +76,9 @@
               <div class="artifact-name">{{artifact.name}}</div>
               <div class="artifact-tier">Cross-Branch Tier {{artifact.tier}}</div>
               <div class="artifact-description">{{artifact.description}}</div>
-              
               @for (effect of artifact.effects; track effect.type) {
                 <div class="artifact-effect">{{effect.description}}</div>
               }
-              
               @if (!isUnlocked(artifact.id)) {
                 <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
                 <div class="artifact-status">{{getStatusMessage(artifact)}}</div>
@@ -107,8 +95,6 @@
         }
       </div>
     </div>
-
-    <!-- Resonance Branch (Right) -->
     <div class="branch resonance-branch">
       <h3 class="branch-title">� Harmonic Resonance</h3>
       <div class="artifacts-column">
@@ -122,11 +108,9 @@
               <div class="artifact-name">{{artifact.name}}</div>
               <div class="artifact-tier">Tier {{artifact.tier}}</div>
               <div class="artifact-description">{{artifact.description}}</div>
-              
               @for (effect of artifact.effects; track effect.type) {
                 <div class="artifact-effect">{{effect.description}}</div>
               }
-              
               @if (!isUnlocked(artifact.id)) {
                 <div class="artifact-cost">Cost: {{formatNumber(artifact.cost)}} Quanta</div>
                 <div class="artifact-status">{{getStatusMessage(artifact)}}</div>

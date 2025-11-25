@@ -3,7 +3,6 @@
     ⚙ DEV
   </button>
 </div>
-
 @if (isOpen()) {
   <div class="dev-panel" [class.minimized]="isMinimized()">
     <div class="panel-header">
@@ -15,10 +14,8 @@
         <button class="close-btn" (click)="togglePanel()">✕</button>
       </div>
     </div>
-
     @if (!isMinimized()) {
       <div class="panel-content">
-        <!-- Quick Actions -->
         <section class="dev-section">
           <h4>Quick Actions</h4>
           <div class="button-grid">
@@ -30,8 +27,6 @@
             <button (click)="unlockAllCurrentTier()">Unlock All Skills</button>
           </div>
         </section>
-
-        <!-- Tier Navigation -->
         <section class="dev-section">
           <h4>Tier Navigation</h4>
           <div class="button-grid">
@@ -42,8 +37,6 @@
             <button (click)="ascendToTier(5)">Jump to Tier 5</button>
           </div>
         </section>
-
-        <!-- Stellar Nexus -->
         <section class="dev-section">
           <h4>Stellar Nexus</h4>
           <div class="button-grid">
@@ -53,8 +46,6 @@
             <button (click)="unlockAllAscensionNodes()">Unlock All Nodes</button>
           </div>
         </section>
-
-        <!-- Dimensional Echoes -->
         <section class="dev-section">
           <h4>Dimensional Echoes</h4>
           <div class="button-grid">
@@ -65,8 +56,6 @@
             <button (click)="maxAllDimensions()">Max All Dimensions</button>
           </div>
         </section>
-
-        <!-- Game Stage Presets -->
         <section class="dev-section preset-section">
           <h4>▸ Game Stage Presets</h4>
           <div class="preset-buttons">
@@ -88,8 +77,6 @@
             </button>
           </div>
         </section>
-
-        <!-- Reset Options -->
         <section class="dev-section danger-section">
           <h4>⚠ Reset Options</h4>
           <div class="button-grid">

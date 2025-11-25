@@ -5,7 +5,6 @@ import { SkillTreeService } from '../../services/skill-tree.service';
 import { AscensionService } from '../../services/ascension.service';
 import { DimensionService } from '../../services/dimension.service';
 import { Decimal } from '../../utils/numbers';
-
 @Component({
   selector: 'app-dev-panel',
   standalone: true,
@@ -18,28 +17,20 @@ export class DevPanelComponent {
   private skillTreeService = inject(SkillTreeService);
   private ascensionService = inject(AscensionService);
   private dimensionService = inject(DimensionService);
-
   isOpen = signal(false);
   isMinimized = signal(false);
-
   togglePanel() {
     this.isOpen.update(v => !v);
   }
-
   toggleMinimize() {
     this.isMinimized.update(v => !v);
   }
-
-  // Quick Actions
   addEnergy(amount: string) {
     const value = new Decimal(amount);
     this.gameService.addResource('knowledge', value);
   }
-
   maxCurrentTier() {
-    // Max all skills in current tier
     const skills = Array.from(this.skillTreeService.getSkills()().values());
-    
     skills.forEach(skill => {
       if (skill.unlocked) {
         while (skill.level < skill.maxLevel) {
@@ -52,12 +43,8 @@ export class DevPanelComponent {
       }
     });
   }
-
   unlockAllCurrentTier() {
-    // Unlock all skills in current tier by maxing prerequisites
     const skills = Array.from(this.skillTreeService.getSkills()().values());
-    
-    // First pass: unlock root nodes
     skills.forEach(skill => {
       if (skill.prerequisites.length === 0) {
         while (skill.level < skill.maxLevel) {
@@ -69,44 +56,27 @@ export class DevPanelComponent {
         }
       }
     });
-    
-    // Second pass: unlock remaining nodes
     this.maxCurrentTier();
   }
-
   ascendToTier(tier: number) {
-    // Ascend to specific tier
     const currentTier = this.skillTreeService.currentTier();
-    
     for (let t = currentTier; t < tier; t++) {
-      // Max current tier
       this.maxCurrentTier();
-      
-      // Add enough energy for ascension
       this.addEnergy('1e100'); // Add massive amount
-      
-      // Ascend
       if (this.skillTreeService.canAscend()) {
         this.skillTreeService.ascend(this.ascensionService);
       }
     }
   }
-
   grantStellarCores(amount: number) {
-    // Grant stellar cores by calling grantAscensionPoint multiple times
     for (let i = 0; i < amount; i++) {
       this.ascensionService.grantAscensionPoint();
     }
   }
-
   unlockAllAscensionNodes() {
     const nodes = Array.from(this.ascensionService.nodes().values());
-    
-    // Grant enough points first
     const totalCost = nodes.reduce((sum, node) => sum + (node.purchased ? 0 : node.cost), 0);
     this.grantStellarCores(totalCost + 10); // Extra buffer
-    
-    // Purchase all nodes (may need multiple passes for prerequisites)
     for (let pass = 0; pass < 10; pass++) {
       let purchased = false;
       nodes.forEach(node => {
@@ -118,23 +88,18 @@ export class DevPanelComponent {
       if (!purchased) break; // No more nodes to purchase
     }
   }
-
   grantEchoFragments(amount: number) {
     this.dimensionService.grantEchoFragments(amount);
   }
-
   unlockAllDimensions() {
     const dimensions = Array.from(this.dimensionService.dimensions().values());
     dimensions.forEach(dimension => {
       if (!dimension.unlocked) {
-        // Grant enough echo fragments
         this.grantEchoFragments(dimension.unlockCost);
-        // Unlock dimension
         this.dimensionService.unlockDimension(dimension.id);
       }
     });
   }
-
   maxAllDimensions() {
     const dimensions = Array.from(this.dimensionService.dimensions().values());
     dimensions.forEach(dimension => {
@@ -142,11 +107,9 @@ export class DevPanelComponent {
         dimension.nodes.forEach(node => {
           if (node.unlocked) {
             while (node.level < node.maxLevel) {
-              // Grant enough echo fragments for cost
               const cost = this.dimensionService.getNodeCost(dimension.id, node.id);
               if (!isFinite(cost) || cost > 10000) break; // Safety check
               this.grantEchoFragments(cost);
-              // Upgrade node
               if (this.dimensionService.canUpgradeNode(dimension.id, node.id)) {
                 this.dimensionService.upgradeNode(dimension.id, node.id);
               } else {
@@ -158,70 +121,44 @@ export class DevPanelComponent {
       }
     });
   }
-
-  // Preset Scenarios
   jumpToStellarNexus() {
-    // Complete Tier 5 and unlock Stellar Nexus
     this.ascendToTier(5);
     this.maxCurrentTier();
     this.addEnergy('1e14'); // 100T energy
-    
     if (this.skillTreeService.canAscend()) {
       this.skillTreeService.ascend(this.ascensionService);
     }
   }
-
   jumpToDimensions() {
-    // Jump to dimensional echoes stage
     this.jumpToStellarNexus();
-    
-    // Grant stellar cores and unlock ascension tree
     this.grantStellarCores(100);
     this.unlockAllAscensionNodes();
-    
-    // Transcend to get echo fragments
     this.addEnergy('1e15'); // 1Q energy for multiple EF
     if (this.skillTreeService.canAscend()) {
       this.skillTreeService.ascend(this.ascensionService);
     }
-    
-    // Grant some extra echo fragments
     this.grantEchoFragments(100);
   }
-
   jumpToMidDimensions() {
     this.jumpToDimensions();
-    
-    // Unlock 2-3 dimensions
     this.grantEchoFragments(50);
     this.dimensionService.unlockDimension('void');
     this.dimensionService.unlockDimension('crystal');
-    
-    // Grant more fragments for upgrades
     this.grantEchoFragments(300);
   }
-
   jumpToLateDimensions() {
     this.jumpToMidDimensions();
-    
-    // Unlock all dimensions
     this.unlockAllDimensions();
-    
-    // Grant lots of echo fragments
     this.grantEchoFragments(1000);
   }
-
-  // Reset functions
   resetGame() {
     if (confirm('Are you sure you want to reset all game progress?')) {
       localStorage.clear();
       location.reload();
     }
   }
-
   resetToTier1() {
     if (confirm('Reset to Tier 1 (keeps Ascension/Dimension progress)?')) {
-      // This would require service methods, for now just reload
       location.reload();
     }
   }

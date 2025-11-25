@@ -4,7 +4,6 @@ import { GameService } from '../../services/game.service';
 import { AscensionService } from '../../services/ascension.service';
 import { DimensionService } from '../../services/dimension.service';
 import { Decimal, formatNumber } from '../../utils/numbers';
-
 @Component({
   selector: 'app-resource-display',
   imports: [CommonModule],
@@ -15,11 +14,9 @@ export class ResourceDisplayComponent {
   private gameService = inject(GameService);
   protected ascensionService = inject(AscensionService);
   protected dimensionService = inject(DimensionService);
-  
   resources = computed(() => {
     return Array.from(this.gameService.getResources()().values());
   });
-
   formatNumber(value: Decimal | number): string {
     return formatNumber(value);
   }

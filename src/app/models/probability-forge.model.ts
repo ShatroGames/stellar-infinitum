@@ -1,6 +1,3 @@
-// Probability Forge - Final endgame feature
-// Theme: Manipulate probability to force favorable outcomes
-
 export enum OutcomeRarity {
   COMMON = 'common',
   UNCOMMON = 'uncommon',
@@ -8,7 +5,6 @@ export enum OutcomeRarity {
   EPIC = 'epic',
   MYTHIC = 'mythic'
 }
-
 export interface ProbabilityOutcome {
   id: string;
   name: string;
@@ -19,7 +15,6 @@ export interface ProbabilityOutcome {
   discovered: boolean;
   obtainedCount: number; // How many times obtained (for pity/streak)
 }
-
 export interface FateWeight {
   id: string;
   name: string;
@@ -31,40 +26,27 @@ export interface FateWeight {
   effect: any; // Type-specific effect data
   unlocked: boolean;
 }
-
 export interface PullResult {
   outcome: ProbabilityOutcome;
   isNew: boolean;
   streakBonus: number;
   finalMultiplier: number;
 }
-
 export interface ProbabilityForgeState {
   systemUnlocked: boolean;
   fateTokens: number;
   totalPulls: number;
-  
-  // Collection
   discoveredOutcomes: Set<string>;
   outcomeObtainedCounts: Map<string, number>;
-  
-  // Probability modifiers
   unlockedWeights: Set<string>;
   weightLevels: Map<string, number>;
-  
-  // Streak tracking
   currentStreak: number;
   bestStreak: number;
   pullsSinceMythic: number; // For pity system
-  
-  // Statistics
   rarityPullCounts: Map<OutcomeRarity, number>;
   totalMultiplierGained: number;
 }
-
-// Define all possible outcomes (100 total)
 export const PROBABILITY_OUTCOMES: ProbabilityOutcome[] = [
-  // COMMON (40 outcomes) - 1.1x to 1.5x multipliers
   { id: 'c1', name: 'Hydrogen Atom', description: 'The simplest element', rarity: OutcomeRarity.COMMON, multiplier: 1.1, icon: '⚛️', discovered: false, obtainedCount: 0 },
   { id: 'c2', name: 'Photon Burst', description: 'A particle of light', rarity: OutcomeRarity.COMMON, multiplier: 1.1, icon: '💡', discovered: false, obtainedCount: 0 },
   { id: 'c3', name: 'Electron Spin', description: 'Quantum angular momentum', rarity: OutcomeRarity.COMMON, multiplier: 1.1, icon: '🔄', discovered: false, obtainedCount: 0 },
@@ -105,8 +87,6 @@ export const PROBABILITY_OUTCOMES: ProbabilityOutcome[] = [
   { id: 'c38', name: 'Fish School', description: 'Collective movement', rarity: OutcomeRarity.COMMON, multiplier: 1.25, icon: '🐟', discovered: false, obtainedCount: 0 },
   { id: 'c39', name: 'Coral Reef', description: 'Marine ecosystem', rarity: OutcomeRarity.COMMON, multiplier: 1.3, icon: '🪸', discovered: false, obtainedCount: 0 },
   { id: 'c40', name: 'Mushroom Spore', description: 'Fungal reproduction', rarity: OutcomeRarity.COMMON, multiplier: 1.35, icon: '🍄', discovered: false, obtainedCount: 0 },
-
-  // UNCOMMON (30 outcomes) - 2x to 5x multipliers
   { id: 'u1', name: 'Fusion Reaction', description: 'Stars are born', rarity: OutcomeRarity.UNCOMMON, multiplier: 2, icon: '💫', discovered: false, obtainedCount: 0 },
   { id: 'u2', name: 'Supernova Remnant', description: 'Stellar death echo', rarity: OutcomeRarity.UNCOMMON, multiplier: 2.2, icon: '💥', discovered: false, obtainedCount: 0 },
   { id: 'u3', name: 'Nebula Cloud', description: 'Star nursery', rarity: OutcomeRarity.UNCOMMON, multiplier: 2.4, icon: '☁️', discovered: false, obtainedCount: 0 },
@@ -137,8 +117,6 @@ export const PROBABILITY_OUTCOMES: ProbabilityOutcome[] = [
   { id: 'u28', name: 'Orbital Ring', description: 'Space infrastructure', rarity: OutcomeRarity.UNCOMMON, multiplier: 4.3, icon: '💍', discovered: false, obtainedCount: 0 },
   { id: 'u29', name: 'Generation Ship', description: 'Interstellar ark', rarity: OutcomeRarity.UNCOMMON, multiplier: 4.5, icon: '🚀', discovered: false, obtainedCount: 0 },
   { id: 'u30', name: 'Terraformed World', description: 'Engineered paradise', rarity: OutcomeRarity.UNCOMMON, multiplier: 4.7, icon: '🌍', discovered: false, obtainedCount: 0 },
-
-  // RARE (20 outcomes) - 10x to 50x multipliers
   { id: 'r1', name: 'Spiral Galaxy', description: 'Billions of stars swirl', rarity: OutcomeRarity.RARE, multiplier: 10, icon: '🌌', discovered: false, obtainedCount: 0 },
   { id: 'r2', name: 'Elliptical Galaxy', description: 'Ancient stellar sphere', rarity: OutcomeRarity.RARE, multiplier: 12, icon: '⭕', discovered: false, obtainedCount: 0 },
   { id: 'r3', name: 'Galaxy Collision', description: 'Cosmic merger', rarity: OutcomeRarity.RARE, multiplier: 15, icon: '💥', discovered: false, obtainedCount: 0 },
@@ -159,8 +137,6 @@ export const PROBABILITY_OUTCOMES: ProbabilityOutcome[] = [
   { id: 'r18', name: 'Loop Quantum Gravity', description: 'Discrete spacetime', rarity: OutcomeRarity.RARE, multiplier: 50, icon: '🔗', discovered: false, obtainedCount: 0 },
   { id: 'r19', name: 'Holographic Principle', description: 'Surface encodes volume', rarity: OutcomeRarity.RARE, multiplier: 45, icon: '📽️', discovered: false, obtainedCount: 0 },
   { id: 'r20', name: 'AdS/CFT Duality', description: 'Gravity-quantum link', rarity: OutcomeRarity.RARE, multiplier: 43, icon: '🔄', discovered: false, obtainedCount: 0 },
-
-  // EPIC (8 outcomes) - 100x to 500x multipliers
   { id: 'e1', name: 'Theory of Everything', description: 'All forces unified', rarity: OutcomeRarity.EPIC, multiplier: 100, icon: '📚', discovered: false, obtainedCount: 0 },
   { id: 'e2', name: 'Perfect Symmetry', description: 'Universal balance', rarity: OutcomeRarity.EPIC, multiplier: 150, icon: '⚖️', discovered: false, obtainedCount: 0 },
   { id: 'e3', name: 'Time Crystal', description: 'Perpetual motion', rarity: OutcomeRarity.EPIC, multiplier: 200, icon: '💎', discovered: false, obtainedCount: 0 },
@@ -169,36 +145,21 @@ export const PROBABILITY_OUTCOMES: ProbabilityOutcome[] = [
   { id: 'e6', name: 'Vacuum Decay', description: 'False vacuum collapse', rarity: OutcomeRarity.EPIC, multiplier: 350, icon: '💥', discovered: false, obtainedCount: 0 },
   { id: 'e7', name: 'Big Crunch', description: 'Universe contracts', rarity: OutcomeRarity.EPIC, multiplier: 400, icon: '🌀', discovered: false, obtainedCount: 0 },
   { id: 'e8', name: 'Phoenix Cycle', description: 'Death and rebirth', rarity: OutcomeRarity.EPIC, multiplier: 450, icon: '🔥', discovered: false, obtainedCount: 0 },
-
-  // MYTHIC (2 outcomes) - 1000x+ multipliers
   { id: 'm1', name: 'Omega Point', description: 'Final state of maximum complexity', rarity: OutcomeRarity.MYTHIC, multiplier: 1000, icon: '🎯', discovered: false, obtainedCount: 0 },
   { id: 'm2', name: 'Absolute Certainty', description: 'Probability becomes 1', rarity: OutcomeRarity.MYTHIC, multiplier: 5000, icon: '✨', discovered: false, obtainedCount: 0 }
 ];
-
-// Fate Weights that modify probabilities
 export const FATE_WEIGHTS: FateWeight[] = [
-  // Rarity shift weights (increase specific rarity chances)
   { id: 'shift_uncommon', name: 'Uncommon Bias', description: 'Increase Uncommon chance by 2% per level', type: 'rarity_shift', cost: 50, level: 0, maxLevel: 10, effect: { rarity: OutcomeRarity.UNCOMMON, increase: 2 }, unlocked: false },
   { id: 'shift_rare', name: 'Rare Attunement', description: 'Increase Rare chance by 1% per level', type: 'rarity_shift', cost: 200, level: 0, maxLevel: 10, effect: { rarity: OutcomeRarity.RARE, increase: 1 }, unlocked: false },
   { id: 'shift_epic', name: 'Epic Magnetism', description: 'Increase Epic chance by 0.5% per level', type: 'rarity_shift', cost: 800, level: 0, maxLevel: 10, effect: { rarity: OutcomeRarity.EPIC, increase: 0.5 }, unlocked: false },
   { id: 'shift_mythic', name: 'Mythic Convergence', description: 'Increase Mythic chance by 0.2% per level', type: 'rarity_shift', cost: 3000, level: 0, maxLevel: 15, effect: { rarity: OutcomeRarity.MYTHIC, increase: 0.2 }, unlocked: false },
-  
-  // Reroll system
   { id: 'reroll_1', name: 'Second Chance', description: 'Reroll once per pull', type: 'reroll', cost: 100, level: 0, maxLevel: 1, effect: { rerolls: 1 }, unlocked: false },
   { id: 'reroll_2', name: 'Third Chance', description: 'Reroll twice per pull', type: 'reroll', cost: 500, level: 0, maxLevel: 1, effect: { rerolls: 2 }, unlocked: false },
   { id: 'reroll_3', name: 'Infinite Chances', description: 'Reroll until satisfied', type: 'reroll', cost: 2000, level: 0, maxLevel: 1, effect: { rerolls: -1 }, unlocked: false },
-  
-  // Pity system
   { id: 'pity_rare', name: 'Rare Guarantee', description: 'Guaranteed Rare after 50 pulls without one', type: 'pity', cost: 400, level: 0, maxLevel: 1, effect: { rarity: OutcomeRarity.RARE, threshold: 50 }, unlocked: false },
   { id: 'pity_epic', name: 'Epic Guarantee', description: 'Guaranteed Epic after 100 pulls without one', type: 'pity', cost: 1500, level: 0, maxLevel: 1, effect: { rarity: OutcomeRarity.EPIC, threshold: 100 }, unlocked: false },
   { id: 'pity_mythic', name: 'Mythic Guarantee', description: 'Guaranteed Mythic after 200 pulls without one', type: 'pity', cost: 5000, level: 0, maxLevel: 1, effect: { rarity: OutcomeRarity.MYTHIC, threshold: 200 }, unlocked: false },
-  
-  // Duplicate protection
   { id: 'dupe_protection', name: 'Anti-Duplication Field', description: 'New outcomes 3x more likely than discovered ones', type: 'duplicate_protection', cost: 1000, level: 0, maxLevel: 1, effect: { newBonus: 3 }, unlocked: false },
-  
-  // Streak bonuses
   { id: 'streak_bonus', name: 'Hot Streak', description: 'Each consecutive rare+ pull increases multiplier by 10%', type: 'streak_bonus', cost: 600, level: 0, maxLevel: 10, effect: { bonusPerLevel: 10 }, unlocked: false },
-  
-  // Exponential scaling
   { id: 'expo_scaling', name: 'Cascade Effect', description: 'Each Mythic found increases future Mythic chance by 0.1%', type: 'exponential_scaling', cost: 10000, level: 0, maxLevel: 1, effect: { perMythic: 0.1 }, unlocked: false }
 ];

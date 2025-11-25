@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuantumService } from '../../services/quantum.service';
 import { formatNumber } from '../../utils/numbers';
-
 @Component({
   selector: 'app-quantum-display',
   imports: [CommonModule],

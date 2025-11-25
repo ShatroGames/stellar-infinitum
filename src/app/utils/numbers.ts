@@ -1,20 +1,10 @@
 import Decimal from 'break_eternity.js';
-
 export { Decimal };
-
-/**
- * Format a Decimal number for display
- * Returns formatted string with suffixes for large numbers
- */
 export function formatNumber(value: Decimal | number, decimals: number = 2): string {
   const num = value instanceof Decimal ? value : new Decimal(value);
-  
-  // If number is too large for suffix system (> 1e66), use scientific notation
   if (num.gte(new Decimal('1e66'))) {
     return num.toExponential(decimals);
   }
-  
-  // Suffixes for large numbers
   const suffixes = [
     { threshold: new Decimal('1e63'), divisor: new Decimal('1e63'), suffix: 'Vg' },     // Vigintillion
     { threshold: new Decimal('1e60'), divisor: new Decimal('1e60'), suffix: 'Nd' },     // Novemdecillion
@@ -38,28 +28,16 @@ export function formatNumber(value: Decimal | number, decimals: number = 2): str
     { threshold: new Decimal('1e6'), divisor: new Decimal('1e6'), suffix: 'M' },        // Million
     { threshold: new Decimal('1e3'), divisor: new Decimal('1e3'), suffix: 'K' }         // Thousand
   ];
-  
-  // Find the appropriate suffix
   for (const { threshold, divisor, suffix } of suffixes) {
     if (num.gte(threshold)) {
       return num.dividedBy(divisor).toFixed(decimals) + suffix;
     }
   }
-  
-  // For numbers less than 1000
   return num.toFixed(decimals);
 }
-
-/**
- * Format a production rate for display
- */
 export function formatRate(value: Decimal | number): string {
   return formatNumber(value, 2);
 }
-
-/**
- * Create a Decimal from a number or string
- */
 export function decimal(value: number | string | Decimal): Decimal {
   if (value instanceof Decimal) {
     return value;

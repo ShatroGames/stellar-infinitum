@@ -22,7 +22,6 @@ import { ArtifactService } from './services/artifact.service';
 import { ProbabilityForgeService } from './services/probability-forge.service';
 import { TutorialService } from './services/tutorial.service';
 import { SkillTreeService } from './services/skill-tree.service';
-
 @Component({
   selector: 'app-root',
   imports: [
@@ -49,87 +48,59 @@ export class App {
   protected readonly title = signal('Stellar Infinitum');
   protected ascensionService = inject(AscensionService);
   protected dimensionService = inject(DimensionService);
-  protected achievementService = inject(AchievementService); // Initialize to start achievement tracking
+  protected achievementService = inject(AchievementService);
   protected quantumService = inject(QuantumService);
   protected artifactService = inject(ArtifactService);
   protected probabilityForgeService = inject(ProbabilityForgeService);
   protected tutorialService = inject(TutorialService);
   protected skillTreeService = inject(SkillTreeService);
   public currentYear = new Date().getFullYear();
-
   activeTab = signal<'skill' | 'ascension' | 'dimensions' | 'quantum' | 'artifacts' | 'forge' | 'collapse' | 'achievements' | 'options'>('skill');
-  
-  // Check if universe has collapsed
   hasCollapsed = computed(() => this.quantumService.hasCollapsed());
-  
-  // Check if at least 4 out of 5 dimensions are maxed
   canAccessCollapse = computed(() => {
     const dimensions = this.dimensionService.dimensions();
     const dimensionArray = Array.from(dimensions.values());
-    
     const maxedDimensions = dimensionArray.filter(dim => 
       dim.nodes.every(node => node.level >= node.maxLevel)
     );
-    
     return maxedDimensions.length >= 4;
   });
-
   constructor() {
-    // Set initial active tab based on collapse state
     if (this.quantumService.hasCollapsed()) {
       this.activeTab.set('quantum');
     }
-    
-    // Load tutorial state
     this.tutorialService.loadSaveData();
-    
-    // Show game start tutorial if this is first time
     if (!this.tutorialService.hasShown('game_start')) {
       setTimeout(() => this.tutorialService.showPopup('game_start'), 500);
     }
-    
-    // Monitor for tutorial triggers
     this.monitorTutorialTriggers();
   }
-
   private monitorTutorialTriggers(): void {
-    // Check every second for tutorial triggers
     setInterval(() => {
-      // First warp tutorial
       if (!this.tutorialService.hasShown('first_warp') && 
           this.skillTreeService.allTimeAscensions() > 0) {
         this.tutorialService.showPopup('first_warp');
       }
-      
-      // Stellar Nexus unlocked
       if (!this.tutorialService.hasShown('stellar_nexus') && 
           this.ascensionService.totalPoints() > 0) {
         this.tutorialService.showPopup('stellar_nexus');
       }
-      
-      // First transcend (dimensional echoes unlocked)
       if (!this.tutorialService.hasShown('first_transcend') && 
           this.dimensionService.totalEchoFragments() > 0) {
         this.tutorialService.showPopup('first_transcend');
       }
-      
-      // Dimensional Echoes tab becomes available
       if (!this.tutorialService.hasShown('dimensional_echoes') && 
           this.ascensionService.isTreeComplete()) {
         this.tutorialService.showPopup('dimensional_echoes');
       }
-      
-      // Cosmic Collapse available
       if (!this.tutorialService.hasShown('cosmic_collapse') && 
           this.canAccessCollapse()) {
         this.tutorialService.showPopup('cosmic_collapse');
       }
-      
-      // Artifacts unlocked
       if (!this.tutorialService.hasShown('artifacts_unlocked') && 
           this.artifactService.systemUnlocked()) {
         this.tutorialService.showPopup('artifacts_unlocked');
-        this.activeTab.set('artifacts'); // Auto-switch to artifacts tab
+        this.activeTab.set('artifacts');
       }
     }, 1000);
   }

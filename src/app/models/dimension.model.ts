@@ -1,5 +1,4 @@
 import { Decimal } from '../utils/numbers';
-
 export interface DimensionNode {
   id: string;
   name: string;
@@ -13,7 +12,6 @@ export interface DimensionNode {
   position: { x: number; y: number };
   effect: DimensionEffect;
 }
-
 export interface DimensionEffect {
   type: 'production_mult' | 'multiplier_power' | 
         'skill_cap' | 'stellar_core_bonus' | 'cross_dimension' |
@@ -22,7 +20,6 @@ export interface DimensionEffect {
   resource?: string;
   special?: string; // For unique mechanics
 }
-
 export interface Dimension {
   id: string;
   name: string;
@@ -34,14 +31,11 @@ export interface Dimension {
   mechanic: string; // Description of unique mechanic
   color: string; // For UI theming
 }
-
 export interface DimensionState {
   echoFragments: number;
   totalEchoFragments: number;
   dimensions: Map<string, Dimension>;
 }
-
-// Void Dimension: Expensive but exponential returns
 const VOID_DIMENSION_NODES: DimensionNode[] = [
   {
     id: 'void_root',
@@ -135,8 +129,6 @@ const VOID_DIMENSION_NODES: DimensionNode[] = [
     effect: { type: 'production_mult', value: 1.0 }
   }
 ];
-
-// Crystal Dimension: Cheap but with unique restrictions
 const CRYSTAL_DIMENSION_NODES: DimensionNode[] = [
   {
     id: 'crystal_root',
@@ -256,8 +248,6 @@ const CRYSTAL_DIMENSION_NODES: DimensionNode[] = [
     effect: { type: 'production_mult', value: 0.30 }
   }
 ];
-
-// Quantum Dimension: Random/probabilistic effects
 const QUANTUM_DIMENSION_NODES: DimensionNode[] = [
   {
     id: 'quantum_root',
@@ -364,8 +354,6 @@ const QUANTUM_DIMENSION_NODES: DimensionNode[] = [
     effect: { type: 'production_mult', value: 0.50 }
   }
 ];
-
-// Temporal Dimension: Effects get stronger over time
 const TEMPORAL_DIMENSION_NODES: DimensionNode[] = [
   {
     id: 'temporal_root',
@@ -472,8 +460,6 @@ const TEMPORAL_DIMENSION_NODES: DimensionNode[] = [
     effect: { type: 'multiplier_power', value: 0.10 }
   }
 ];
-
-// Prism Dimension: Balanced bonuses to everything
 const PRISM_DIMENSION_NODES: DimensionNode[] = [
   {
     id: 'prism_root',
@@ -606,7 +592,6 @@ const PRISM_DIMENSION_NODES: DimensionNode[] = [
     effect: { type: 'production_mult', value: 2.0 }
   }
 ];
-
 export const DIMENSIONS: Dimension[] = [
   {
     id: 'void',

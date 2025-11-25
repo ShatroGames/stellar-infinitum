@@ -1,5 +1,4 @@
 import { Decimal } from '../utils/numbers';
-
 export interface Achievement {
   id: string;
   name: string;
@@ -11,14 +10,12 @@ export interface Achievement {
   secret?: boolean; // Hidden until unlocked
   reward?: AchievementReward;
 }
-
 export interface AchievementReward {
   type: 'multiplier' | 'unlock' | 'cosmetic' | 'automation';
   description: string;
   value?: number;
   unlockId?: string; // For automation unlocks like 'auto_buy', 'auto_warp'
 }
-
 export enum AchievementCategory {
   ENERGY = 'Energy',
   STELLAR = 'Stellar',
@@ -28,9 +25,7 @@ export enum AchievementCategory {
   SPEED = 'Speed',
   SPECIAL = 'Special'
 }
-
 export const ACHIEVEMENTS: Achievement[] = [
-  // Energy Milestones
   {
     id: 'energy_1k',
     name: 'Spark of Power',
@@ -71,8 +66,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     category: AchievementCategory.ENERGY,
     unlocked: false
   },
-
-  // Production Milestones
   {
     id: 'production_100',
     name: 'Efficient Generator',
@@ -105,8 +98,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     category: AchievementCategory.ENERGY,
     unlocked: false
   },
-
-  // Skill Tree Achievements
   {
     id: 'first_skill',
     name: 'First Steps',
@@ -173,8 +164,6 @@ export const ACHIEVEMENTS: Achievement[] = [
       value: 1.05
     }
   },
-
-  // Ascension Achievements
   {
     id: 'first_warp',
     name: 'Space-Time Novice',
@@ -286,8 +275,6 @@ export const ACHIEVEMENTS: Achievement[] = [
       value: 1.15
     }
   },
-
-  // Dimension Achievements
   {
     id: 'dimensions_unlocked',
     name: 'Dimensional Awakening',
@@ -423,8 +410,6 @@ export const ACHIEVEMENTS: Achievement[] = [
       value: 1.25
     }
   },
-
-  // Progression Achievements
   {
     id: 'progression_1hour',
     name: 'Committed Explorer',
@@ -485,8 +470,6 @@ export const ACHIEVEMENTS: Achievement[] = [
       value: 1.1
     }
   },
-
-  // Special Achievements
   {
     id: 'welcome',
     name: 'Welcome to Stellar Infinitum',
@@ -535,8 +518,6 @@ export const ACHIEVEMENTS: Achievement[] = [
       value: 1.25
     }
   },
-  
-  // Quantum / Collapse Achievements
   {
     id: 'cosmic_collapse',
     name: 'Big Crunch',

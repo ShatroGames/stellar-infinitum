@@ -4,7 +4,6 @@
     <p class="dimension-desc">{{ dimension().description }}</p>
     <p class="dimension-mechanic">✦ {{ dimension().mechanic }}</p>
   </div>
-
   <div class="dimension-nodes">
     @for (row of nodesByRow(); track row[0]) {
       <div class="node-row" [attr.data-row]="row[0]">
@@ -12,7 +11,6 @@
           <div class="dimension-node {{ getNodeClass(node) }}" 
                [attr.data-node-id]="node.id"
                [attr.data-unlocked]="node.unlocked">
-            
             <div class="node-icon">
               @if (node.level >= node.maxLevel) {
                 ★
@@ -24,25 +22,21 @@
                 ⊗
               }
             </div>
-            
             <div class="node-content">
               <div class="node-header">
                 <h4 class="node-name">{{ node.name }}</h4>
                 <span class="node-level">{{ getNodeLevel(node) }}</span>
               </div>
               <p class="node-description">{{ getEffectDescription(node) }}</p>
-              
               @if (node.unlocked && node.level < node.maxLevel) {
                 <div class="node-cost">
                   Cost: {{ getNodeCost(node.id) }} EF
                 </div>
               }
-              
               @if (node.level >= node.maxLevel) {
                 <div class="node-maxed-badge">MAXED</div>
               }
             </div>
-            
             @if (node.unlocked && node.level < node.maxLevel) {
               <button class="btn-upgrade" 
                       (click)="onUpgrade(node.id)"

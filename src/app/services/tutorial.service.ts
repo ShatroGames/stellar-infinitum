@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-
 export interface TutorialPopup {
   id: string;
   title: string;
@@ -7,14 +6,12 @@ export interface TutorialPopup {
   icon: string;
   shown: boolean;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class TutorialService {
   private shownPopups = signal<Set<string>>(new Set());
   private currentPopup = signal<TutorialPopup | null>(null);
-
   private tutorialPopups: Map<string, TutorialPopup> = new Map([
     ['game_start', {
       id: 'game_start',
@@ -102,20 +99,16 @@ export class TutorialService {
       shown: false
     }]
   ]);
-
   hasShown(popupId: string): boolean {
     return this.shownPopups().has(popupId);
   }
-
   showPopup(popupId: string): void {
     if (this.hasShown(popupId)) return;
-
     const popup = this.tutorialPopups.get(popupId);
     if (popup) {
       this.currentPopup.set({ ...popup, shown: true });
     }
   }
-
   dismissPopup(popupId: string): void {
     this.shownPopups.update(shown => {
       const newSet = new Set(shown);
@@ -125,16 +118,13 @@ export class TutorialService {
     this.currentPopup.set(null);
     this.save();
   }
-
   getCurrentPopup() {
     return this.currentPopup;
   }
-
   private save(): void {
     const data = Array.from(this.shownPopups());
     localStorage.setItem('stellarInfinitum_tutorials', JSON.stringify(data));
   }
-
   loadSaveData(): void {
     const saved = localStorage.getItem('stellarInfinitum_tutorials');
     if (saved) {
@@ -146,7 +136,6 @@ export class TutorialService {
       }
     }
   }
-
   reset(): void {
     this.shownPopups.set(new Set());
     this.currentPopup.set(null);

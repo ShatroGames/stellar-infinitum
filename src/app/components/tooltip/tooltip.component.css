@@ -15,11 +15,9 @@
   max-width: 300px;
   margin-left: 10px;
 }
-
 .tooltip-content {
   text-align: left;
 }
-
 .tooltip::after {
   content: '';
   position: absolute;
@@ -29,7 +27,6 @@
   border: 6px solid transparent;
   border-right-color: #404040;
 }
-
 .tooltip::before {
   content: '';
   position: absolute;

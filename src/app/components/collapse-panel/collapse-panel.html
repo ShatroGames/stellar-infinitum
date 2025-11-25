@@ -3,13 +3,11 @@
     <h2>🌌 Cosmic Collapse</h2>
     <p class="subtitle">The ultimate transcendence awaits</p>
   </div>
-
   <div class="collapse-info">
     <div class="info-section">
       <h3>What is Cosmic Collapse?</h3>
       <p>When all dimensions reach their maximum potential, the universe can undergo a <strong>Cosmic Collapse</strong> - a transformative event that resets reality and unlocks the <strong>Quantum Weaving</strong> system.</p>
     </div>
-
     <div class="info-section warning">
       <h3>⚠️ Warning: This will reset</h3>
       <ul>
@@ -19,7 +17,6 @@
         <li>✅ Achievements are KEPT</li>
       </ul>
     </div>
-
     <div class="info-section">
       <h3>✨ You will gain</h3>
       <ul>
@@ -30,7 +27,6 @@
         <li>🌟 Entanglement mechanic to link nodes across trees</li>
       </ul>
     </div>
-
     <div class="requirements-section">
       <h3>Requirements</h3>
       <div class="requirement" [class.met]="dimensionsMaxed()">
@@ -49,7 +45,6 @@
         }
         <span>All pre-collapse achievements unlocked</span>
       </div>
-      
       @if (!allPreCollapseAchievements() && missingAchievements().length > 0) {
         <div class="missing-achievements">
           <h4>Missing Achievements ({{ missingAchievements().length }}):</h4>
@@ -67,7 +62,6 @@
         </div>
       }
     </div>
-
     <div class="collapse-actions">
       @if (canCollapse()) {
         <button class="collapse-btn" (click)="initiateCollapse()">
@@ -84,15 +78,12 @@
       }
     </div>
   </div>
-
-  <!-- Confirmation Modal -->
   @if (showConfirmation) {
     <div class="modal-overlay" (click)="cancelCollapse()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <h2>⚠️ Confirm Cosmic Collapse</h2>
         <p>Are you absolutely sure you want to collapse the universe?</p>
         <p class="warning-text">This action cannot be undone!</p>
-        
         <div class="modal-actions">
           <button class="confirm-btn" (click)="confirmCollapse()">
             Yes, Collapse the Universe
@@ -104,8 +95,6 @@
       </div>
     </div>
   }
-
-  <!-- Collapse Animation -->
   @if (showCollapseAnimation) {
     <div class="collapse-animation-overlay">
       <div class="black-hole">

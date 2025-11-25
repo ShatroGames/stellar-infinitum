@@ -1,5 +1,4 @@
 import { Decimal } from '../utils/numbers';
-
 export interface SkillNode {
   id: string;
   name: string;
@@ -13,13 +12,11 @@ export interface SkillNode {
   position: { x: number; y: number }; // For visual layout
   effect: SkillEffect;
 }
-
 export interface SkillEffect {
   type: 'production' | 'multiplier' | 'unlock' | 'automation';
   value: number;
   resource?: string;
 }
-
 export interface SkillTreeTier {
   id: number;
   name: string;
@@ -28,7 +25,6 @@ export interface SkillTreeTier {
   skills: SkillNode[];
   prestigeBonus: number; // Multiplier bonus for completing this tier
 }
-
 export interface PrestigeData {
   currentTier: number;
   totalAscensions: number; // Total warps across all runs
@@ -37,7 +33,6 @@ export interface PrestigeData {
   currentRunPrestigeBonus: number; // Bonus for the current cycle (resets on Tier 5 completion)
   tierCompletions: Map<number, number>; // How many times each tier was completed
 }
-
 export interface GameState {
   resources: Map<string, Decimal>;
   productionRates: Map<string, Decimal>;

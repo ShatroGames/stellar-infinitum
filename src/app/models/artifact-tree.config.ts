@@ -1,9 +1,5 @@
 import { Artifact, ArtifactBranch, ArtifactEffectType } from './artifact.model';
-
 export const ARTIFACTS: Artifact[] = [
-  // ========================================
-  // PRODUCTION BRANCH (10 tiers)
-  // ========================================
   {
     id: 'prod_1',
     name: 'Energy Amplifier',
@@ -144,10 +140,6 @@ export const ARTIFACTS: Artifact[] = [
     ],
     position: { x: 0, y: 9 }
   },
-
-  // ========================================
-  // MULTIPLIER BRANCH (10 tiers)
-  // ========================================
   {
     id: 'mult_1',
     name: 'Power Conduit',
@@ -288,11 +280,6 @@ export const ARTIFACTS: Artifact[] = [
     ],
     position: { x: 1, y: 9 }
   },
-
-  // ========================================
-  // RESONANCE BRANCH (10 tiers)
-  // Synergy bonus: Scales with artifacts from OTHER branches
-  // ========================================
   {
     id: 'res_1',
     name: 'Harmonic Resonator I',

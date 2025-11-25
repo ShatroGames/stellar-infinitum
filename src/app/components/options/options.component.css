@@ -1,38 +1,31 @@
-/* Options Container */
 .options-container {
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
   color: #fafafa;
 }
-
 .options-header {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid #262626;
 }
-
 .options-header h2 {
   font-size: 2rem;
   font-weight: 700;
   color: #fafafa;
   margin: 0;
 }
-
 .options-content {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
-
-/* Sections */
 .options-section {
   background: #141414;
   border: 1px solid #262626;
   border-radius: 12px;
   padding: 1.5rem;
 }
-
 .options-section h3 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -42,16 +35,12 @@
   align-items: center;
   gap: 0.5rem;
 }
-
-/* Button Group */
 .button-group {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1rem;
 }
-
-/* Buttons */
 .btn {
   display: flex;
   align-items: center;
@@ -67,45 +56,37 @@
   background: transparent;
   width: 100%;
 }
-
 .btn-icon {
   font-size: 1.125rem;
 }
-
 .btn-primary {
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: #fff;
   border-color: #2563eb;
 }
-
 .btn-primary:hover {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
 .btn-secondary {
   background: #262626;
   color: #d4d4d4;
   border-color: #404040;
 }
-
 .btn-secondary:hover {
   background: #333333;
   border-color: #525252;
   color: #fafafa;
 }
-
 .btn-danger {
   background: linear-gradient(135deg, #dc2626, #b91c1c);
   color: #fff;
   border-color: #b91c1c;
 }
-
 .btn-danger:hover {
   background: linear-gradient(135deg, #b91c1c, #991b1b);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
-
 .btn-extreme-danger {
   background: linear-gradient(135deg, #7c2d12, #991b1b);
   color: #fff;
@@ -113,7 +94,6 @@
   position: relative;
   overflow: hidden;
 }
-
 .btn-extreme-danger::before {
   content: '';
   position: absolute;
@@ -124,7 +104,6 @@
   background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.3), transparent);
   animation: danger-shine 3s infinite;
 }
-
 @keyframes danger-shine {
   0%, 100% {
     left: -100%;
@@ -133,14 +112,11 @@
     left: 100%;
   }
 }
-
 .btn-extreme-danger:hover {
   background: linear-gradient(135deg, #991b1b, #7c2d12);
   box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
   transform: scale(1.02);
 }
-
-/* Messages */
 .message {
   padding: 0.75rem 1rem;
   border-radius: 6px;
@@ -148,20 +124,16 @@
   font-weight: 500;
   margin-top: 0.75rem;
 }
-
 .message.success {
   background: rgba(34, 197, 94, 0.15);
   color: #4ade80;
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
-
 .message.error {
   background: rgba(239, 68, 68, 0.15);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
-
-/* Info Box */
 .info-box {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
@@ -169,28 +141,22 @@
   padding: 1rem;
   margin-top: 1rem;
 }
-
 .info-box p {
   margin: 0.5rem 0;
   color: #a3a3a3;
   font-size: 0.875rem;
   line-height: 1.5;
 }
-
 .info-box p:first-child {
   margin-top: 0;
 }
-
 .info-box p:last-child {
   margin-bottom: 0;
 }
-
 .info-box strong {
   color: #60a5fa;
   font-weight: 600;
 }
-
-/* Warning Box */
 .warning-box {
   background: rgba(220, 38, 38, 0.1);
   border: 1px solid rgba(220, 38, 38, 0.3);
@@ -198,38 +164,31 @@
   padding: 1rem;
   margin-top: 1rem;
 }
-
 .warning-box p {
   margin: 0.5rem 0;
   color: #a3a3a3;
   font-size: 0.875rem;
   line-height: 1.5;
 }
-
 .warning-box p:first-child {
   margin-top: 0;
 }
-
 .warning-box p:last-child {
   margin-bottom: 0;
 }
-
 .warning-box strong {
   color: #f87171;
   font-weight: 600;
 }
-
 .warning-box ul {
   margin: 0.5rem 0;
   padding-left: 1.5rem;
   color: #a3a3a3;
   font-size: 0.875rem;
 }
-
 .warning-box li {
   margin: 0.25rem 0;
 }
-
 .eternal-note {
   color: #fbbf24 !important;
   font-weight: 600 !important;
@@ -238,38 +197,28 @@
   border-radius: 4px;
   border-left: 3px solid #fbbf24;
 }
-
-/* Danger Zone */
 .danger-zone {
   border-color: rgba(220, 38, 38, 0.3);
 }
-
-/* Dev Zone */
 .dev-zone {
   border-color: rgba(168, 85, 247, 0.3);
 }
-
 .dev-zone .info-box {
   background: rgba(168, 85, 247, 0.1);
   border-color: rgba(168, 85, 247, 0.3);
 }
-
 .dev-zone .info-box strong {
   color: #c084fc;
 }
-
 .btn-special {
   background: linear-gradient(135deg, #a855f7, #9333ea);
   color: #fff;
   border-color: #9333ea;
 }
-
 .btn-special:hover {
   background: linear-gradient(135deg, #9333ea, #7e22ce);
   box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
 }
-
-/* Dialog */
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -283,7 +232,6 @@
   z-index: 1000;
   padding: 1rem;
 }
-
 .dialog-content {
   background: #141414;
   border: 1px solid #404040;
@@ -296,7 +244,6 @@
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
-
 .dialog-header {
   display: flex;
   justify-content: space-between;
@@ -304,14 +251,12 @@
   padding: 1.5rem;
   border-bottom: 1px solid #262626;
 }
-
 .dialog-header h3 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: #fafafa;
 }
-
 .btn-close {
   background: none;
   border: none;
@@ -327,23 +272,19 @@
   border-radius: 4px;
   transition: all 0.2s ease;
 }
-
 .btn-close:hover {
   background: #262626;
   color: #fafafa;
 }
-
 .dialog-body {
   padding: 1.5rem;
   overflow-y: auto;
 }
-
 .dialog-body p {
   margin: 0 0 1rem 0;
   color: #d4d4d4;
   font-size: 0.938rem;
 }
-
 .import-textarea {
   width: 100%;
   padding: 0.75rem;
@@ -356,43 +297,34 @@
   resize: vertical;
   min-height: 120px;
 }
-
 .import-textarea:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
-
 .dialog-footer {
   display: flex;
   gap: 0.75rem;
   padding: 1.5rem;
   border-top: 1px solid #262626;
 }
-
 .dialog-footer .btn {
   flex: 1;
 }
-
-/* Responsive */
 @media (max-width: 640px) {
   .options-container {
     padding: 1rem;
   }
-
   .options-header h2 {
     font-size: 1.5rem;
   }
-
   .options-section {
     padding: 1rem;
   }
-
   .btn {
     padding: 0.75rem 1.25rem;
     font-size: 0.875rem;
   }
-
   .dialog-content {
     margin: 1rem;
   }

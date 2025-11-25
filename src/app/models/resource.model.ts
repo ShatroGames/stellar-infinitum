@@ -1,5 +1,4 @@
 import { Decimal } from '../utils/numbers';
-
 export interface Resource {
   id: string;
   name: string;
@@ -8,7 +7,6 @@ export interface Resource {
   displayName: string;
   icon?: string;
 }
-
 export const INITIAL_RESOURCES: Resource[] = [
   {
     id: 'knowledge',

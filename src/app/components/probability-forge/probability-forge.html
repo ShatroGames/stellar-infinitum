@@ -15,7 +15,6 @@
       </p>
     </div>
   } @else {
-    <!-- Header -->
     <div class="forge-header">
       <h2>🎲 Probability Forge</h2>
       <div class="resources">
@@ -45,8 +44,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Tabs -->
     <div class="tabs">
       <button 
         class="tab" 
@@ -73,8 +70,6 @@
         📊 Statistics
       </button>
     </div>
-
-    <!-- Pull Tab -->
     @if (selectedTab === 'pull') {
       <div class="pull-section">
         <div class="probabilities">
@@ -90,7 +85,6 @@
             }
           </div>
         </div>
-
         <div class="pull-area">
           <button 
             class="pull-button" 
@@ -105,7 +99,6 @@
               }
             </span>
           </button>
-
           @if (showPullAnimation && lastPull) {
             <div class="pull-result" [class.animating]="showPullAnimation">
               <div class="result-card" [style.border-color]="getRarityColor(lastPull.outcome.rarity)">
@@ -130,8 +123,6 @@
         </div>
       </div>
     }
-
-    <!-- Collection Tab -->
     @if (selectedTab === 'collection') {
       <div class="collection-section">
         <div class="collection-header">
@@ -144,7 +135,6 @@
             </span>
           </div>
         </div>
-
         @for (rarity of [OutcomeRarity.MYTHIC, OutcomeRarity.EPIC, OutcomeRarity.RARE, OutcomeRarity.UNCOMMON, OutcomeRarity.COMMON]; track rarity) {
           <div class="rarity-section">
             <h4 [style.color]="getRarityColor(rarity)">{{getRarityName(rarity)}}</h4>
@@ -174,15 +164,12 @@
         }
       </div>
     }
-
-    <!-- Fate Weights Tab -->
     @if (selectedTab === 'weights') {
       <div class="weights-section">
         <h3>Fate Weights - Manipulate Probability</h3>
         <p class="weights-description">
           Unlock and upgrade weights to permanently shift odds in your favor.
         </p>
-
         <div class="weights-grid">
           @for (weight of fateWeights(); track weight.id) {
             <div class="weight-card" [class.unlocked]="weight.unlocked">
@@ -221,8 +208,6 @@
         </div>
       </div>
     }
-
-    <!-- Statistics Tab -->
     @if (selectedTab === 'stats') {
       <div class="stats-section">
         <h3>Pull Statistics</h3>
@@ -244,7 +229,6 @@
             <div class="stat-value highlight">{{formatNumber(totalMultiplier())}}x</div>
           </div>
         </div>
-
         <h4>Rarity Distribution</h4>
         <div class="rarity-stats">
           @for (entry of currentProbabilities() | keyvalue; track entry.key) {

@@ -7,17 +7,14 @@
       <span class="points-total">({{ totalPoints() }} total earned)</span>
     </div>
   </div>
-
   <div class="ascension-info">
     <p>Complete Tier 5 to earn Stellar Cores. Spend them on permanent upgrades that enhance your progression!</p>
     @if (totalPoints() > 0) {
       <p class="global-bonus">✦ Global Production Multiplier: <strong>{{ globalMultiplier() }}x</strong></p>
     }
   </div>
-
   <div class="tree-visualization">
     <div class="nodes-container">
-      <!-- Tier 1: Starting Node -->
       <div class="tier-section">
         <div class="tier-header">★ Core Automation</div>
         <div class="tier-nodes">
@@ -44,8 +41,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 2: Three Branches -->
       <div class="tier-section">
         <div class="tier-header">✦ Primary Upgrades</div>
         <div class="tier-nodes">
@@ -72,8 +67,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 3: Secondary Upgrades -->
       <div class="tier-section">
         <div class="tier-header">✧ Secondary Upgrades</div>
         <div class="tier-nodes">
@@ -100,8 +93,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 4: Auto-Warp -->
       <div class="tier-section">
         <div class="tier-header">⚡ Automation</div>
         <div class="tier-nodes">
@@ -128,8 +119,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 5: Tertiary Upgrades -->
       <div class="tier-section">
         <div class="tier-header">✵ Tertiary Upgrades</div>
         <div class="tier-nodes">
@@ -156,8 +145,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 6: Advanced Upgrades -->
       <div class="tier-section">
         <div class="tier-header">◈ Advanced Upgrades</div>
         <div class="tier-nodes">
@@ -184,8 +171,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 7: Convergence -->
       <div class="tier-section">
         <div class="tier-header">◆ Convergence Upgrades</div>
         <div class="tier-nodes">
@@ -212,8 +197,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 8: Ultimate -->
       <div class="tier-section">
         <div class="tier-header">◉ Ultimate Upgrades</div>
         <div class="tier-nodes">
@@ -240,8 +223,6 @@
           }
         </div>
       </div>
-
-      <!-- Tier 9: Final Mastery -->
       <div class="tier-section">
         <div class="tier-header">✦ Final Mastery</div>
         <div class="tier-nodes">
@@ -270,7 +251,6 @@
       </div>
     </div>
   </div>
-
   <div class="legend">
     <div class="legend-item">
       <span class="legend-icon node-purchased">✓</span>

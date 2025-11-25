@@ -8,11 +8,9 @@
       }
     </div>
   </div>
-
   @if (!dimensionService.hasAnyDimensionUnlocked()) {
     <div class="progress-section">
       <h3>Warp Progress</h3>
-
       <div class="points-progress">
         <div class="progress-label">
           <span>Energy:</span>
@@ -25,7 +23,6 @@
       </div>
     </div>
   }
-
   @if (canAscend()) {
     <div class="warp-ready">
       <p class="ready-message">✓ Ready to Warp!</p>

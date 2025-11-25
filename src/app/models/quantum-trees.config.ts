@@ -1,6 +1,4 @@
 import { QuantumNode, QuantumTreeType, QuantumNodeType, Synergy } from './quantum.model';
-
-// Matter Tree - Production Focus
 const MATTER_NODES: QuantumNode[] = [
   {
     id: 'matter_1',
@@ -107,8 +105,6 @@ const MATTER_NODES: QuantumNode[] = [
     position: { x: 1, y: 4 }
   }
 ];
-
-// Energy Tree - Multiplier Focus
 const ENERGY_NODES: QuantumNode[] = [
   {
     id: 'energy_1',
@@ -215,8 +211,6 @@ const ENERGY_NODES: QuantumNode[] = [
     position: { x: 7, y: 4 }
   }
 ];
-
-// Time Tree - Speed and Automation Focus
 const TIME_NODES: QuantumNode[] = [
   {
     id: 'time_1',
@@ -323,8 +317,6 @@ const TIME_NODES: QuantumNode[] = [
     position: { x: 11, y: 4 }
   }
 ];
-
-// Synergies - activated when specific node combinations are met
 export const QUANTUM_SYNERGIES: Synergy[] = [
   {
     id: 'synergy_matter_energy',
@@ -411,5 +403,4 @@ export const QUANTUM_SYNERGIES: Synergy[] = [
     icon: '⧖'
   }
 ];
-
 export const QUANTUM_NODES = [...MATTER_NODES, ...ENERGY_NODES, ...TIME_NODES];

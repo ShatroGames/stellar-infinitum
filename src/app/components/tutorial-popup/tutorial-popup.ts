@@ -1,7 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TutorialService } from '../../services/tutorial.service';
-
 @Component({
   selector: 'app-tutorial-popup',
   imports: [CommonModule],
@@ -10,9 +9,7 @@ import { TutorialService } from '../../services/tutorial.service';
 })
 export class TutorialPopup {
   private tutorialService = inject(TutorialService);
-  
   popup = computed(() => this.tutorialService.getCurrentPopup()());
-
   onDismiss(): void {
     const popup = this.popup();
     if (popup) {

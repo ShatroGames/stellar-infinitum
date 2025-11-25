@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AscensionService } from '../../services/ascension.service';
 import { AscensionNode } from '../../models/ascension-tree.model';
-
 @Component({
   selector: 'app-ascension-tree',
   standalone: true,
@@ -12,33 +11,25 @@ import { AscensionNode } from '../../models/ascension-tree.model';
 })
 export class AscensionTreeComponent {
   private ascensionService = inject(AscensionService);
-
   points = this.ascensionService.points;
   totalPoints = this.ascensionService.totalPoints;
   nodes = this.ascensionService.nodes;
   globalMultiplier = this.ascensionService.globalMultiplier;
-  
-  // Make Array available in template
   protected readonly Array = Array;
-
   purchasedNodes = computed(() => this.ascensionService.getPurchasedNodes());
   availableNodes = computed(() => this.ascensionService.getAvailableNodes());
   lockedNodes = computed(() => this.ascensionService.getLockedNodes());
-
   onPurchase(nodeId: string): void {
     this.ascensionService.purchaseNode(nodeId);
   }
-
   canPurchase(nodeId: string): boolean {
     return this.ascensionService.canPurchase(nodeId);
   }
-
   getNodeClass(node: AscensionNode): string {
     if (node.purchased) return 'node-purchased';
     if (this.canPurchase(node.id)) return 'node-available';
     return 'node-locked';
   }
-
   getEffectDescription(node: AscensionNode): string {
     const effect = node.effect;
     switch (effect.type) {

@@ -11,7 +11,6 @@ import { ArtifactService } from '../../services/artifact.service';
 import { ProbabilityForgeService } from '../../services/probability-forge.service';
 import { TutorialService } from '../../services/tutorial.service';
 import { EternalProgress } from '../../services/eternal-progress';
-
 @Component({
   selector: 'app-options',
   imports: [CommonModule, FormsModule],
@@ -29,27 +28,19 @@ export class OptionsComponent {
   private probabilityForgeService = inject(ProbabilityForgeService);
   private tutorialService = inject(TutorialService);
   private eternalProgress = inject(EternalProgress);
-
   showImportDialog = false;
   importText = '';
   exportMessage = '';
   importMessage = '';
-  
-  // Expose eternal stats for template
   totalVictories = this.eternalProgress.totalVictories;
   hasEverWon = this.eternalProgress.hasEverWon;
-
   exportSave(): void {
     try {
-      // First, save current game state to localStorage
       this.gameService.saveGameState();
       this.skillTreeService.saveSkills();
       this.skillTreeService.savePrestige();
       this.ascensionService.saveState();
       this.dimensionService.saveState();
-      // Note: achievements, quantum, and tutorials auto-save
-
-      // Now gather all save data from localStorage
       const saveData = {
         gameState: localStorage.getItem('treefinite_save'),
         skills: localStorage.getItem('treefinite_skills'),
@@ -60,14 +51,10 @@ export class OptionsComponent {
         quantum: localStorage.getItem('stellarInfinitum_quantum'),
         tutorials: localStorage.getItem('stellarInfinitum_tutorials')
       };
-
-      // Encode to base64 (handle Unicode properly)
       const jsonString = JSON.stringify(saveData);
       const encoded = btoa(encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g, (match, p1) => {
         return String.fromCharCode(parseInt(p1, 16));
       }));
-
-      // Copy to clipboard
       navigator.clipboard.writeText(encoded).then(() => {
         this.exportMessage = '[✓] Save data copied to clipboard!';
         setTimeout(() => this.exportMessage = '', 3000);
@@ -82,39 +69,30 @@ export class OptionsComponent {
       setTimeout(() => this.exportMessage = '', 5000);
     }
   }
-
   openImportDialog(): void {
     this.showImportDialog = true;
     this.importText = '';
     this.importMessage = '';
   }
-
   closeImportDialog(): void {
     this.showImportDialog = false;
     this.importText = '';
     this.importMessage = '';
   }
-
   importSave(): void {
     try {
       if (!this.importText.trim()) {
         this.importMessage = '[✗] Please paste save data';
         return;
       }
-
-      // Decode from base64 (handle Unicode properly)
       const decoded = atob(this.importText.trim());
       const decodedString = decodeURIComponent(decoded.split('').map((c) => {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
       const saveData = JSON.parse(decodedString);
-
-      // Validate save data structure
       if (!saveData || typeof saveData !== 'object') {
         throw new Error('Invalid save data format');
       }
-
-      // Import each piece of save data
       if (saveData.gameState) {
         localStorage.setItem('treefinite_save', saveData.gameState);
       }
@@ -139,7 +117,6 @@ export class OptionsComponent {
       if (saveData.tutorials) {
         localStorage.setItem('stellarInfinitum_tutorials', saveData.tutorials);
       }
-
       this.importMessage = '[✓] Save imported successfully! Reloading...';
       setTimeout(() => {
         window.location.reload();
@@ -150,17 +127,14 @@ export class OptionsComponent {
       console.error('Import error:', error);
     }
   }
-
   saveGame(): void {
     this.gameService.saveGameState();
     this.skillTreeService.saveSkills();
     this.skillTreeService.savePrestige();
     this.ascensionService.saveState();
-    
     this.exportMessage = '[✓] Game saved successfully!';
     setTimeout(() => this.exportMessage = '', 3000);
   }
-
   resetGame(): void {
     if (confirm('Are you sure you want to COMPLETELY reset the game? This will erase ALL progress including warps and ascension points!')) {
       if (confirm('This action cannot be undone! Are you absolutely sure?')) {
@@ -177,23 +151,17 @@ export class OptionsComponent {
       }
     }
   }
-  
   fullReset(): void {
     const hasWon = this.quantumService.hasWon();
     const totalVictories = this.totalVictories();
-    
     let message = 'FULL RESET: This will erase EVERYTHING including achievements and tutorials.\n';
     if (totalVictories > 0) {
       message += `\nYou have ${totalVictories} victory reset(s). This count will be preserved for future features.\n`;
     }
     message += '\nAre you absolutely sure?';
-    
     if (confirm(message)) {
       if (confirm('FINAL WARNING: This cannot be undone! Continue with full reset?')) {
-        // Record the reset in eternal progress
         this.eternalProgress.recordReset();
-        
-        // Reset all game systems
         this.gameService.resetGame();
         this.skillTreeService.resetAll();
         this.ascensionService.reset();
@@ -203,39 +171,25 @@ export class OptionsComponent {
         this.artifactService.reset();
         this.probabilityForgeService.reset();
         this.tutorialService.reset();
-        
-        // Reload to start fresh
         window.location.reload();
       }
     }
   }
-
   skipToPostCollapse(): void {
     if (confirm('Skip to Post-Collapse state? This will reset all progress except achievements.')) {
-      // Reset all pre-quantum systems
       this.gameService.resetGame();
       this.skillTreeService.resetAll();
       this.ascensionService.reset();
       this.dimensionService.reset();
       this.artifactService.reset();
-      
-      // Initialize quantum state (post-collapse)
       this.quantumService.initializeQuantumState();
-      
-      // Grant the collapse achievement
       this.achievementService.unlockAchievement('cosmic_collapse');
-      
-      // Mark collapse tutorial as shown by dismissing it
       this.tutorialService.dismissPopup('cosmic_collapse');
-      
-      // Save everything (quantum auto-saves)
       this.gameService.saveGameState();
       this.skillTreeService.saveSkills();
       this.skillTreeService.savePrestige();
       this.ascensionService.saveState();
       this.dimensionService.saveState();
-      
-      // Reload to apply changes
       window.location.reload();
     }
   }

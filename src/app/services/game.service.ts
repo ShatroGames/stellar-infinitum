@@ -4,7 +4,6 @@ import { Decimal } from '../utils/numbers';
 import { SaveManagerService } from './save-manager.service';
 import { QuantumService } from './quantum.service';
 import { ProbabilityForgeService } from './probability-forge.service';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +18,6 @@ export class GameService {
   private saveCounter = 0;
   private readonly SAVE_INTERVAL = 100; // Save every 10 seconds (100 ticks at 100ms)
   private _achievementService?: any; // Lazy loaded to avoid circular dependency
-  
   private get achievementService(): any {
     if (!this._achievementService) {
       try {
@@ -30,13 +28,11 @@ export class GameService {
     }
     return this._achievementService;
   }
-
   constructor() {
     this.initializeResources();
     this.startGameLoop();
     this.loadGameState();
   }
-
   private initializeResources(): void {
     const resourceMap = new Map<string, Resource>();
     INITIAL_RESOURCES.forEach(resource => {
@@ -44,15 +40,12 @@ export class GameService {
     });
     this.resources.set(resourceMap);
   }
-
   getResources() {
     return this.resources.asReadonly();
   }
-
   getResource(id: string): Resource | undefined {
     return this.resources().get(id);
   }
-
   addResource(resourceId: string, amount: Decimal | number): void {
     this.resources.update(resourceMap => {
       const newMap = new Map(resourceMap);
@@ -65,13 +58,11 @@ export class GameService {
       return newMap;
     });
   }
-
   canAfford(resourceId: string, cost: Decimal | number): boolean {
     const resource = this.resources().get(resourceId);
     const costDecimal = cost instanceof Decimal ? cost : new Decimal(cost);
     return resource ? resource.amount.gte(costDecimal) : false;
   }
-
   spend(resourceId: string, cost: Decimal | number): boolean {
     if (this.canAfford(resourceId, cost)) {
       const costDecimal = cost instanceof Decimal ? cost : new Decimal(cost);
@@ -80,14 +71,12 @@ export class GameService {
     }
     return false;
   }
-
   setProductionRate(resourceId: string, rate: Decimal | number): void {
     this.resources.update(resourceMap => {
       const newMap = new Map(resourceMap);
       const resource = newMap.get(resourceId);
       if (resource) {
         const rateDecimal = rate instanceof Decimal ? rate : new Decimal(rate);
-        // Only update if the rate actually changed
         if (!resource.productionRate.eq(rateDecimal)) {
           resource.productionRate = rateDecimal;
           newMap.set(resourceId, resource);
@@ -97,98 +86,73 @@ export class GameService {
       return resourceMap; // No change, return original
     });
   }
-
   addProductionRate(resourceId: string, additionalRate: number): void {
     const resource = this.resources().get(resourceId);
     if (resource) {
       this.setProductionRate(resourceId, resource.productionRate.plus(additionalRate));
     }
   }
-
   private startGameLoop(): void {
     this.gameLoopInterval = window.setInterval(() => {
       this.tick();
     }, 50); // Update 20 times per second
   }
-
   private tick(): void {
     const now = Date.now();
     const deltaTime = (now - this.lastUpdate) / 1000; // Convert to seconds
     this.lastUpdate = now;
-
-    // If collapsed, update quantum system instead of regular resources
     if (this.quantumService.hasCollapsed()) {
       const quantaPerSecond = this.quantumService.quantaPerSecond();
-      
-      // Update Probability Forge with time-based token generation
       this.probabilityForgeService.checkUnlock(this.quantumService.totalQuantaGenerated());
       this.probabilityForgeService.generateFateTokens(deltaTime);
-      
-      // Apply Probability Forge multiplier to Quanta generation
       const forgeMultiplier = this.probabilityForgeService.totalMultiplier();
       this.quantumService.addQuanta(deltaTime, forgeMultiplier);
     } else {
-      // Apply production rates - only update if there's actual production
       this.resources.update(resourceMap => {
         let hasChanges = false;
         const newMap = new Map(resourceMap);
-        
         newMap.forEach((resource, id) => {
           if (resource.productionRate.gt(0)) {
             resource.amount = resource.amount.plus(resource.productionRate.times(deltaTime));
             hasChanges = true;
           }
         });
-        
         return hasChanges ? newMap : resourceMap;
       });
     }
-
-    // Deterministic auto-save every 10 seconds instead of random
     this.saveCounter++;
     if (this.saveCounter >= this.SAVE_INTERVAL) {
       this.saveCounter = 0;
       this.saveGameState();
     }
   }
-
   saveGameState(): void {
     const state = {
       resources: Array.from(this.resources().entries()),
       lastUpdate: this.lastUpdate,
       timestamp: Date.now()
     };
-    
-    // Use save manager for debounced saves
     this.saveManager.scheduleSave('game', () => {
       localStorage.setItem('treefinite_save', JSON.stringify(state));
     });
   }
-
   loadGameState(): void {
     const saved = localStorage.getItem('treefinite_save');
     if (saved) {
       try {
         const state = JSON.parse(saved);
         const resourceMap = new Map<string, Resource>(state.resources);
-        
-        // Calculate offline progress
         const offlineTime = (Date.now() - state.timestamp) / 1000; // seconds
         resourceMap.forEach((resource, id) => {
-          // Convert loaded values to Decimal if they aren't already
           resource.amount = new Decimal(resource.amount);
           resource.productionRate = new Decimal(resource.productionRate);
-          
           if (resource.productionRate.gt(0)) {
             resource.amount = resource.amount.plus(resource.productionRate.times(offlineTime));
             resourceMap.set(id, resource);
           }
         });
-        
         this.resources.set(resourceMap);
         this.lastUpdate = Date.now();
-        
-        // Notify achievement service of offline time (lazy loaded to avoid circular dependency)
         if (offlineTime > 0) {
           setTimeout(() => {
             this.achievementService?.recordOfflineTime(offlineTime);
@@ -199,18 +163,15 @@ export class GameService {
       }
     }
   }
-
   resetGame(): void {
     localStorage.removeItem('treefinite_save');
     this.initializeResources();
     this.lastUpdate = Date.now();
   }
-
   ngOnDestroy(): void {
     if (this.gameLoopInterval) {
       clearInterval(this.gameLoopInterval);
     }
-    // Force immediate save on destroy
     this.saveManager.flushAll();
   }
 }

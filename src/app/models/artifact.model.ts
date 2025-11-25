@@ -4,7 +4,6 @@ export enum ArtifactBranch {
   RESONANCE = 'resonance',
   CROSS_BRANCH = 'cross-branch'
 }
-
 export enum ArtifactEffectType {
   FLAT_PRODUCTION = 'flat_production',
   MULTIPLIER = 'multiplier',
@@ -16,13 +15,11 @@ export enum ArtifactEffectType {
   COMPOUND_BONUS = 'compound_bonus',
   EFFECTIVENESS_BONUS = 'effectiveness_bonus'
 }
-
 export interface ArtifactEffect {
   type: ArtifactEffectType;
   value: number; // Percentage or multiplier value
   description: string;
 }
-
 export interface Artifact {
   id: string;
   name: string;
@@ -36,7 +33,6 @@ export interface Artifact {
   effects: ArtifactEffect[];
   position: { x: number; y: number }; // For visual layout
 }
-
 export interface ArtifactState {
   unlockedArtifacts: Set<string>;
   artifactUnlockTime: Map<string, number>; // For time-based bonuses

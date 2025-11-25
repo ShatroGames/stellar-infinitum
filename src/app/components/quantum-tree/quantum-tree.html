@@ -15,8 +15,6 @@
                 <span class="stat-value">{{ formatNumber(quantumService.totalQuantaGenerated()) }}</span>
             </div>
         </div>
-
-        <!-- Artifact Unlock Progress -->
         @if (!artifactService.systemUnlocked()) {
         <div class="artifact-unlock-progress">
             <div class="progress-label">
@@ -29,8 +27,6 @@
         </div>
         }
     </div>
-
-    <!-- Help Panel -->
     <div class="help-panel">
         <h3>⚛ How Quantum Weaving Works</h3>
         <div class="help-grid">
@@ -67,8 +63,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Active Synergies -->
     @if (activeSynergies().length > 0) {
     <div class="synergies-panel">
         <h3>Active Synergies</h3>
@@ -85,10 +79,7 @@
         </div>
     </div>
     }
-
-    <!-- Three Trees Side by Side -->
     <div class="trees-container">
-        <!-- Matter Tree -->
         <div class="tree-column matter">
             <h3 class="tree-title">{{ getTreeTitle(QuantumTreeType.MATTER) }}</h3>
             <div class="tree-grid">
@@ -96,15 +87,12 @@
                 @if (getNodeState(node.id); as state) {
                 <div [class]="getNodeClasses(node).join(' ')" [style.grid-column]="node.position.x + 1"
                     [style.grid-row]="node.position.y + 1">
-
                     @if (isNodeInAnySynergy(node.id)) {
                     <div class="synergy-indicator" [class.active]="isNodeInActiveSynergy(node.id)">✨</div>
                     }
-
                     <div class="node-icon">{{ node.icon }}</div>
                     <div class="node-name">{{ node.name }}</div>
                     <div class="node-level">Lv {{ state.level }}/{{ node.maxLevel }}</div>
-
                     @if (getSynergiesForNode(node.id).length > 0) {
                     <div class="node-synergies">
                         @for (synergy of getSynergiesForNode(node.id); track synergy.id) {
@@ -114,7 +102,6 @@
                         }
                     </div>
                     }
-
                     @if (state.unlocked) {
                     <div class="node-effect">
                         @if (node.productionBonus) {
@@ -124,7 +111,6 @@
                         <span>×{{ roundMultiplier(1 + (node.multiplierBonus * state.level)) }}</span>
                         }
                     </div>
-
                     @if (state.level < node.maxLevel) { <button class="upgrade-btn" [disabled]="!canUpgrade(node.id)"
                         (click)="upgradeNode(node.id); $event.stopPropagation()">
                         {{ formatNumber(getNodeCost(node.id)) }}
@@ -140,8 +126,6 @@
                 }
             </div>
         </div>
-
-        <!-- Energy Tree -->
         <div class="tree-column energy">
             <h3 class="tree-title">{{ getTreeTitle(QuantumTreeType.ENERGY) }}</h3>
             <div class="tree-grid">
@@ -149,15 +133,12 @@
                 @if (getNodeState(node.id); as state) {
                 <div [class]="getNodeClasses(node).join(' ')" [style.grid-column]="node.position.x + 1"
                     [style.grid-row]="node.position.y + 1">
-
                     @if (isNodeInAnySynergy(node.id)) {
                     <div class="synergy-indicator" [class.active]="isNodeInActiveSynergy(node.id)">✨</div>
                     }
-
                     <div class="node-icon">{{ node.icon }}</div>
                     <div class="node-name">{{ node.name }}</div>
                     <div class="node-level">Lv {{ state.level }}/{{ node.maxLevel }}</div>
-
                     @if (getSynergiesForNode(node.id).length > 0) {
                     <div class="node-synergies">
                         @for (synergy of getSynergiesForNode(node.id); track synergy.id) {
@@ -167,7 +148,6 @@
                         }
                     </div>
                     }
-
                     @if (state.unlocked) {
                     <div class="node-effect">
                         @if (node.productionBonus) {
@@ -177,7 +157,6 @@
                         <span>×{{ roundMultiplier(1 + (node.multiplierBonus * state.level)) }}</span>
                         }
                     </div>
-
                     @if (state.level < node.maxLevel) { <button class="upgrade-btn" [disabled]="!canUpgrade(node.id)"
                         (click)="upgradeNode(node.id); $event.stopPropagation()">
                         {{ formatNumber(getNodeCost(node.id)) }}
@@ -193,8 +172,6 @@
                 }
             </div>
         </div>
-
-        <!-- Time Tree -->
         <div class="tree-column time">
             <h3 class="tree-title">{{ getTreeTitle(QuantumTreeType.TIME) }}</h3>
             <div class="tree-grid">
@@ -202,15 +179,12 @@
                 @if (getNodeState(node.id); as state) {
                 <div [class]="getNodeClasses(node).join(' ')" [style.grid-column]="node.position.x + 1"
                     [style.grid-row]="node.position.y + 1">
-
                     @if (isNodeInAnySynergy(node.id)) {
                     <div class="synergy-indicator" [class.active]="isNodeInActiveSynergy(node.id)">✨</div>
                     }
-
                     <div class="node-icon">{{ node.icon }}</div>
                     <div class="node-name">{{ node.name }}</div>
                     <div class="node-level">Lv {{ state.level }}/{{ node.maxLevel }}</div>
-
                     @if (getSynergiesForNode(node.id).length > 0) {
                     <div class="node-synergies">
                         @for (synergy of getSynergiesForNode(node.id); track synergy.id) {
@@ -220,7 +194,6 @@
                         }
                     </div>
                     }
-
                     @if (state.unlocked) {
                     <div class="node-effect">
                         @if (node.productionBonus) {
@@ -230,7 +203,6 @@
                         <span>×{{ roundMultiplier(1 + (node.multiplierBonus * state.level)) }}</span>
                         }
                     </div>
-
                     @if (state.level < node.maxLevel) { <button class="upgrade-btn" [disabled]="!canUpgrade(node.id)"
                         (click)="upgradeNode(node.id); $event.stopPropagation()">
                         {{ formatNumber(getNodeCost(node.id)) }}
@@ -247,8 +219,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Legend -->
     <div class="legend">
         <div class="legend-item">
             <div class="legend-icon type-production"></div>

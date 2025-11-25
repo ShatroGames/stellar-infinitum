@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkillTreeService } from '../../services/skill-tree.service';
 import { SkillNodeComponent } from '../skill-node/skill-node.component';
-
 @Component({
   selector: 'app-skill-tree',
   imports: [CommonModule, SkillNodeComponent],
@@ -11,16 +10,12 @@ import { SkillNodeComponent } from '../skill-node/skill-node.component';
 })
 export class SkillTreeComponent {
   private skillTreeService = inject(SkillTreeService);
-
   skills = computed(() => {
     return Array.from(this.skillTreeService.getSkills()().values());
   });
-
-  // Organize skills by their Y position (rows)
   skillRows = computed(() => {
     const skills = this.skills();
     const rowMap = new Map<number, typeof skills>();
-
     skills.forEach(skill => {
       const y = skill.position.y;
       if (!rowMap.has(y)) {
@@ -28,13 +23,9 @@ export class SkillTreeComponent {
       }
       rowMap.get(y)!.push(skill);
     });
-
-    // Sort each row by X position
     rowMap.forEach(row => {
       row.sort((a, b) => a.position.x - b.position.x);
     });
-
-    // Convert to array and sort by Y
     return Array.from(rowMap.entries())
       .sort((a, b) => a[0] - b[0])
       .map(entry => entry[1]);
