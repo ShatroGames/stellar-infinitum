@@ -1,128 +1,48 @@
-import { Component, signal, inject, computed } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { ResourceDisplayComponent } from './components/resource-display/resource-display.component';
-import { SkillTreeComponent } from './components/skill-tree/skill-tree.component';
-import { PrestigePanelComponent } from './components/prestige-panel/prestige-panel.component';
-import { AscensionTreeComponent } from './components/ascension-tree/ascension-tree.component';
-import { DimensionPanelComponent } from './components/dimension-panel/dimension-panel';
-import { QuantumDisplayComponent } from './components/quantum-display/quantum-display.component';
-import { ArtifactTreeComponent } from './components/artifact-tree/artifact-tree.component';
-import { ProbabilityForgeComponent } from './components/probability-forge/probability-forge';
-import { OptionsComponent } from './components/options/options.component';
-import { Achievements } from './components/achievements/achievements';
-import { QuantumTree } from './components/quantum-tree/quantum-tree';
-import { CollapsePanel } from './components/collapse-panel/collapse-panel';
-import { TutorialPopup } from './components/tutorial-popup/tutorial-popup';
-import { VictoryScreen } from './components/victory-screen/victory-screen';
-import { AscensionService } from './services/ascension.service';
-import { DimensionService } from './services/dimension.service';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { StageService } from './core/stage.service';
+import { SaveService } from './core/save.service';
+import { Stage1Service } from './stages/stage1/stage1.service';
 import { AchievementService } from './services/achievement.service';
-import { QuantumService } from './services/quantum.service';
-import { ArtifactService } from './services/artifact.service';
-import { ProbabilityForgeService } from './services/probability-forge.service';
 import { TutorialService } from './services/tutorial.service';
-import { SkillTreeService } from './services/skill-tree.service';
+import { SkillTreeComponent } from './components/skill-tree/skill-tree.component';
+import { Stage1Panel } from './stages/stage1/stage1-panel/stage1-panel';
+import { PlaceholderView } from './stages/placeholder/placeholder-view/placeholder-view';
+import { CurrencyDisplay } from './components/currency-display/currency-display';
+import { Notices } from './components/notices/notices';
+import { Achievements } from './components/achievements/achievements';
+import { OptionsComponent } from './components/options/options.component';
+import { TutorialPopup } from './components/tutorial-popup/tutorial-popup';
+
+type Tab = 'stage' | 'achievements' | 'options';
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet, 
-    ResourceDisplayComponent,
-    SkillTreeComponent, 
-    PrestigePanelComponent, 
-    AscensionTreeComponent, 
-    DimensionPanelComponent, 
-    QuantumTree, 
-    CollapsePanel, 
-    QuantumDisplayComponent, 
-    ArtifactTreeComponent,
-    ProbabilityForgeComponent,
-    OptionsComponent, 
-    Achievements, 
-    TutorialPopup,
-    VictoryScreen
+    SkillTreeComponent, Stage1Panel, PlaceholderView, CurrencyDisplay, Notices,
+    Achievements, OptionsComponent, TutorialPopup,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('Stellar Infinitum');
-  protected ascensionService = inject(AscensionService);
-  protected dimensionService = inject(DimensionService);
-  protected achievementService = inject(AchievementService); // Initialize to start achievement tracking
-  protected quantumService = inject(QuantumService);
-  protected artifactService = inject(ArtifactService);
-  protected probabilityForgeService = inject(ProbabilityForgeService);
-  protected tutorialService = inject(TutorialService);
-  protected skillTreeService = inject(SkillTreeService);
-  public currentYear = new Date().getFullYear();
+  protected stageService = inject(StageService);
+  protected achievementService = inject(AchievementService);
+  private tutorialService = inject(TutorialService);
+  private stage1 = inject(Stage1Service);
+  private saveService = inject(SaveService);
 
-  activeTab = signal<'skill' | 'ascension' | 'dimensions' | 'quantum' | 'artifacts' | 'forge' | 'collapse' | 'achievements' | 'options'>('skill');
-  
-  // Check if universe has collapsed
-  hasCollapsed = computed(() => this.quantumService.hasCollapsed());
-  
-  // Show the Collapse tab once every dimension is unlocked (collapsing needs them maxed)
-  canAccessCollapse = computed(() =>
-    Array.from(this.dimensionService.dimensions().values()).every(dim => dim.unlocked));
+  protected activeTab = signal<Tab>('stage');
+  protected stageNumber = computed(() => this.stageService.currentIndex() + 1);
+  protected currentYear = new Date().getFullYear();
 
   constructor() {
-    // Set initial active tab based on collapse state
-    if (this.quantumService.hasCollapsed()) {
-      this.activeTab.set('quantum');
-    }
-    
-    // Load tutorial state
-    this.tutorialService.loadSaveData();
-    
-    // Show game start tutorial if this is first time
-    if (!this.tutorialService.hasShown('game_start')) {
-      setTimeout(() => this.tutorialService.showPopup('game_start'), 500);
-    }
-    
-    // Monitor for tutorial triggers
-    this.monitorTutorialTriggers();
-  }
-
-  private monitorTutorialTriggers(): void {
-    // Check every second for tutorial triggers
-    setInterval(() => {
-      // First warp tutorial
-      if (!this.tutorialService.hasShown('first_warp') && 
-          this.skillTreeService.allTimeAscensions() > 0) {
-        this.tutorialService.showPopup('first_warp');
-      }
-      
-      // Stellar Nexus unlocked
-      if (!this.tutorialService.hasShown('stellar_nexus') && 
-          this.ascensionService.totalPoints() > 0) {
-        this.tutorialService.showPopup('stellar_nexus');
-      }
-      
-      // First transcend (dimensional echoes unlocked)
-      if (!this.tutorialService.hasShown('first_transcend') && 
-          this.dimensionService.totalEchoFragments() > 0) {
-        this.tutorialService.showPopup('first_transcend');
-      }
-      
-      // Dimensional Echoes tab becomes available
-      if (!this.tutorialService.hasShown('dimensional_echoes') && 
-          this.ascensionService.isTreeComplete()) {
-        this.tutorialService.showPopup('dimensional_echoes');
-      }
-      
-      // Cosmic Collapse available
-      if (!this.tutorialService.hasShown('cosmic_collapse') && 
-          this.canAccessCollapse()) {
-        this.tutorialService.showPopup('cosmic_collapse');
-      }
-      
-      // Artifacts unlocked
-      if (!this.tutorialService.hasShown('artifacts_unlocked') && 
-          this.artifactService.systemUnlocked()) {
-        this.tutorialService.showPopup('artifacts_unlocked');
-        this.activeTab.set('artifacts'); // Auto-switch to artifacts tab
-      }
-    }, 1000);
+    // Tutorials follow natural progression
+    effect(() => {
+      // Wait until notices (rebuilt-game notice, away summary) are dismissed
+      if (this.saveService.legacyNotice() || this.stageService.awayReport()) return;
+      if (this.stageService.stagesBeaten() >= 1) this.tutorialService.showPopup('stage_beaten');
+      else if (this.stage1.tier() >= 2) this.tutorialService.showPopup('first_warp');
+      else this.tutorialService.showPopup('game_start');
+    });
   }
 }

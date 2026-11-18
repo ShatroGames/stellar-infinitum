@@ -28,23 +28,3 @@ export interface SkillTreeTier {
   skills: SkillNode[];
   prestigeBonus: number; // Multiplier bonus for completing this tier
 }
-
-export interface PrestigeData {
-  currentTier: number;
-  totalAscensions: number; // Total warps across all runs
-  currentRunAscensions: number; // Warps in the current ascension cycle
-  totalPrestigeBonus: number; // Cumulative bonus from all ascensions
-  currentRunPrestigeBonus: number; // Bonus for the current cycle (resets on Tier 5 completion)
-  tierCompletions: Map<number, number>; // How many times each tier was completed
-  bestEnergy?: string; // Highest Energy held when transcending (Decimal string); rewards are based on it
-  overchargeStart?: number | null; // Timestamp (ms) when Tier 5 was fully maxed this run
-}
-
-export interface GameState {
-  resources: Map<string, Decimal>;
-  productionRates: Map<string, Decimal>;
-  skills: Map<string, SkillNode>;
-  lastUpdate: number;
-  totalPlayTime: number;
-  prestige: PrestigeData;
-}

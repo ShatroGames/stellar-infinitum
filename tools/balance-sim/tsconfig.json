@@ -9,5 +9,5 @@
     "rootDir": "../..",
     "outDir": "out"
   },
-  "files": ["sim.ts", "analyze.ts", "price-dims.ts"]
+  "files": ["run.ts"]
 }

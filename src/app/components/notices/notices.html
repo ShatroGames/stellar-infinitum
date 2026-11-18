@@ -1,0 +1,27 @@
+@if (saveService.legacyNotice()) {
+  <div class="overlay">
+    <div class="dialog" role="dialog" aria-labelledby="legacy-title">
+      <h2 id="legacy-title">Stellar Infinitum has been rebuilt</h2>
+      <p>The game was redesigned from the ground up, so progress starts fresh.</p>
+      <p>Your old save is kept in this browser. You can copy it to keep a backup.</p>
+      <div class="actions">
+        <button class="secondary" (click)="copyLegacySave()">{{ copied() ? 'Copied ✓' : 'Copy old save' }}</button>
+        <button (click)="saveService.dismissLegacyNotice()">Start</button>
+      </div>
+    </div>
+  </div>
+} @else if (stageService.awayReport(); as report) {
+  <div class="overlay">
+    <div class="dialog" role="dialog" aria-labelledby="away-title">
+      <h2 id="away-title">While you were away ({{ duration(report.seconds) }})</h2>
+      <ul>
+        @for (gain of report.gains; track gain.label) {
+          <li><span>{{ gain.label }}</span><strong>+{{ fmt(gain.gained) }}</strong></li>
+        }
+      </ul>
+      <div class="actions">
+        <button (click)="stageService.dismissAwayReport()">Continue</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,11 +1,11 @@
 <div class="skill-node" 
-     [class.unlocked]="skill().unlocked"
+     [class.unlocked]="unlocked()"
      [class.maxed]="isMaxed()"
      [class.can-upgrade]="canUpgrade()"
-     [class.has-prerequisites]="hasPrerequisites() && !skill().unlocked"
+     [class.has-prerequisites]="hasPrerequisites() && !unlocked()"
      (click)="onUpgrade()">
   
-  @if (hasPrerequisites() && !skill().unlocked) {
+  @if (hasPrerequisites() && !unlocked()) {
     <div class="prerequisites-indicator">
       <div class="prereq-text">
         @if (allPrerequisitesMet()) {
@@ -31,7 +31,7 @@
     {{ skill().description }}
   </div>
   
-  @if (!isMaxed() && skill().unlocked) {
+  @if (!isMaxed() && unlocked()) {
     <div class="skill-cost">
       Cost: {{ upgradeCost() }} Energy
     </div>
@@ -39,7 +39,7 @@
   @if (isMaxed()) {
     <div class="maxed-badge">MAX</div>
   }
-  @if (!skill().unlocked) {
+  @if (!unlocked()) {
     <div class="locked-badge">⊗ LOCKED</div>
   }
 </div>

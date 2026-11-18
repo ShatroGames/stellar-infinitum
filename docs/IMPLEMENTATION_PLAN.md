@@ -26,7 +26,10 @@ Removed code stays in git history.
 
 ---
 
-## Phase 0: Foundation
+## Phase 0: Foundation **(done)**
+
+Delivered: stage framework (`core/stage.ts`, `core/stage.service.ts`), one versioned save (`core/save.service.ts`) with the legacy archive, the single game loop with away time and the return summary, old systems removed, a per-stage simulator (`tools/balance-sim`), and a functional UI shell. The current Stellar Network is ported as the Stage 1 module (manual play, no automation) so the game stays playable; Stages 2 and 3 are placeholders whose currency grows at +1/s.
+
 
 1. **Stage framework**: a `StageService` that knows the current stage, holds each stage's currency, checks the completion target, and starts the next stage's currency at +1/s (stage chain). Stages are self-contained modules with a common interface (tick, save, load, offline progress, completion check).
 2. **One versioned save**: a single save with a schema version instead of a dozen localStorage keys, so future changes can migrate saves cleanly.
@@ -39,7 +42,7 @@ Removed code stays in git history.
    Each reports time to beat the stage.
 6. **Functional UI shell**: a stage view plus resources, options and achievements. Plain and functional (the visual rebuild comes later).
 
-**Decision needed before Phase 0**: what happens to existing players' saves (see the end of this document).
+**Decided**: existing saves are archived (exportable from Options) and players start fresh, with a notice.
 
 ## Phase 1: Stage 1 (Stellar Network)
 
@@ -87,12 +90,6 @@ A complete visual redesign, once the gameplay is in place.
 
 ---
 
-## Decision needed
+## Decided: existing saves
 
-**Existing saves.** The new stages share almost nothing with the old save data. Options:
-
-1. **Fresh start with a notice**: old saves are archived (kept in the browser, exportable) and the player starts from Stage 1, with a message explaining the rebuild.
-2. **Partial conversion**: e.g., players who were past the first loop start at Stage 2. Complicated, and the old and new progress don't map well.
-3. **Separate release**: publish the rebuild as a new version or address and leave the old game as it is.
-
-Recommendation: **1**, or **3** if you want the old version to stay playable.
+Option 1: fresh start with a notice. Old saves are archived in the browser (`stellarInfinitum_legacy_archive`) and can be copied from the notice or from Options.

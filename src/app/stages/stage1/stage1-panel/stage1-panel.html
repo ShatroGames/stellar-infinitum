@@ -1,0 +1,35 @@
+<div class="panel">
+  <div class="panel-header">
+    <h2>{{ stage1.tierInfo().name }}</h2>
+    <span class="tier">Tier {{ stage1.tier() }} / 5</span>
+  </div>
+  @if (stage1.prestigeBonus() > 1) {
+    <p class="bonus">Warp bonus: ×{{ stage1.prestigeBonus() }} production</p>
+  }
+
+  <div class="progress">
+    <div class="progress-label">
+      <span>{{ stage1.isFinalTier() ? 'Stage goal' : 'Warp goal' }}</span>
+      <span>{{ format(progress().current) }} / {{ format(progress().required) }}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" [style.width.%]="progress().percentage"></div></div>
+  </div>
+
+  <ul class="requirements">
+    <li [class.done]="stage1.allMaxed()">{{ stage1.allMaxed() ? '✓' : '○' }} Max every node</li>
+    <li [class.done]="progress().current.gte(progress().required)">
+      {{ progress().current.gte(progress().required) ? '✓' : '○' }} Reach {{ format(progress().required) }} Energy
+    </li>
+  </ul>
+
+  @if (stage1.isFinalTier()) {
+    <button class="action" [disabled]="!stage1.canWarp()" (click)="beatStage()">◇ Beat Stage 1</button>
+  } @else {
+    <button class="action" [disabled]="!stage1.canWarp()" (click)="warp()">
+      ➶ Warp to {{ stage1.nextTierInfo()?.name }}
+    </button>
+    @if (stage1.nextTierInfo(); as next) {
+      <p class="hint">Warping grants ×{{ stage1.tierInfo().prestigeBonus }} production for the rest of this stage.</p>
+    }
+  }
+</div>

@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SkillTreeService } from '../../services/skill-tree.service';
+import { Stage1Service } from '../../stages/stage1/stage1.service';
 import { SkillNodeComponent } from '../skill-node/skill-node.component';
 
 @Component({
@@ -10,11 +10,9 @@ import { SkillNodeComponent } from '../skill-node/skill-node.component';
   styleUrl: './skill-tree.component.css'
 })
 export class SkillTreeComponent {
-  private skillTreeService = inject(SkillTreeService);
+  private stage1 = inject(Stage1Service);
 
-  skills = computed(() => {
-    return Array.from(this.skillTreeService.getSkills()().values());
-  });
+  skills = this.stage1.skills;
 
   // Organize skills by their Y position (rows)
   skillRows = computed(() => {

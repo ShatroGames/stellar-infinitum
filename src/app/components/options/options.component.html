@@ -1,116 +1,47 @@
 <div class="options-container">
   <div class="options-header">
-    <h2>⚙ Options</h2>
+    <h2>Options</h2>
   </div>
 
   <div class="options-content">
-    <!-- Save Management Section -->
     <section class="options-section">
-      <h3>▸ Save Management</h3>
-      
+      <h3>Save</h3>
+      <p class="info">The game saves automatically every few seconds and when you close it.</p>
       <div class="button-group">
-        <button class="btn btn-primary" (click)="saveGame()">
-          <span class="btn-icon">▸</span>
-          Save Game
-        </button>
-        
-        <button class="btn btn-secondary" (click)="exportSave()">
-          <span class="btn-icon">↑</span>
-          Export Save to Clipboard
-        </button>
-        
-        <button class="btn btn-secondary" (click)="openImportDialog()">
-          <span class="btn-icon">↓</span>
-          Import Save
-        </button>
-      </div>
-
-      @if (exportMessage) {
-        <div class="message" [class.success]="exportMessage.includes('[✓]')" [class.error]="exportMessage.includes('[✗]')">
-          {{ exportMessage }}
-        </div>
-      }
-
-      <div class="info-box">
-        <p><strong>Export:</strong> Copies your save data to clipboard as encoded text.</p>
-        <p><strong>Import:</strong> Paste saved data to restore your progress.</p>
-        <p><strong>Note:</strong> Keep your save data safe! Store it in a text file or note app.</p>
-      </div>
-    </section>
-
-    <!-- Danger Zone Section -->
-    <section class="options-section danger-zone">
-      <h3>⚠ Danger Zone</h3>
-      
-      <div class="button-group">
-        <!-- <button class="btn btn-danger" (click)="resetGame()">
-          <span class="btn-icon">↻</span>
-          Reset All Progress
-        </button>
-         -->
-        <button class="btn btn-extreme-danger" (click)="fullReset()">
-          <span class="btn-icon">💀</span>
-          FULL RESET (Including Achievements)
-        </button>
-      </div>
-
-      <div class="warning-box">
-        <p><strong>FULL RESET:</strong> Completely erases EVERYTHING including achievements and tutorials.</p>
-        @if (hasEverWon()) {
-          <p class="eternal-note">✨ <strong>Eternal Progress:</strong> You have completed {{totalVictories()}} victory reset(s). This count persists across full resets for potential future features.</p>
+        <button class="btn btn-secondary" (click)="exportSave()">Export save to clipboard</button>
+        <button class="btn btn-secondary" (click)="openImportDialog()">Import save</button>
+        @if (hasLegacySave) {
+          <button class="btn btn-secondary" (click)="copyLegacySave()">Copy old (pre-rebuild) save</button>
         }
-        <p>Make sure to export your save first if you want to keep a backup!</p>
       </div>
+      @if (exportMessage) {
+        <div class="message success">{{ exportMessage }}</div>
+      }
     </section>
 
-    <!-- Dev Tools Section -->
-    <!-- <section class="options-section dev-zone">
-      <h3>🔧 Development Tools</h3>
-      
+    <section class="options-section danger-zone">
+      <h3>Reset</h3>
       <div class="button-group">
-        <button class="btn btn-special" (click)="skipToPostCollapse()">
-          <span class="btn-icon">⚛️</span>
-          Skip to Post-Collapse
-        </button>
+        <button class="btn btn-extreme-danger" (click)="fullReset()">Erase all progress</button>
       </div>
-
-      <div class="info-box">
-        <p><strong>Skip to Post-Collapse:</strong> Instantly sets up the game state as if you just completed the Cosmic Collapse.</p>
-        <p>This grants:</p>
-        <ul>
-          <li>Quantum system unlocked with starting Quanta</li>
-          <li>All previous systems (Skills, Ascension, Dimensions, Artifacts) reset</li>
-          <li>Cosmic Collapse achievement</li>
-        </ul>
-      </div>
-    </section> -->
+      <p class="info">Erases everything, including achievements. Export your save first if you want a backup.</p>
+    </section>
   </div>
 </div>
 
-<!-- Import Dialog -->
 @if (showImportDialog) {
   <div class="dialog-overlay" (click)="closeImportDialog()">
     <div class="dialog-content" (click)="$event.stopPropagation()">
       <div class="dialog-header">
-        <h3>↓ Import Save Data</h3>
+        <h3>Import save</h3>
         <button class="btn-close" (click)="closeImportDialog()">×</button>
       </div>
-      
       <div class="dialog-body">
-        <p>Paste your exported save data below:</p>
-        <textarea 
-          class="import-textarea" 
-          [(ngModel)]="importText" 
-          placeholder="Paste your save data here..."
-          rows="8"></textarea>
-        
+        <textarea class="import-textarea" [(ngModel)]="importText" placeholder="Paste your save here" rows="8"></textarea>
         @if (importMessage) {
-          <div class="message" [class.success]="importMessage.includes('[✓]')" [class.error]="importMessage.includes('[✗]')">
-            {{ importMessage }}
-          </div>
+          <div class="message">{{ importMessage }}</div>
         }
       </div>
-      
       <div class="dialog-footer">
         <button class="btn btn-secondary" (click)="closeImportDialog()">Cancel</button>
         <button class="btn btn-primary" (click)="importSave()">Import</button>

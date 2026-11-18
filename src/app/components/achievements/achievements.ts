@@ -13,7 +13,7 @@ export class Achievements {
   protected achievementService = inject(AchievementService);
   
   categories = Object.values(AchievementCategory);
-  selectedCategory = signal<AchievementCategory>(AchievementCategory.ENERGY);
+  selectedCategory = signal<AchievementCategory>(AchievementCategory.JOURNEY);
   
   selectCategory(category: AchievementCategory) {
     this.selectedCategory.set(category);
@@ -40,7 +40,7 @@ export class Achievements {
   }
   
   formatPlayTime(): string {
-    const seconds = this.achievementService['playTime']();
+    const seconds = this.achievementService.playTime();
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     if (hours > 0) {

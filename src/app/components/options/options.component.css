@@ -397,3 +397,9 @@
     margin: 1rem;
   }
 }
+
+.info {
+  color: #a3a3a3;
+  font-size: 0.85rem;
+  margin: 8px 0;
+}

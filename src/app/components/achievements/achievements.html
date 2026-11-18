@@ -42,52 +42,21 @@
       <h3 class="category-title">{{ selectedCategory() }}</h3>
       <div class="achievements-list">
         @for (achievement of getSelectedAchievements(); track achievement.id) {
-          @if (!achievement.secret || achievement.unlocked) {
-            <div class="achievement-card" 
-                 [class.unlocked]="achievement.unlocked"
-                 [class.locked]="!achievement.unlocked"
-                 [class.has-reward]="!achievement.unlocked && achievement.reward">
-              <div class="achievement-icon">{{ achievement.icon }}</div>
-              <div class="achievement-content">
-                <div class="achievement-name">
-                  {{ achievement.name }}
-                  @if (achievement.unlocked) {
-                    <span class="unlock-check">✓</span>
-                  }
-                  @if (!achievement.unlocked && achievement.reward) {
-                    <span class="reward-badge">★</span>
-                  }
-                </div>
-                <div class="achievement-description">{{ achievement.description }}</div>
-                @if (achievement.reward) {
-                  @if (achievement.unlocked) {
-                    <div class="achievement-reward unlocked">
-                      <span class="reward-icon">★</span>
-                      {{ achievement.reward.description }}
-                    </div>
-                  } @else {
-                    <div class="achievement-reward locked">
-                      <span class="reward-icon">★</span>
-                      Reward: {{ achievement.reward.description }}
-                    </div>
-                  }
-                }
-                @if (achievement.unlockedAt && achievement.unlocked) {
-                  <div class="unlock-date">
-                    Unlocked: {{ achievement.unlockedAt | date:'short' }}
-                  </div>
+          <div class="achievement-card" [class.unlocked]="achievement.unlocked" [class.locked]="!achievement.unlocked">
+            <div class="achievement-icon">{{ achievement.icon }}</div>
+            <div class="achievement-content">
+              <div class="achievement-name">
+                {{ achievement.name }}
+                @if (achievement.unlocked) {
+                  <span class="unlock-check">✓</span>
                 }
               </div>
+              <div class="achievement-description">{{ achievement.description }}</div>
+              @if (achievement.unlockedAt && achievement.unlocked) {
+                <div class="unlock-date">Unlocked: {{ achievement.unlockedAt | date:'short' }}</div>
+              }
             </div>
-          } @else {
-            <div class="achievement-card locked secret">
-              <div class="achievement-icon">?</div>
-              <div class="achievement-content">
-                <div class="achievement-name">Secret Achievement</div>
-                <div class="achievement-description">???</div>
-              </div>
-            </div>
-          }
+          </div>
         }
       </div>
     </div>

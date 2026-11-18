@@ -4,29 +4,13 @@ An incremental/idle game built with Angular where you progress through multiple 
 
 ## About the Game
 
-Stellar Infinitum is an idle game where you:
-- 🎯 Earn Energy automatically over time
-- 📚 Unlock and upgrade skills using Energy
-- ⚡ Build production chains through skill prerequisites
-- 🌟 **Ascend through 5 warp tiers** (4 skills → 6 skills → 8 skills)
-- � Gain **permanent bonuses** from each warp
-- 💤 Benefit from offline progress when you're away
-- 💾 Auto-save your progress every 10 seconds
+Stellar Infinitum is an idle/incremental game built around skill trees. It is being rebuilt
+around self-contained stages: each stage has its own currency, its own kind of tree and its own
+prestige loop, and beating a stage starts the next stage's currency at +1/s.
 
-### Current Features
-
-- **5-Tier Progression System**
-- **Prestige Mechanics**: Max all skills + reach threshold to unlock next tier
-- **Permanent Bonuses**: Each warp multiplies production permanently
-- **Resource System**: Energy with automatic production
-- **Idle Mechanics**: Resources accumulate in real-time and offline
-- **Persistent Saves**: All progress including ascensions saved to localStorage
-- **Responsive UI**: Clean, gradient-based design that works on mobile and desktop
-- **Achievement System**: 70+ achievements across 7 categories with permanent rewards
-  - Track milestones, unlocks, and special accomplishments
-  - Secret achievements for expert players
-  - Visual notifications and progress tracking
-  - See [ACHIEVEMENTS.md](ACHIEVEMENTS.md) for full details
+- Design: [`docs/GAME_DESIGN.md`](docs/GAME_DESIGN.md)
+- Build plan and progress: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
+- Balance simulator: `npm run sim` (see [`tools/balance-sim/README.md`](tools/balance-sim/README.md))
 
 ## Development server
 

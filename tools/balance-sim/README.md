@@ -1,46 +1,31 @@
 # Balance simulator
 
-Plays the pre-collapse game headlessly with two player profiles and reports how
-long each milestone takes in game time. It uses the real config files and the
-shared formulas in `src/app/economy/economy.ts`, so it stays in sync with the game.
+Plays each built stage headlessly and reports how long it takes to beat it, in game time.
+It uses the real config files and the pure formulas in `src/app/economy/`, so it stays in sync
+with the game.
 
 ```bash
-npm run sim            # both profiles
-npm run sim -- active  # one profile
+npm run sim              # all stages
+npm run sim -- stage1    # one stage
 ```
 
-Profiles (see `PROFILES` in `sim.ts`):
+## Profiles (`profiles.ts`)
 
-- **active** checks in every 10 s and transcends after an Overcharge dwell of
-  20x the run's setup time (60 s to 15 min).
-- **casual** checks in every 15 min and transcends whenever it would gain something.
+Idle vs active means *how you play* (docs/GAME_DESIGN.md):
 
-Tuning overrides (environment variables, no code changes needed):
+- **active** checks in every 5 seconds and acts.
+- **idle** checks in every 45 minutes and acts.
 
-| Variable | Meaning |
-| --- | --- |
-| `CORE=scale,power[,start]` | Stellar Core reward curve |
-| `EF=scale,power[,start]` | Echo Fragment reward curve |
-| `OC=tau,power` | Overcharge growth |
-| `DWELL=n` | active profile dwell multiplier |
-| `TRACE=1` | log every Echo Fragment purchase |
+Between check-ins only time-based progress happens; the player makes every purchase.
 
-Helpers:
+## Adding a stage
 
-- `analyze.ts` prints how many orders of magnitude each system adds to Tier 5 production.
-- `price-dims.ts` prints orders of magnitude per level for every dimension node
-  (used to price dimension nodes at a constant Echo Fragment cost per order).
+1. Put the stage's formulas in `src/app/economy/<stage>.ts` (framework-free).
+2. Write `tools/balance-sim/<stage>.ts` exporting `simulate<Stage>(profile): StageResult`.
+3. Register it in `STAGES` in `run.ts`.
 
-Run them with `npx tsc -p tools/balance-sim` and then
-`node tools/balance-sim/out/tools/balance-sim/<file>.js`.
+## Balancing notes
 
-## Why the numbers look the way they do
-
-Progress is a feedback loop: Energy records earn currencies, currencies buy
-production, production raises the next record. If one order of magnitude of
-production earns more currency than it costs to buy that order again, the phase
-runs away in minutes; if it earns much less, it stalls for days. The game is
-tuned to sit just below 1, and Overcharge keeps waiting meaningful so a small
-shortfall costs a little more time instead of an exponential wall. Big lump
-purchases (unlocks, skill-cap nodes) are kept cheap for the same reason:
-saving for them stalls the loop.
+Learned while tuning the previous design: progress is a feedback loop. If one order of magnitude
+of production earns more than it costs to buy that order again, a phase runs away; if it earns
+much less, it stalls. Aim just below 1, and avoid big lump purchases that players must save for.

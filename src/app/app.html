@@ -1,136 +1,48 @@
-﻿<div class="game-container">
+<div class="game-container">
   <header class="game-header">
     <div class="header-content">
       <div class="logo-section">
         <div class="logo-icon">✨</div>
         <div class="title-wrapper">
-          <h1>{{ title() }}</h1>
-          <p class="subtitle">An Incremental Journey Through the Stars</p>
+          <h1>Stellar Infinitum</h1>
+          <p class="subtitle">Stage {{ stageNumber() }}: {{ stageService.current().name }}</p>
         </div>
-      </div>
-      <div class="header-stats">
-        @if (ascensionService.totalPoints() > 0) {
-          <div class="stat-badge stellar">
-            <span class="stat-icon">★</span>
-            <span class="stat-value">{{ ascensionService.totalPoints() }}</span>
-          </div>
-        }
-        @if (dimensionService.totalEchoFragments() > 0) {
-          <div class="stat-badge dimensional">
-            <span class="stat-icon">◆</span>
-            <span class="stat-value">{{ dimensionService.totalEchoFragments() }}</span>
-          </div>
-        }
       </div>
     </div>
   </header>
 
   <main class="game-content">
     <aside class="sidebar">
-      @if (!hasCollapsed()) {
-        <app-resource-display />
-        <app-prestige-panel />
-      } @else {
-        <app-quantum-display />
+      <app-currency-display />
+      @if (stageService.current().id === 'stage1') {
+        <app-stage1-panel />
       }
     </aside>
 
     <section class="main-area">
       <div class="tabs-container">
-        <div class="tabs-header">
-          <!-- Pre-Collapse Tabs -->
-          @if (!hasCollapsed()) {
-            <button 
-              class="tab-button" 
-              [class.active]="activeTab() === 'skill'"
-              (click)="activeTab.set('skill')">
-              ✦ Stellar Network
-            </button>
-            @if (ascensionService.totalPoints() > 0) {
-              <button 
-                class="tab-button" 
-                [class.active]="activeTab() === 'ascension'"
-                (click)="activeTab.set('ascension')">
-                ★ Stellar Nexus
-              </button>
-            }
-            @if (ascensionService.isTreeComplete()) {
-              <button 
-                class="tab-button" 
-                [class.active]="activeTab() === 'dimensions'"
-                (click)="activeTab.set('dimensions')">
-                ◆ Dimensional Echoes
-              </button>
-              @if (canAccessCollapse()) {
-                <button 
-                  class="tab-button collapse-trigger" 
-                  [class.active]="activeTab() === 'collapse'"
-                  (click)="activeTab.set('collapse')">
-                  🌌 Cosmic Collapse
-                </button>
-              }
-            }
-          }
-          
-          <!-- Post-Collapse Tab -->
-          @if (hasCollapsed()) {
-            <button 
-              class="tab-button quantum-tab" 
-              [class.active]="activeTab() === 'quantum'"
-              (click)="activeTab.set('quantum')">
-              ⚛ Quantum Weaving
-            </button>
-            @if (artifactService.systemUnlocked()) {
-              <button 
-                class="tab-button artifact-tab" 
-                [class.active]="activeTab() === 'artifacts'"
-                (click)="activeTab.set('artifacts')">
-                🔬 Artifacts
-              </button>
-            }
-            @if (probabilityForgeService.systemUnlocked()) {
-              <button 
-                class="tab-button forge-tab" 
-                [class.active]="activeTab() === 'forge'"
-                (click)="activeTab.set('forge')">
-                🎲 Probability Forge
-              </button>
-            }
-          }
-          
-          <!-- Always Available Tabs -->
-          <button 
-              class="tab-button" 
-              [class.active]="activeTab() === 'achievements'"
-              (click)="activeTab.set('achievements')">
-              🏆 Achievements
-            </button>
-          <button 
-            class="tab-button" 
-            [class.active]="activeTab() === 'options'"
-            (click)="activeTab.set('options')">
-            ⚙ Options
+        <div class="tabs-header" role="tablist">
+          <button class="tab-button" role="tab" [class.active]="activeTab() === 'stage'" (click)="activeTab.set('stage')">
+            {{ stageService.current().name }}
+          </button>
+          <button class="tab-button" role="tab" [class.active]="activeTab() === 'achievements'" (click)="activeTab.set('achievements')">
+            Achievements
+          </button>
+          <button class="tab-button" role="tab" [class.active]="activeTab() === 'options'" (click)="activeTab.set('options')">
+            Options
           </button>
         </div>
         <div class="tabs-content">
-          @if (activeTab() === 'skill' && !hasCollapsed()) {
-            <app-skill-tree />
-          } @else if (activeTab() === 'ascension' && !hasCollapsed()) {
-            <app-ascension-tree />
-          } @else if (activeTab() === 'dimensions' && !hasCollapsed()) {
-            <app-dimension-panel />
-          } @else if (activeTab() === 'collapse' && !hasCollapsed()) {
-            <app-collapse-panel />
-          } @else if (activeTab() === 'quantum' && hasCollapsed()) {
-            <app-quantum-tree />
-          } @else if (activeTab() === 'artifacts' && hasCollapsed()) {
-            <app-artifact-tree />
-          } @else if (activeTab() === 'forge' && hasCollapsed()) {
-            <app-probability-forge />
-          } @else if (activeTab() === 'achievements') {
-            <app-achievements />
-          } @else if (activeTab() === 'options') {
-            <app-options />
+          @switch (activeTab()) {
+            @case ('stage') {
+              @if (stageService.current().id === 'stage1') {
+                <app-skill-tree />
+              } @else {
+                <app-placeholder-view />
+              }
+            }
+            @case ('achievements') { <app-achievements /> }
+            @case ('options') { <app-options /> }
           }
         </div>
       </div>
@@ -141,48 +53,37 @@
     <div class="footer-content">
       <div class="footer-left">
         <div class="footer-logo">✨ Stellar Infinitum</div>
-        <p class="footer-tagline">Reach for the infinite</p>
       </div>
       <div class="footer-center">
         <p class="copyright">&copy; {{ currentYear }} Shatro</p>
-        <p class="version">v1.0.0
-        <span class="separator"> • </span>
-        <a href="https://shatro.games" target="_blank" class="footer-link">shatro.games</a>
+        <p class="version">
+          <a href="https://shatro.games" target="_blank" rel="noopener" class="footer-link">shatro.games</a>
         </p>
       </div>
       <div class="footer-right">
         <div class="footer-links">
-          <a href="https://www.patreon.com/shatro" target="_blank" class="footer-link">Patreon</a>
+          <a href="https://www.patreon.com/shatro" target="_blank" rel="noopener" class="footer-link">Patreon</a>
           <span class="separator">•</span>
-          <a href="https://github.com/ShatroGames" target="_blank" class="footer-link">GitHub</a>
+          <a href="https://github.com/ShatroGames" target="_blank" rel="noopener" class="footer-link">GitHub</a>
         </div>
       </div>
     </div>
   </footer>
 </div>
 
-<!-- Achievement Notifications (Global) -->
 @if (achievementService.getNotifications()().length > 0) {
-  <div class="achievement-notifications">
+  <div class="achievement-notifications" aria-live="polite">
     @for (notification of achievementService.getNotifications()(); track notification.achievement.id) {
       <div class="achievement-notification">
         <div class="notification-icon">{{ notification.achievement.icon }}</div>
         <div class="notification-content">
-          <div class="notification-title">Achievement Unlocked!</div>
+          <div class="notification-title">Achievement</div>
           <div class="notification-name">{{ notification.achievement.name }}</div>
-          @if (notification.achievement.reward) {
-            <div class="notification-reward">{{ notification.achievement.reward.description }}</div>
-          }
         </div>
       </div>
     }
   </div>
 }
 
-<!-- Tutorial Popups -->
 <app-tutorial-popup />
-
-<!-- Victory Screen -->
-<app-victory-screen />
-
-<router-outlet />
+<app-notices />
