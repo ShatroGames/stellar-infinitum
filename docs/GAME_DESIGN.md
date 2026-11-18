@@ -14,7 +14,8 @@ The simulator (`npm run sim`, see `tools/balance-sim/README.md`) measures pacing
 
 ## 1. Vision and pillars
 
-1. **Genre**: browser idle/incremental game with layered prestige systems. Space theme. **[Implemented]**
+0. **Core concept: skill trees.** Every stage of the game is a skill tree or a tree-like structure, and new layers introduce new ways for trees to work, not just bigger numbers. **[Decided]** (section 1A catalogs the mechanics)
+1. **Genre**: browser idle/incremental game with layered prestige systems. Space theme. **[Decided]**
 2. **Length**: playtime is measured in game time, not real days. A loose target is around 50 h for a dedicated player and around 100 h for a casual one. These are guidelines; balance comes first. **[Decided]**
 3. **Active play is clearly better than idling.** Not watching the game is the drawback: nothing is bought automatically while the game is hidden or closed. **[Decided]**
 4. **The bucket principle**: idle time fills a bucket (resources, Overcharge) with diminishing returns. Emptying it, by buying, warping or transcending, takes the player. Idle time never skips a chunk of progression, and there are no caps that punish being away. **[Decided]**
@@ -23,7 +24,49 @@ The simulator (`npm run sim`, see `tools/balance-sim/README.md`) measures pacing
 7. **Cosmic Collapse is the ultimate prestige.** It fundamentally changes the game. **[Decided]**
 8. **New Game+** after victory, with a small perk per completion. **[Decided]** (details in section 9)
 
-- **[Open] 1.1**: Is "around 50% of the playtime before Collapse, around 50% after" the right split?
+- **[Decided] 1.1**: Playtime splits about 50/50 before and after Collapse, **provided** the Quantum era brings about 50% more (or different) skill tree mechanics, so the second half feels like a new game rather than more of the same.
+
+---
+
+## 1A. Skill tree mechanics catalog
+
+Every tree mechanic the game uses or could use, so each layer can introduce something new.
+
+### Already in the game **[Implemented]**
+
+| # | Mechanic | Where |
+|---|---|---|
+| T1 | Leveled nodes; children unlock when their parents are maxed | Stellar Network |
+| T2 | Growing tree: each tier keeps the old nodes and adds new ones | Stellar Network tiers 1-5 |
+| T3 | One-time purchase tree with prerequisites, bought with a meta currency | Stellar Nexus |
+| T4 | Parallel trees that must be unlocked separately | Dimensions |
+| T5 | Synergy nodes that scale with the number of purchased nodes in their tree | Dimensions |
+| T6 | Cross-tree synergies triggered by owning specific node combinations | Quantum trees |
+| T7 | Milestone-gated nodes (need a lifetime total, not just currency) | Quantum trees |
+| T8 | Linear ladder branches where only the highest tier counts | Artifacts |
+
+### New mechanics **[Proposed]**
+
+| # | Mechanic | How it works | Fits |
+|---|---|---|---|
+| N1 | **Overdrive node** | Repeatable node that appears once the tree is maxed: ×N production per level, cost rises steeply. Auto-buy only buys it while you watch. | Tier 5 (answers the active-play gap, 2.3) |
+| N2 | **Exclusive branches** | Pick one of 2-3 branches; switching costs something (respec). Real build choices. | Stellar Nexus, Crystal |
+| N3 | **Node evolution** | A maxed node can evolve into one of two stronger variants. | Stellar Network (later loops) |
+| N4 | **Adjacency bonuses** | Nodes boost their direct neighbors, so the layout and purchase order matter. | Prism |
+| N5 | **Pruning / sacrifice** | Give up (reset) a branch for a permanent or stronger effect elsewhere. | Void |
+| N6 | **Time-scaling nodes** | Effects grow with time in the current run (pairs with Overcharge). | Temporal |
+| N7 | **Rolled nodes** | Effect values re-roll each transcend; you can lock one roll. | Quantum dimension |
+| N8 | **Superposition nodes** | A node holds two possible effects; buying it "observes" it and fixes one, and it re-opens on the next reset. | Quantum era |
+| N9 | **Entanglement** | Link two nodes in different trees so they share levels or effects; limited links. (The game already teases this.) | Quantum era |
+| N10 | **Constellations (build your own tree)** | You place nodes and draw the connections yourself, with limited links; shape determines bonuses. | Quantum era |
+| N11 | **Fog of war** | Nodes stay hidden until a neighbor is bought; exploring the tree is part of the reward. | Quantum era |
+| N12 | **Flow trees** | The root produces a resource that flows down the edges to the leaves; upgrades widen edges or split flow. | Quantum era |
+| N13 | **Socketing** | Items (artifacts) are inserted into node sockets to change what the node does. | Artifacts |
+| N14 | **Mastery** | Nodes gain mastery from active time while maxed, giving small permanent bonuses. | Any layer (active play reward) |
+
+The pre-Collapse half would use T1-T5 plus a few new ones (N1-N7). The Quantum era would bring T6-T8 plus several of N8-N13, which is the "50% more mechanics" the split depends on.
+
+- **[Open] 1A.1**: Which of N1-N14 do you like, dislike, or want changed? We'll assign them to layers in sections 3-6.
 
 ---
 
