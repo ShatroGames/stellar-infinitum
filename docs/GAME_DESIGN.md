@@ -304,10 +304,11 @@ These explain the numbers; they're not player-facing.
 
 ## 9. Victory and New Game+
 
-- **[Implemented]** At victory, the victory screen appears; you can keep playing. Eternal progress counts victories and survives a full reset.
-- **[Decided]** New Game+ grants a small perk per completion. The early game speeds up first, and each further NG+ speeds up a later stage.
-- **[Proposed]** NG+1 makes the first loop faster, NG+2 the Nexus phase, NG+3 Dimensions, NG+4 the Quantum era. Each is a modest boost (around 1.5 to 2× for that stage).
-- **[Open] 9.1**: What carries over into NG+ (achievements? cosmetics?), and does it have an end?
+- **[Decided]** Victory = beating Stage 3' (section 6). After victory, the player can start New Game+.
+- **[Decided] 9.1**: Each NG+ completion speeds up one stage by about **1.5× (timers/production)**, in order: NG+1 → Stage 1, NG+2 → Stage 2, NG+3 → Stage 3, NG+4 → Stage 1', NG+5 → Stage 2', NG+6 → Stage 3'.
+- **[Decided] 9.2**: New Game+ **ends after NG+6**: the game is complete, and later replays grant no new perks.
+- **[Decided] 9.3**: Achievements and eternal stats carry over; everything else starts fresh. NG+ has **no achievements of its own**.
+- **[Decided] 9.4**: NG+ restarts from the normal (untransformed) Stage 1, so Collapse keeps its impact.
 
 ---
 
