@@ -148,79 +148,56 @@ Current code, for reference (the decisions below change it):
 - **[Decided] 3.11**: **Overcharge becomes an idle-path option** (one of the warp choices), growing faster while visible (3.3).
 - Record-based Stellar Cores/Echo Fragments and the current Stellar Nexus are replaced by the new Stage 2/3 designs.
 
-### Stage 1 content draft **[Proposed]**
+### Stage 1 content draft v2 **[Proposed]**
 
-All numbers are starting points; final values come from the simulator.
+v1 (timers: "time since last purchase" / "purchases in the last 60 s") was rejected as too complicated.
+
+#### The idea
+
+- **Active play** buys almost as soon as something is affordable. It is naturally stronger: buying sooner means producing more sooner.
+- **Idle play** spends currency every once in a while. Its options must **offset the delay**, so idle play is somewhat comparable.
+- No timers. Every effect depends on something visible right now.
 
 #### The two themes
 
-Every warp offers one **Steady** (idle) and one **Surge** (active) expansion. Both use one simple, visible quantity:
-
-- **Steady** nodes grow with **time since your last purchase**. Waiting pays; buying resets that clock. They suit checking in now and then.
-- **Surge** nodes grow with **recent purchases** (bought in the last 60 s). Buying keeps them up; they fade when you stop. They suit active play.
-
-Because the two pull in opposite directions, picking a theme is a real play-style choice, and mixing them is a trade-off rather than "more is better".
-
-#### Tier 1: core (fixed, no choice)
-
-The existing four nodes (Energy Core, Power Amplifier, Energy Enhancer, Synthesis Boost). Teaches buying, prerequisites and warping.
-
-#### Warp 1 → Tier 2: first choice
-
-| Steady | Effect | Surge | Effect |
-|---|---|---|---|
-| Reservoir | Production ×(1 + √minutes since last purchase) | Momentum | +5% production per purchase in the last 60 s |
-| Deep Store | +10% production per order of magnitude of Energy held | Quick Hands | After a purchase, the next node is 10% cheaper for 30 s |
-| Slow Current | ×1.25 multiplier (plain) | Fast Current | ×1.25 multiplier (plain) |
-
-#### Warp 2 → Tier 3: path synergies
-
-Nodes react to the choices made so far.
-
-| Steady | Effect | Surge | Effect |
-|---|---|---|---|
-| Patience | ×1.3 per Steady choice on your path | Rhythm | ×1.3 per Surge choice on your path |
-| Slow Burn | Reservoir grows 50% faster | Long Chain | Momentum counts purchases from the last 90 s instead of 60 s |
-| Counterweight | +15% production per Surge choice on your path (supports mixing) | Counterpoint | +15% production per Steady choice on your path (supports mixing) |
-
-#### Warp 3 → Tier 4: neighbor bonuses
-
-Nodes boost the nodes they are connected to, so the tree layout matters.
-
-| Steady | Effect | Surge | Effect |
-|---|---|---|---|
-| Root Network | Connected nodes' multipliers +2% per level | Relay | Connected nodes cost 5% less per level |
-| Still Pool | Connected Steady nodes count +10 minutes extra waiting | Spark Chain | Buying a connected node counts as 2 purchases for Momentum |
-| Anchor | ×1.4 multiplier; doubled if both neighbors are maxed | Catalyst | ×1.4 multiplier; doubled if bought within 10 s of a neighbor |
-
-#### Warp 4 → Tier 5: final choice and capstone
-
-| Steady | Effect | Surge | Effect |
-|---|---|---|---|
-| Overcharge | Once every Tier 5 node is maxed, production grows with time (faster while the game is visible); never resets until the stage is beaten | Burst | Every 10th purchase within 60 s triples production for 30 s |
-| Deep Reserve | Deep Store counts double | Overdrive Loop | Momentum stacks also reduce costs by 1% each |
-| Long Light | ×1.6 multiplier (plain) | Short Light | ×1.6 multiplier (plain) |
-
-**Capstone** (granted at Tier 5 from your path; shown on the map from the start):
-
-| Archetype | Path | Capstone |
+| | **Saver** (idle) | **Spender** (active) |
 |---|---|---|
-| Steady | 3-4 Steady choices | **Unbroken Calm**: buying no longer resets the Steady clock |
-| Surge | 3-4 Surge choices | **Endless Motion**: Momentum no longer fades while the game is visible |
-| Balanced | 2 Steady + 2 Surge | **Equilibrium**: Steady and Surge effects each get +50% |
+| Rewards | Holding Energy and buying in big batches | Buying often, in many small steps |
+| Core mechanic | **Interest**: production bonus based on unspent Energy | **Fine steps**: nodes with many cheap levels; bonuses per level bought |
+| Example | +10% production per order of magnitude of Energy held | A node with 25 levels of ×1.05 instead of 5 levels of ×1.28 |
+| Second mechanic | **Bulk discount**: buying several levels at once costs less per level ("Buy max" button) | **Level count**: +x% production per node level bought this tier |
+
+Why this balances: an idle player holds a lot of Energy between check-ins (big Interest bonus), then spends it all at once (Bulk discount). An active player holds almost nothing, so Interest does little, but gets every cheap level the moment it is affordable.
+
+#### Per tier (same tier rules as before)
+
+| Tier | Rule | Saver option | Spender option |
+|---|---|---|---|
+| 1 | Fixed core, no choice | – | – |
+| 2 | First choice | Interest node + bulk discount | Fine-step multiplier + level-count node |
+| 3 | Path synergies | Interest stronger per Saver choice | Level-count stronger per Spender choice |
+| 4 | Neighbor bonuses | Connected nodes count Energy held ×2 for Interest | Connected nodes get +5 cheap levels |
+| 5 | Final choice | Overcharge (decided as the idle option) | Fine-step capstone node |
+
+**Capstone** (shown on the map from the start):
+
+| Path | Capstone |
+|---|---|
+| 3-4 Saver | Interest counts double |
+| 3-4 Spender | Every level bought makes all nodes 1% cheaper (this tier) |
+| 2 + 2 | Both effects at +50% |
 
 #### Balance targets **[Proposed]**
 
-- Active player (acts every few seconds) on a Surge-heavy path: about **45 min**.
-- Idle player (checks in every 45 min) on a Steady-heavy path: about **3 h** (today: 15 h).
-- The mismatched path should be noticeably slower for each player (about 1.3× or more), and the Balanced path in between for both.
-- Active play stays clearly faster than idle play (pillar 3).
+- Active player on a Spender path: about **45 min**.
+- Idle player (checks in every 45 min) on a Saver path: about **3 h** (today: 15 h).
+- Mismatched paths noticeably slower; active play stays faster overall.
 
 #### Open questions
 
-- **[Open] 3.12**: Theme labels "Steady" / "Surge" OK (proper nouns kept to a minimum)?
-- **[Open] 3.13**: Is "time since last purchase" vs "recent purchases" the right pair of quantities?
-- **[Open] 3.14**: Are the balance targets right (45 min active, 3 h idle)?
+- **[Open] 3.12**: Is Saver (Interest + Bulk discount) vs Spender (Fine steps + Level count) the right concept?
+- **[Open] 3.13**: Overcharge grows with time. It was decided as the idle option; does it still fit, or should Tier 5's Saver option be something like a bigger Interest node?
+- **[Open] 3.14**: Balance targets: about 45 min active, about 3 h idle?
 - **[Open] 3.15**: Capstone rule: 3+ of a theme → that capstone, 2-2 → Balanced?
 
 ---
