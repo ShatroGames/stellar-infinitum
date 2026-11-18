@@ -271,10 +271,12 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
   - **Stage 1'**: more complex, or simply much more content. **[Decided]**
   - **Stage 2'**: a more involved card system, possibly deck-building (see S3 idea). **[Decided]**
   - **Stage 3'**: decided once Stage 3's own complexity is settled. **[Open]**
-- **[Open] 6.1**: Is there one Collapse (first half → second half), with replays afterwards handled by New Game+? Or can you Collapse repeatedly?
-- **[Open] 6.2**: Does Collapse grant anything itself (a currency or permanent upgrades), or is the transformation the reward?
-- **[Open] 6.3**: Does the escalation pillar apply across the boundary (Stage 1' longer and more complex than Stage 3), or only within each half?
-- **[Open] 6.4**: Victory = beating the last transformed stage (Stage 3')?
+- **[Decided] 6.1**: **One Collapse**: the turning point between the two halves. Further replays come from New Game+.
+- **[Decided] 6.2**: Collapse grants nothing itself; the transformation is the reward.
+- **[Decided] 6.3**: Escalation continues across Collapse: Stage 1' is longer and more complex than Stage 3, and so on.
+- **[Decided] 6.4**: **Victory = beating Stage 3'** (the last transformed stage).
+
+**Full structure**: Stage 1 → Stage 2 → Stage 3 → *Collapse* → Stage 1' → Stage 2' → Stage 3' → *Victory* → New Game+.
 
 ## 7. Achievements
 
