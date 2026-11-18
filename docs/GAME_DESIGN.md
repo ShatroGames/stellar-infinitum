@@ -119,7 +119,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 ### Stage 1 sketch **[Proposed]**
 
 - **Tier 1**: a fixed 4-node core tree, no choices (tutorial).
-- **Each warp** (1→2 … 4→5): choose one of **3 destinations**. The chosen expansion grows onto the tree for the rest of the run. Earlier nodes stay, and their levels reset on warp as before. The run's choices form its **path**.
+- **Each warp** (1→2 … 4→5): choose one of **2 destinations**. The chosen expansion grows onto the tree for the rest of the run. Earlier nodes stay, and their levels reset on warp as before. The run's choices form its **path**.
 - **Themes** (each tier has its own content per theme):
 
 | Theme | Playstyle | Example nodes |
@@ -129,13 +129,19 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 | Binary (synergy) | Nodes scaling with other nodes | Per-maxed-node bonuses, boosting pairs |
 
 - **Tier rules (A)**: T2 first destination; T3 synergy nodes reacting to the path; T4 neighbor bonuses; T5 capstone by archetype (pure: 3+ picks of one theme; hybrid: all three themes; mixed: otherwise), then Overcharge.
-- **Balance**: all 81 paths within about ±10% (simulator).
+- **Balance**: all 16 paths within about ±10% (simulator).
 - **Size**: about 3 nodes per theme per tier, about 36 expansion nodes (today the tiers add 14).
 
-- **[Open] 3.5**: Theme names and playstyles.
-- **[Open] 3.6**: Auto-warp repeats the previous run's path; changing it means picking manually at a warp. **[Proposed]**
-- **[Open] 3.7**: Show all upcoming destinations of the run in advance (proposed), or only the next warp's choices?
-- **[Open] 3.8**: 3 options per warp, or 2?
+- **[Decided] 3.5**: Nebula / Pulsar / Binary are fine for now. Use proper nouns and thematic words sparingly; names can change later.
+- **[Decided] 3.7**: The map shows every path of the run in advance so players can plan.
+- **[Decided] 3.8**: **Two options per warp** (16 paths per run). Each warp offers two of the three themes; the map shows which.
+- **[Decided] 3.6a**: Stage 1 is mainly active play: buying and warping by hand.
+- **[Open] 3.6b**: How to avoid repeating Stage 1 becoming tedious in Stage 2:
+  1. Automation is earned and chosen in the Stellar Nexus (e.g., auto-buy, remember last path), still only while visible.
+  2. Fewer, bigger repetitions: about 10-15 transcends in Stage 2.
+  3. Shortcuts: a "buy max / buy all affordable" button (still active); "path replay" to skip ahead to a fraction of your record.
+  4. Rework Stage 2: after the first transcend, the Stellar Network becomes a background generator from your best path, and Stage 2 has its own tree.
+  - **[Proposed]** 1 + 2 + the buy-max button now; keep 4 in mind when designing Stage 2.
 
 ---
 
