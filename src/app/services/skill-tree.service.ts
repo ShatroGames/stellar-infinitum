@@ -127,10 +127,14 @@ export class SkillTreeService {
     
     // Start auto-buy loop with reduced frequency
     setInterval(() => {
-      this.autoBuySkills(this.ascensionService);
+      // Resources and Overcharge keep accumulating, but automation only runs while
+      // the game is visible: not watching is the drawback of idling
       this.updateOvercharge();
+      if (document.hidden) return;
+
+      this.autoBuySkills(this.ascensionService);
       
-      // Check for auto-warp (Tiers 1-4) - now using achievement service
+      // Check for auto-warp (Tiers 1-4)
       if (this.hasAutoWarp() && this.canAscend()) {
         // Only auto-warp if not on Tier 5 (to prevent auto-transcending)
         if (this.prestige().currentTier < 5) {

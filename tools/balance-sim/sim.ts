@@ -38,6 +38,8 @@ interface Profile {
   name: string;
   /** Seconds between moments the player looks at the game and acts */
   checkInterval: number;
+  /** Seconds the game stays visible after each check-in (automation only runs while visible) */
+  visibleFor: number;
   /**
    * Overcharge time before transcending, as a multiple of the time the run took to
    * reach Overcharge (0 = transcend as soon as anything is gained)
@@ -46,8 +48,8 @@ interface Profile {
 }
 
 const PROFILES: Profile[] = [
-  { name: 'active', checkInterval: 10, dwell: Number(process.env['DWELL'] ?? 20) },
-  { name: 'casual', checkInterval: 15 * 60, dwell: 0 },
+  { name: 'active', checkInterval: 10, visibleFor: Infinity, dwell: Number(process.env['DWELL'] ?? 20) },
+  { name: 'casual', checkInterval: 15 * 60, visibleFor: 30, dwell: 0 },
 ];
 
 /** Auto-buy runs every 200ms and buys up to `bulkBuy` levels per run */
@@ -320,24 +322,28 @@ class Sim {
 
   run(): void {
     let nextCheck = 0;
+    let visibleUntil = 0;
     const limit = MAX_HOURS * 3600;
     while (this.t < limit && !this.collapseReady()) {
       if (this.t >= nextCheck - 1e-9) {
         this.checkIn();
+        visibleUntil = this.t + this.profile.visibleFor;
         nextCheck = this.t + this.profile.checkInterval;
       }
-      // Automation
+      // Automation (only while the game is visible)
+      const visible = this.t < visibleUntil;
       let boughtThisTick = 0;
-      if (this.autoBuy) boughtThisTick = this.buySkills(this.nx.bulkBuy);
-      if (this.autoWarp && this.tier < 5 && this.canWarp()) { this.warp(); continue; }
+      if (visible && this.autoBuy) boughtThisTick = this.buySkills(this.nx.bulkBuy);
+      if (visible && this.autoWarp && this.tier < 5 && this.canWarp()) { this.warp(); continue; }
       if (boughtThisTick > 0) { this.advance(AUTO_BUY_TICK); continue; }
 
       // Jump to the next interesting moment
       let dt = nextCheck - this.t;
+      if (visible) dt = Math.min(dt, visibleUntil - this.t);
       const rate = this.production;
       if (rate.gt(0)) {
         const target = this.nextTarget();
-        if (target && (this.autoBuy || this.autoWarp)) {
+        if (target && visible && (this.autoBuy || this.autoWarp)) {
           const wait = target.minus(this.energy).div(rate).toNumber();
           if (wait > 0) dt = Math.min(dt, Math.max(AUTO_BUY_TICK, wait));
           else dt = Math.min(dt, AUTO_BUY_TICK);
