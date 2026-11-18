@@ -110,8 +110,16 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - Nodes are almost all flat multipliers (×1.2 to ×1.7 per level), plus one production node. **[Implemented]**
 - The first loop takes about 25 to 40 min for an active player; later tiers are no longer faster than earlier ones. **[Implemented]**
 
-- **[Open] 3.1**: Nodes that aren't flat multipliers (your TODO list: Energy-based, time-based, based on the number of maxed nodes). Do we want them in this layer, and how many?
-- **[Open] 3.2**: Should a tier's content stay "fixed nodes with caps", or should Tier 5 get repeatable content (see 2.3A)?
+- **[Decided] 3.1 Forks**: tiers add choices where picking one option locks the other until transcend. Auto-buy never chooses for you. **No option may be clearly better**: options should play differently, and each path should reach the next milestone within about ±10% of the others in the simulator.
+- **[Decided] 3.2 Archetypes**: fork choices across tiers combine into synergies. Repeating a theme unlocks a "pure" synergy; mixing themes unlocks a "hybrid" one. This replaces generic non-flat nodes.
+- **[Decided] 3.3 Overcharge grows faster while the game is visible** (diminishing returns stay). There is a point where waiting stops paying, which encourages actively moving on. N1 Overdrive is dropped.
+- **[Open] 3.4 Structure** (choosing these may change 3.1/3.2):
+  - **A. Tier identity**: each tier introduces a new rule (T1 basics, T2 first fork, T3 synergy nodes, T4 neighbor bonuses, T5 Overcharge and a capstone fork).
+  - **B. Warp destinations**: each warp chooses which of 2-3 expansions the tree grows into; a run becomes a path through a small map. Forks move to the warp step; archetypes come from the path.
+  - **C. Anchors**: keep one node's level into the next tier.
+  - **D. Stellar conditions**: an optional modifier chosen at each warp (e.g., multipliers ×1.5, costs ×2).
+  - **E. Challenges**: optional restricted runs that grant a permanent bonus.
+  - **[Proposed]** A + B now, E later; skip C and D (they overlap with B).
 
 ---
 
