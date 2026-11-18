@@ -148,7 +148,7 @@ Current code, for reference (the decisions below change it):
 - **[Decided] 3.11**: **Overcharge becomes an idle-path option** (one of the warp choices), growing faster while visible (3.3).
 - Record-based Stellar Cores/Echo Fragments and the current Stellar Nexus are replaced by the new Stage 2/3 designs.
 
-### Stage 1 content draft v2 **[Proposed]**
+### Stage 1 content (v2) **[Decided]**
 
 v1 (timers: "time since last purchase" / "purchases in the last 60 s") was rejected as too complicated.
 
@@ -195,10 +195,10 @@ Why this balances: an idle player holds a lot of Energy between check-ins (big I
 
 #### Open questions
 
-- **[Open] 3.12**: Is Saver (Interest + Bulk discount) vs Spender (Fine steps + Level count) the right concept?
-- **[Open] 3.13**: Overcharge grows with time. It was decided as the idle option; does it still fit, or should Tier 5's Saver option be something like a bigger Interest node?
-- **[Open] 3.14**: Balance targets: about 45 min active, about 3 h idle?
-- **[Open] 3.15**: Capstone rule: 3+ of a theme → that capstone, 2-2 → Balanced?
+- **[Decided] 3.12**: Saver (Interest + Bulk discount) vs Spender (Fine steps + Level count).
+- **[Decided] 3.13**: Overcharge stays as Tier 5's Saver option: it is the last node before Stage 2, so idling there is fine.
+- **[Decided] 3.14**: Targets: about 45 min active (Spender), about 3 h idle (Saver, 45-min check-ins).
+- **[Decided] 3.15**: Capstone: 3+ of a theme → that capstone; 2 + 2 → Balanced.
 
 ---
 
