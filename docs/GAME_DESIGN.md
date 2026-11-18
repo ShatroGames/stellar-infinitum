@@ -110,16 +110,32 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - Nodes are almost all flat multipliers (×1.2 to ×1.7 per level), plus one production node. **[Implemented]**
 - The first loop takes about 25 to 40 min for an active player; later tiers are no longer faster than earlier ones. **[Implemented]**
 
-- **[Decided] 3.1 Forks**: tiers add choices where picking one option locks the other until transcend. Auto-buy never chooses for you. **No option may be clearly better**: options should play differently, and each path should reach the next milestone within about ±10% of the others in the simulator.
-- **[Decided] 3.2 Archetypes**: fork choices across tiers combine into synergies. Repeating a theme unlocks a "pure" synergy; mixing themes unlocks a "hybrid" one. This replaces generic non-flat nodes.
+- **[Decided] 3.1 Choices**: no option may be clearly better. Options should play differently, and every path should reach the next milestone within about ±10% of the others in the simulator. Auto-buy never chooses for you.
+- **[Decided] 3.2 Archetypes**: choices combine into synergies; a "pure" path (same theme) and a "hybrid" path (all themes) unlock different capstones.
 - **[Decided] 3.3 Overcharge grows faster while the game is visible** (diminishing returns stay). There is a point where waiting stops paying, which encourages actively moving on. N1 Overdrive is dropped.
-- **[Open] 3.4 Structure** (choosing these may change 3.1/3.2):
-  - **A. Tier identity**: each tier introduces a new rule (T1 basics, T2 first fork, T3 synergy nodes, T4 neighbor bonuses, T5 Overcharge and a capstone fork).
-  - **B. Warp destinations**: each warp chooses which of 2-3 expansions the tree grows into; a run becomes a path through a small map. Forks move to the warp step; archetypes come from the path.
-  - **C. Anchors**: keep one node's level into the next tier.
-  - **D. Stellar conditions**: an optional modifier chosen at each warp (e.g., multipliers ×1.5, costs ×2).
-  - **E. Challenges**: optional restricted runs that grant a permanent bonus.
-  - **[Proposed]** A + B now, E later; skip C and D (they overlap with B).
+- **[Decided] 3.4 Structure: A (tier identity) + B (warp destinations).** Choices from 3.1 happen at the warp; archetypes from 3.2 come from the path.
+  - Later, side note: **E. Challenges** (optional restricted runs with permanent rewards).
+
+### Stage 1 sketch **[Proposed]**
+
+- **Tier 1**: a fixed 4-node core tree, no choices (tutorial).
+- **Each warp** (1→2 … 4→5): choose one of **3 destinations**. The chosen expansion grows onto the tree for the rest of the run. Earlier nodes stay, and their levels reset on warp as before. The run's choices form its **path**.
+- **Themes** (each tier has its own content per theme):
+
+| Theme | Playstyle | Example nodes |
+|---|---|---|
+| Nebula (growth) | Big multipliers, steeper costs | ×1.6 nodes, high caps |
+| Pulsar (speed) | Cheaper nodes, lower warp requirements, faster runs | Discounts, requirement cuts |
+| Binary (synergy) | Nodes scaling with other nodes | Per-maxed-node bonuses, boosting pairs |
+
+- **Tier rules (A)**: T2 first destination; T3 synergy nodes reacting to the path; T4 neighbor bonuses; T5 capstone by archetype (pure: 3+ picks of one theme; hybrid: all three themes; mixed: otherwise), then Overcharge.
+- **Balance**: all 81 paths within about ±10% (simulator).
+- **Size**: about 3 nodes per theme per tier, about 36 expansion nodes (today the tiers add 14).
+
+- **[Open] 3.5**: Theme names and playstyles.
+- **[Open] 3.6**: Auto-warp repeats the previous run's path; changing it means picking manually at a warp. **[Proposed]**
+- **[Open] 3.7**: Show all upcoming destinations of the run in advance (proposed), or only the next warp's choices?
+- **[Open] 3.8**: 3 options per warp, or 2?
 
 ---
 
