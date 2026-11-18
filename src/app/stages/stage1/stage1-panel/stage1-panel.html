@@ -6,7 +6,9 @@
 
   <ul class="bonuses">
     @if (stage1.prestigeBonus() > 1) { <li>Warp bonus <strong>×{{ stage1.prestigeBonus() }}</strong></li> }
-    @if (stage1.interestBonus() > 1) { <li>Interest <strong>×{{ bonus(stage1.interestBonus()) }}</strong></li> }
+    @if (stage1.hasInterest()) {
+      <li>Holding {{ minutes(stage1.minutesHeld()) }} of production → Interest <strong>×{{ bonus(stage1.interestBonus()) }}</strong></li>
+    }
     @if (stage1.tallyBonus() > 1) { <li>Tally <strong>×{{ bonus(stage1.tallyBonus()) }}</strong></li> }
     @if (stage1.isOvercharging()) { <li>Overcharge <strong>×{{ bonus(stage1.overchargeMultiplier()) }}</strong></li> }
   </ul>

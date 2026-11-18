@@ -3,6 +3,7 @@
  * and requirement that make new nodes cost about C seconds and the warp goal
  * about W seconds of that tier's maxed production (geometric mean of both themes).
  */
+import './overrides';
 import { Decimal } from '../../src/app/utils/numbers';
 import { EXPANSIONS, TIERS, Theme } from '../../src/app/economy/stage1-content';
 import { Stage1State, buildTree, baseProduction, cost, maxLevel } from '../../src/app/economy/stage1';
@@ -11,7 +12,7 @@ const COST_SECONDS = [0, 60, 120, 180, 240, 300];
 const GOAL_SECONDS = [30, 60, 90, 120, 180];
 
 function maxed(tier: number, path: Theme[], runBonus: number) {
-  const state: Stage1State = { tier, path, levels: {}, energy: new Decimal(1e12), runBonus, overchargeTime: 0 };
+  const state: Stage1State = { tier, path, levels: {}, energy: new Decimal(0), runBonus, overchargeTime: 0 };
   const nodes = buildTree(tier, path);
   let newCost = new Decimal(0);
   const newIds = tier >= 2 ? EXPANSIONS[tier][path[tier - 2]].nodes.map(n => n.id) : [];
@@ -27,13 +28,19 @@ function maxed(tier: number, path: Theme[], runBonus: number) {
 }
 
 let runBonus = 1;
+const saver: string[] = [];
+const spender: string[] = [];
+const req: string[] = [];
 for (let tier = 1; tier <= TIERS.length; tier++) {
   const results = (['saver', 'spender'] as Theme[]).map(theme =>
     maxed(tier, Array(tier - 1).fill(theme), runBonus));
   const logProd = (results[0].prod.log10().toNumber() + results[1].prod.log10().toNumber()) / 2;
   const goal = Math.pow(10, logProd) * GOAL_SECONDS[tier - 1];
-  const factors = results.map(r => tier === 1 ? 1 : Math.pow(10, logProd) * COST_SECONDS[tier] / r.newCost.toNumber());
-  console.log(`T${tier}: maxed prod 1e${logProd.toFixed(2)}, goal ${goal.toExponential(2)}, ` +
-    `cost factor saver ${factors[0].toExponential(2)} spender ${factors[1].toExponential(2)}`);
+  req.push((goal / TIERS[tier - 1].requirement).toPrecision(3));
+  if (tier >= 2) {
+    saver.push((Math.pow(10, logProd) * COST_SECONDS[tier] / results[0].newCost.toNumber()).toPrecision(3));
+    spender.push((Math.pow(10, logProd) * COST_SECONDS[tier] / results[1].newCost.toNumber()).toPrecision(3));
+  }
   runBonus *= TIERS[tier - 1].warpBonus;
 }
+console.log(`S1_COST_SAVER=${saver.join(',')} S1_COST_SPENDER=${spender.join(',')} S1_REQ=${req.join(',')}`);

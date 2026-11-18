@@ -35,6 +35,10 @@ export class Stage1Panel {
     return formatNumber(value, 0);
   }
 
+  minutes(value: number): string {
+    return value >= 60 ? '60+ min' : `${value.toFixed(value < 10 ? 1 : 0)} min`;
+  }
+
   bonus(value: number): string {
     return formatNumber(value, 2);
   }

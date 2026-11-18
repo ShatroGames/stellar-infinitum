@@ -8,6 +8,8 @@ import { CORE_NODES, EXPANSIONS, OVERCHARGE, Stage1NodeDef, TIERS, Theme } from 
 export const STAGE1_START_ENERGY = 10;
 export const FINAL_TIER = TIERS.length;
 const MAX_BULK_DISCOUNT = 0.5;
+/** Interest grows with minutes of production held, up to this many minutes */
+const INTEREST_MAX_MINUTES = 60;
 const SPENDER_CAPSTONE_DISCOUNT = 0.99;
 
 export interface Stage1State {
@@ -158,7 +160,7 @@ export function interestBonus(nodes: readonly Stage1NodeDef[], state: Stage1Stat
   if (interest <= 0) return 1;
   const power = 1 + sumOf(nodes, state, 'interest_power') * themeCount(state.path, 'saver');
   const capstone = archetype(state) === 'saver' ? 2 : 1;
-  return 1 + interest * power * capstone * Math.log2(1 + minutesHeld(nodes, state));
+  return 1 + interest * power * capstone * Math.min(minutesHeld(nodes, state), INTEREST_MAX_MINUTES) / 10;
 }
 
 /** Tally bonus (Spender): based on node levels owned this tier */

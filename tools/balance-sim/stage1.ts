@@ -1,28 +1,7 @@
 /** Stage 1 (Stellar Network) simulation for every path, using the game's own formulas */
-import { EXPANSIONS, TIERS, Theme } from '../../src/app/economy/stage1-content';
+import { Theme } from '../../src/app/economy/stage1-content';
 
-/**
- * Tuning overrides (environment variables, applied to the loaded content):
- *   S1_COST_SAVER=f2,f3,f4,f5     multiply Saver expansion costs per tier
- *   S1_COST_SPENDER=f2,f3,f4,f5   multiply Spender expansion costs per tier
- *   S1_REQ=r1,r2,r3,r4,r5         multiply each tier's Energy goal
- *   S1_INTEREST=k                 multiply Interest values
- *   S1_BULK=k                     multiply bulk discount values
- */
-function applyOverrides(): void {
-  const list = (name: string) => process.env[name]?.split(',').map(Number);
-  for (const [theme, env] of [['saver', 'S1_COST_SAVER'], ['spender', 'S1_COST_SPENDER']] as const) {
-    list(env)?.forEach((f, i) => EXPANSIONS[i + 2][theme].nodes.forEach(n => (n.cost *= f)));
-  }
-  list('S1_REQ')?.forEach((f, i) => (TIERS[i].requirement *= f));
-  const scaleType = (type: string, k: number) => Object.values(EXPANSIONS).forEach(e =>
-    Object.values(e).forEach(exp => exp.nodes.forEach(n => { if (n.type === type) n.value *= k; })));
-  const interest = Number(process.env['S1_INTEREST'] ?? 1);
-  if (interest !== 1) scaleType('interest', interest);
-  const bulk = Number(process.env['S1_BULK'] ?? 1);
-  if (bulk !== 1) scaleType('bulk_discount', bulk);
-}
-applyOverrides();
+import './overrides';
 import {
   FINAL_TIER, Stage1State, advance, buildTree, buyAll, canWarp, initialState, warp,
 } from '../../src/app/economy/stage1';

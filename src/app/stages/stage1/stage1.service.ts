@@ -51,6 +51,8 @@ export class Stage1Service implements StageModule {
   readonly isOvercharging = computed(() => eco.isOvercharging(this.nodes(), this.state()));
   readonly overchargeMultiplier = computed(() => eco.overchargeMultiplier(this.state().overchargeTime));
   readonly interestBonus = computed(() => eco.interestBonus(this.nodes(), this.state()));
+  readonly minutesHeld = computed(() => eco.minutesHeld(this.nodes(), this.state()));
+  readonly hasInterest = computed(() => this.nodes().some(n => n.type === 'interest' && eco.level(this.state(), n.id) > 0));
   readonly tallyBonus = computed(() => eco.tallyBonus(this.nodes(), this.state()));
   /** Theme chosen at the first warp (null in Tier 1) */
   readonly theme = computed(() => eco.chosenTheme(this.state()));
@@ -83,7 +85,12 @@ export class Stage1Service implements StageModule {
   }
 
   advanceTime(seconds: number): void {
-    this.mutate(s => eco.advance(this.nodes(), s, seconds, false));
+    // Small steps so Interest (based on Energy held) grows during the absence, as it would while playing
+    const nodes = this.nodes();
+    const step = Math.max(30, seconds / 2000);
+    this.mutate(s => {
+      for (let left = seconds; left > 0; left -= step) eco.advance(nodes, s, Math.min(step, left), false);
+    });
   }
 
   summary(): SummaryValue[] {
