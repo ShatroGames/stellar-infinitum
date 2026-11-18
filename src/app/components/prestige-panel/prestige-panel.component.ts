@@ -23,6 +23,11 @@ export class PrestigePanelComponent {
   ascensionPoints = this.ascensionService.points;
   totalAscensionPoints = this.ascensionService.totalPoints;
   potentialEchoFragments = this.skillTreeService.potentialEchoFragments;
+  pendingStellarCores = this.skillTreeService.pendingStellarCores;
+  nextStellarCoreAt = this.skillTreeService.nextStellarCoreAt;
+  nextEchoFragmentAt = this.skillTreeService.nextEchoFragmentAt;
+  isOvercharging = this.skillTreeService.isOvercharging;
+  overchargeMultiplier = this.skillTreeService.overchargeMultiplier;
   
   progress = computed(() => this.skillTreeService.getAscensionProgress());
   allSkillsMaxed = computed(() => this.skillTreeService.areAllSkillsMaxed());
@@ -30,6 +35,10 @@ export class PrestigePanelComponent {
 
   formatNumber(value: Decimal | number): string {
     return formatNumber(value, 0);
+  }
+
+  formatMultiplier(multiplier: number): string {
+    return formatNumber(multiplier, multiplier < 100 ? 2 : 1);
   }
 
   formatBonus(multiplier: number): string {

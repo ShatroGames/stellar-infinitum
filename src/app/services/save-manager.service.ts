@@ -31,13 +31,12 @@ export class SaveManagerService {
     if (this.suspended) return;
     this.pendingSaves.set(key, saveFn);
     
-    // Clear existing timeout
-    if (this.saveTimeout !== null) {
-      clearTimeout(this.saveTimeout);
-    }
+    // Keep an already scheduled flush: restarting the timer on every call would
+    // postpone saving forever while automation requests saves several times a second
+    if (this.saveTimeout !== null) return;
 
-    // Schedule new save
     this.saveTimeout = window.setTimeout(() => {
+      this.saveTimeout = null;
       this.flush();
     }, this.DEBOUNCE_MS);
   }
@@ -79,6 +78,7 @@ export class SaveManagerService {
     if (!force && now - this.lastSaveTime < this.MIN_SAVE_INTERVAL_MS && this.pendingSaves.size > 0) {
       // Reschedule for later
       this.saveTimeout = window.setTimeout(() => {
+        this.saveTimeout = null;
         this.flush();
       }, this.MIN_SAVE_INTERVAL_MS - (now - this.lastSaveTime));
       return;

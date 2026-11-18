@@ -62,17 +62,9 @@ export class App {
   // Check if universe has collapsed
   hasCollapsed = computed(() => this.quantumService.hasCollapsed());
   
-  // Check if at least 4 out of 5 dimensions are maxed
-  canAccessCollapse = computed(() => {
-    const dimensions = this.dimensionService.dimensions();
-    const dimensionArray = Array.from(dimensions.values());
-    
-    const maxedDimensions = dimensionArray.filter(dim => 
-      dim.nodes.every(node => node.level >= node.maxLevel)
-    );
-    
-    return maxedDimensions.length >= 4;
-  });
+  // Show the Collapse tab once every dimension is unlocked (collapsing needs them maxed)
+  canAccessCollapse = computed(() =>
+    Array.from(this.dimensionService.dimensions().values()).every(dim => dim.unlocked));
 
   constructor() {
     // Set initial active tab based on collapse state

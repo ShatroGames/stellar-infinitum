@@ -318,3 +318,58 @@ li.complete {
   font-weight: 600;
   border-color: rgba(16, 185, 129, 0.3);
 }
+
+/* Overcharge readout */
+.overcharge {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 8px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  border-radius: 8px;
+  background: rgba(250, 204, 21, 0.06);
+}
+
+.overcharge-label {
+  color: #facc15;
+  font-weight: 600;
+}
+
+.overcharge-value {
+  color: #fde68a;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.overcharge small {
+  grid-column: 1 / -1;
+  color: #a3a3a3;
+  font-size: 0.75rem;
+}
+
+/* Transcend preview */
+.transcend-preview {
+  margin: 8px 0 12px;
+  font-size: 0.875rem;
+}
+
+.transcend-preview ul {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+
+.transcend-preview li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.transcend-preview li small,
+.transcend-preview .reward-hint {
+  color: #a3a3a3;
+  font-size: 0.75rem;
+}

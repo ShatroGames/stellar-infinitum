@@ -36,8 +36,8 @@ export interface PrestigeData {
   totalPrestigeBonus: number; // Cumulative bonus from all ascensions
   currentRunPrestigeBonus: number; // Bonus for the current cycle (resets on Tier 5 completion)
   tierCompletions: Map<number, number>; // How many times each tier was completed
-  stellarCoreProgress?: number; // Fractional Stellar Core carried over between transcendences
-  echoFragmentProgress?: number; // Fractional Echo Fragment carried over between transcendences
+  bestEnergy?: string; // Highest Energy held when transcending (Decimal string); rewards are based on it
+  overchargeStart?: number | null; // Timestamp (ms) when Tier 5 was fully maxed this run
 }
 
 export interface GameState {

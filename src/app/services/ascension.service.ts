@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import Decimal from 'break_eternity.js';
-import { AscensionEffect, AscensionNode, AscensionState, ASCENSION_TREE_NODES } from '../models/ascension-tree.model';
+import { AscensionNode, AscensionState, ASCENSION_TREE_NODES } from '../models/ascension-tree.model';
+import { coreGlobalMultiplier, nexusEffects } from '../economy/economy';
 import { SaveManagerService } from './save-manager.service';
 
 @Injectable({
@@ -19,21 +20,21 @@ export class AscensionService {
   totalPoints = computed(() => this.state().totalPoints);
   nodes = computed(() => this.state().nodes);
 
-  // Computed effects. All values come from ASCENSION_TREE_NODES so the config is the
-  // single source of truth for both gameplay and the UI.
-  hasAutoBuy = computed(() => this.hasEffect('auto_buy'));
-  
-  hasAutoWarp = computed(() => this.hasEffect('auto_warp'));
-  
-  bulkBuyAmount = computed(() => Math.max(1, this.maxEffect('bulk_buy')));
+  // Computed effects (formulas live in economy/economy.ts)
+  private purchasedIds = computed(() => {
+    const ids = new Set<string>();
+    this.state().nodes.forEach(node => { if (node.purchased) ids.add(node.id); });
+    return ids;
+  });
+  effects = computed(() => nexusEffects(this.purchasedIds()));
 
-  costReduction = computed(() => this.maxEffect('cost_reduction'));
-
-  productionBoost = computed(() => this.sumEffect('production_boost'));
-
-  multiplierBoost = computed(() => this.sumEffect('multiplier_boost'));
-
-  startingEnergy = computed(() => new Decimal(Math.max(10, this.maxEffect('start_bonus'))));
+  hasAutoBuy = computed(() => this.effects().autoBuy);
+  hasAutoWarp = computed(() => this.effects().autoWarp);
+  bulkBuyAmount = computed(() => this.effects().bulkBuy);
+  costReduction = computed(() => this.effects().costReduction);
+  productionBoost = computed(() => this.effects().productionBoost);
+  multiplierBoost = computed(() => this.effects().multiplierBoost);
+  startingEnergy = computed(() => new Decimal(this.effects().startingEnergy));
   
   // Check if all ascension tree nodes are purchased (unlocks dimensions)
   isTreeComplete = computed(() => {
@@ -45,22 +46,15 @@ export class AscensionService {
     return purchasedCount === totalNodes;
   });
 
-  warpSpeedReduction = computed(() => this.maxEffect('warp_speed'));
+  warpSpeedReduction = computed(() => this.effects().warpSpeedReduction);
+  skillEfficiencyBonus = computed(() => this.effects().skillEfficiency);
+  skillCapIncrease = computed(() => this.effects().skillCapIncrease);
+  stellarCoreMult = computed(() => this.effects().stellarCoreMult);
+  warpMomentumBonus = computed(() => this.effects().warpMomentum);
+  hasUnlockAll = computed(() => this.effects().unlockAll);
 
-  skillEfficiencyBonus = computed(() => this.sumEffect('skill_efficiency'));
-
-  skillCapIncrease = computed(() => this.sumEffect('skill_cap'));
-
-  stellarCoreMult = computed(() => this.sumEffect('stellar_core_mult'));
-
-  warpMomentumBonus = computed(() => this.sumEffect('warp_momentum'));
-
-  hasUnlockAll = computed(() => this.hasEffect('remove_prerequisites'));
-
-  // Global multiplier based on total Stellar Cores earned: +100% per core
-  globalMultiplier = computed(() => {
-    return 1 + this.totalPoints();
-  });
+  // Production multiplier from total Stellar Cores earned
+  globalMultiplier = computed(() => coreGlobalMultiplier(this.totalPoints()));
 
   constructor() {
     this.initializeNodes();
@@ -77,28 +71,6 @@ export class AscensionService {
       ...state,
       nodes: nodeMap
     }));
-  }
-
-  private purchasedEffects(type: AscensionEffect['type']): number[] {
-    const values: number[] = [];
-    this.state().nodes.forEach(node => {
-      if (node.purchased && node.effect.type === type) values.push(node.effect.value);
-    });
-    return values;
-  }
-
-  private hasEffect(type: AscensionEffect['type']): boolean {
-    return this.purchasedEffects(type).length > 0;
-  }
-
-  /** For upgrades that replace each other (e.g. Cost Optimization I/II) */
-  private maxEffect(type: AscensionEffect['type']): number {
-    return Math.max(0, ...this.purchasedEffects(type));
-  }
-
-  /** For upgrades that stack (e.g. Power Enhancement I-IV) */
-  private sumEffect(type: AscensionEffect['type']): number {
-    return this.purchasedEffects(type).reduce((sum, v) => sum + v, 0);
   }
 
   private hasNode(nodeId: string): boolean {
@@ -143,11 +115,12 @@ export class AscensionService {
     return true;
   }
 
-  grantAscensionPoint(): void {
+  grantAscensionPoint(amount = 1): void {
+    if (amount <= 0) return;
     this.state.update(state => ({
       ...state,
-      points: state.points + 1,
-      totalPoints: state.totalPoints + 1
+      points: state.points + amount,
+      totalPoints: state.totalPoints + amount
     }));
     this.saveState();
   }

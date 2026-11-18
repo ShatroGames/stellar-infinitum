@@ -121,7 +121,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: 'Max out all skills in Energy Seed',
     icon: '✦',
     category: AchievementCategory.STELLAR,
-    unlocked: false
+    unlocked: false,
+    reward: {
+      type: 'automation',
+      description: 'Unlock Auto-Buy: Automatically purchase skills when affordable',
+      unlockId: 'auto_buy'
+    }
   },
   {
     id: 'tier2_complete',
@@ -153,12 +158,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: 'Max out all skills in Ultimate Synthesis',
     icon: '✦',
     category: AchievementCategory.STELLAR,
-    unlocked: false,
-    reward: {
-      type: 'automation',
-      description: 'Unlock Auto-Buy: Automatically purchase skills when affordable',
-      unlockId: 'auto_buy'
-    }
+    unlocked: false
   },
   {
     id: 'all_tiers_complete',

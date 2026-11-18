@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "sim": "tsc -p tools/balance-sim && node tools/balance-sim/out/tools/balance-sim/sim.js"
   },
   "prettier": {
     "printWidth": 100,

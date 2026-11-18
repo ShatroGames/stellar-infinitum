@@ -7,6 +7,7 @@ import { SkillTreeService } from './skill-tree.service';
 import { QuantumService } from './quantum.service';
 import { QuantumTreeType } from '../models/quantum.model';
 import { Decimal } from '../utils/numbers';
+import { achievementEffects } from '../economy/economy';
 
 /** Set by the options screen when a save is imported; read once on the next load */
 export const IMPORT_ACHIEVEMENT_FLAG = 'stellarInfinitum_importedSave';
@@ -79,94 +80,24 @@ export class AchievementService {
     return map;
   });
 
-  // Achievement multiplier bonuses
-  energyProductionMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = Array.from(this.achievements().values());
-    
-    if (achievements.find(a => a.id === 'all_tiers_complete' && a.unlocked)) {
-      multiplier *= 1.05;
-    }
-    if (achievements.find(a => a.id === 'fast_tier5' && a.unlocked)) {
-      multiplier *= 1.1;
-    }
-    if (achievements.find(a => a.id === 'max_all_trees' && a.unlocked)) {
-      multiplier *= 1.25;
-    }
-    
-    return multiplier;
+  // Reward effects (values live in economy/economy.ts)
+  private unlockedIds = computed(() => {
+    const ids = new Set<string>();
+    this.achievements().forEach(a => { if (a.unlocked) ids.add(a.id); });
+    return ids;
   });
-
-  stellarCoreMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = Array.from(this.achievements().values());
-    
-    if (achievements.find(a => a.id === 'stellar_400' && a.unlocked)) {
-      multiplier *= 1.1;
-    }
-    
-    return multiplier;
-  });
-
-  echoFragmentMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = Array.from(this.achievements().values());
-    
-    if (achievements.find(a => a.id === 'transcend_100' && a.unlocked)) {
-      multiplier *= 1.1;
-    }
-    if (achievements.find(a => a.id === 'echo_5000' && a.unlocked)) {
-      multiplier *= 1.2;
-    }
-    
-    return multiplier;
-  });
-
-  ascensionBonusMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = Array.from(this.achievements().values());
-    
-    if (achievements.find(a => a.id === 'ascension_all_complete' && a.unlocked)) {
-      multiplier *= 1.15;
-    }
-    if (achievements.find(a => a.id === 'max_all_trees' && a.unlocked)) {
-      multiplier *= 1.25;
-    }
-    
-    return multiplier;
-  });
-
-  dimensionBonusMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = Array.from(this.achievements().values());
-    
-    if (achievements.find(a => a.id === 'all_dimensions_unlocked' && a.unlocked)) {
-      multiplier *= 1.25;
-    }
-    if (achievements.find(a => a.id === 'max_all_trees' && a.unlocked)) {
-      multiplier *= 1.25;
-    }
-    
-    return multiplier;
-  });
-
-  // Bonus to quantum production from quantum achievements
-  quantumProductionMultiplier = computed(() => {
-    let multiplier = 1;
-    const achievements = this.achievements();
-    if (achievements.get('all_synergies')?.unlocked) multiplier *= 1.5;
-    if (achievements.get('quantum_trinity')?.unlocked) multiplier *= 2;
-    return multiplier;
-  });
-
-  // Bonus to offline Energy gains
-  offlineProductionMultiplier = computed(() => {
-    return this.achievements().get('progression_100hours')?.unlocked ? 1.05 : 1;
-  });
+  effects = computed(() => achievementEffects(this.unlockedIds()));
+  energyProductionMultiplier = computed(() => this.effects().energy);
+  stellarCoreMultiplier = computed(() => this.effects().stellarCore);
+  echoFragmentMultiplier = computed(() => this.effects().echoFragment);
+  ascensionBonusMultiplier = computed(() => this.effects().nexus);
+  dimensionBonusMultiplier = computed(() => this.effects().dimension);
+  quantumProductionMultiplier = computed(() => this.effects().quantum);
+  offlineProductionMultiplier = computed(() => this.effects().offline);
 
   // Automation unlocks from achievements
   hasAutoBuy = computed(() => {
-    const achievement = this.achievements().get('tier5_complete');
+    const achievement = this.achievements().get('tier1_complete');
     return achievement?.unlocked ?? false;
   });
 

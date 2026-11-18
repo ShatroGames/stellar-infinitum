@@ -21,6 +21,9 @@ export class GameService {
   // this service, so it cannot be called from here)
   private pendingOfflineSeconds = 0;
 
+  /** Offline time and save timestamp measured on load (not consumed) */
+  offlineInfo = { seconds: 0, savedAt: 0 };
+
   /** Returns the offline time measured on load, once */
   consumeOfflineSeconds(): number {
     const seconds = this.pendingOfflineSeconds;
@@ -188,6 +191,7 @@ export class GameService {
         // Picked up by AchievementService on construction
         if (offlineTime > 0) {
           this.pendingOfflineSeconds = offlineTime;
+          this.offlineInfo = { seconds: offlineTime, savedAt: state.timestamp };
         }
       } catch (e) {
         console.error('Failed to load game state:', e);

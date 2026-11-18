@@ -360,7 +360,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
     id: 3,
     name: '◆ Synthesis Grid',
     description: 'Complex energy convergence',
-    requiredPoints: new Decimal(250000000000),
+    requiredPoints: new Decimal('3e12'),
     skills: TIER_3_SKILLS,
     prestigeBonus: 2.0  // Warping grants another 2x multiplier (total 8x)
   },
@@ -368,7 +368,7 @@ export const SKILL_TREE_TIERS: SkillTreeTier[] = [
     id: 4,
     name: '◉ Nexus Array',
     description: 'Unified power nexus',
-    requiredPoints: new Decimal(3500000000000000),
+    requiredPoints: new Decimal('1e17'),
     skills: TIER_4_SKILLS,
     prestigeBonus: 2.0  // Warping grants another 2x multiplier (total 16x)
   },

@@ -2,6 +2,7 @@ import { Injectable, signal, computed, inject, Injector, forwardRef } from '@ang
 import { Dimension, DimensionNode, DimensionState, DIMENSIONS } from '../models/dimension.model';
 import { SaveManagerService } from './save-manager.service';
 import type { SkillTreeService } from './skill-tree.service';
+import { dimensionEffects } from '../economy/economy';
 
 @Injectable({
   providedIn: 'root'
@@ -38,129 +39,14 @@ export class DimensionService {
     this.dimensionBonusFactor.set(factor);
   }
 
-  // Computed bonuses
-  totalProductionBonus = computed(() => {
-    let bonus = 1;
-    this.state().dimensions.forEach(dimension => {
-      if (!dimension.unlocked) return;
-      
-      dimension.nodes.forEach(node => {
-        if (node.level > 0 && node.effect.type === 'production_mult') {
-          bonus *= Math.pow(1 + node.effect.value, node.level);
-        }
-      });
-    });
-    return 1 + (bonus - 1) * this.dimensionBonusFactor();
-  });
-
-  totalMultiplierPower = computed(() => {
-    let power = 0;
-    this.state().dimensions.forEach(dimension => {
-      if (!dimension.unlocked) return;
-      
-      dimension.nodes.forEach(node => {
-        if (node.level > 0 && node.effect.type === 'multiplier_power') {
-          power += node.effect.value * node.level;
-        }
-        // Crystal Harmony: +1% multiplier power per purchased Crystal node
-        if (node.level > 0 && node.effect.special === 'crystal_synergy') {
-          const crystalNodes = dimension.nodes.filter(n => n.level > 0).length;
-          power += node.effect.value * crystalNodes;
-        }
-      });
-    });
-    return power * this.dimensionBonusFactor();
-  });
-
-  totalSkillCapIncrease = computed(() => {
-    let cap = 0;
-    this.state().dimensions.forEach(dimension => {
-      if (!dimension.unlocked) return;
-      
-      dimension.nodes.forEach(node => {
-        if (node.level > 0 && node.effect.type === 'skill_cap') {
-          cap += node.effect.value * node.level;
-        }
-      });
-    });
-    return cap;
-  });
-
-  totalStellarCoreBonus = computed(() => {
-    let bonus = 0;
-    this.state().dimensions.forEach(dimension => {
-      if (!dimension.unlocked) return;
-      
-      dimension.nodes.forEach(node => {
-        if (node.level > 0 && node.effect.type === 'stellar_core_bonus') {
-          bonus += node.effect.value * node.level;
-        }
-      });
-    });
-    return bonus;
-  });
-
-  // Cross-dimension synergies
-  crossDimensionBonus = computed(() => {
-    let bonus = 1;
-    
-    this.state().dimensions.forEach(dimension => {
-      if (!dimension.unlocked) return;
-      
-      dimension.nodes.forEach(node => {
-        if (node.level > 0 && node.effect.type === 'cross_dimension') {
-          const special = node.effect.special;
-          const value = node.effect.value;
-          
-          switch (special) {
-            case 'void_synergy': {
-              // +2% production per Void node
-              const voidNodes = this.getNodesInDimension('void').filter(n => n.level > 0).length;
-              bonus *= (1 + value * voidNodes);
-              break;
-            }
-            case 'crystal_synergy':
-              // Applied as multiplier power in totalMultiplierPower
-              break;
-            case 'quantum_synergy': {
-              // +3% production per Quantum node
-              const quantumNodes = this.getNodesInDimension('quantum').filter(n => n.level > 0).length;
-              bonus *= (1 + value * quantumNodes);
-              break;
-            }
-            case 'temporal_synergy': {
-              // +2.5% production per Temporal node
-              const temporalNodes = this.getNodesInDimension('temporal').filter(n => n.level > 0).length;
-              bonus *= (1 + value * temporalNodes);
-              break;
-            }
-            case 'prism_synergy': {
-              // +0.5% production per node in ALL dimensions
-              const allNodes = Array.from(this.state().dimensions.values())
-                .filter(d => d.unlocked)
-                .flatMap(d => d.nodes)
-                .filter(n => n.level > 0).length;
-              bonus *= (1 + value * allNodes);
-              break;
-            }
-          }
-        }
-      });
-    });
-    
-    return 1 + (bonus - 1) * this.dimensionBonusFactor();
-  });
-
-  // Prism "all aspects" bonus
-  prismAllAspectsBonus = computed(() => {
-    const prism = this.state().dimensions.get('prism');
-    if (!prism || !prism.unlocked) return 0;
-    
-    const rootNode = prism.nodes.find(n => n.id === 'prism_root');
-    if (!rootNode || rootNode.level === 0) return 0;
-    
-    return rootNode.effect.value * rootNode.level;
-  });
+  // Computed bonuses (formulas live in economy/economy.ts)
+  effects = computed(() => dimensionEffects(this.state().dimensions.values(), this.dimensionBonusFactor()));
+  totalProductionBonus = computed(() => this.effects().productionBonus);
+  totalMultiplierPower = computed(() => this.effects().multiplierPower);
+  totalSkillCapIncrease = computed(() => this.effects().skillCapIncrease);
+  totalStellarCoreBonus = computed(() => this.effects().stellarCoreBonus);
+  crossDimensionBonus = computed(() => this.effects().crossDimensionBonus);
+  prismAllAspectsBonus = computed(() => this.effects().prismAllAspects);
 
   constructor() {
     this.initializeDimensions();
@@ -195,11 +81,6 @@ export class DimensionService {
       });
       return prereqsMet ? { ...node, unlocked: true } : node;
     });
-  }
-
-  private getNodesInDimension(dimensionId: string): DimensionNode[] {
-    const dimension = this.state().dimensions.get(dimensionId);
-    return dimension ? dimension.nodes : [];
   }
 
   canUnlockDimension(dimensionId: string): boolean {

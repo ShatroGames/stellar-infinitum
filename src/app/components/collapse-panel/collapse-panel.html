@@ -27,7 +27,6 @@
         <li>🌟 New resource: <strong>Quanta</strong> (1/sec base)</li>
         <li>🌟 Three parallel quantum trees: Matter, Energy, and Time</li>
         <li>🌟 Synergy system for powerful combinations</li>
-        <li>🌟 Entanglement mechanic to link nodes across trees</li>
       </ul>
     </div>
 
@@ -41,31 +40,6 @@
         }
         <span>All Dimension nodes at maximum level</span>
       </div>
-      <div class="requirement" [class.met]="allPreCollapseAchievements()">
-        @if (allPreCollapseAchievements()) {
-          <span class="checkmark">✓</span>
-        } @else {
-          <span class="crossmark">✗</span>
-        }
-        <span>All pre-collapse achievements unlocked</span>
-      </div>
-      
-      @if (!allPreCollapseAchievements() && missingAchievements().length > 0) {
-        <div class="missing-achievements">
-          <h4>Missing Achievements ({{ missingAchievements().length }}):</h4>
-          <div class="achievement-list">
-            @for (achievement of missingAchievements(); track achievement.id) {
-              <div class="missing-achievement">
-                <span class="achievement-icon">{{ achievement.icon }}</span>
-                <div class="achievement-info">
-                  <span class="achievement-name">{{ achievement.name }}</span>
-                  <span class="achievement-desc">{{ achievement.description }}</span>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      }
     </div>
 
     <div class="collapse-actions">
@@ -73,13 +47,9 @@
         <button class="collapse-btn" (click)="initiateCollapse()">
           🌌 Trigger Cosmic Collapse
         </button>
-      } @else if (!dimensionsMaxed()) {
-        <button class="collapse-btn" disabled>
-          🔒 Complete All Dimensions First
-        </button>
       } @else {
         <button class="collapse-btn" disabled>
-          🔒 Unlock All Achievements First
+          🔒 Complete All Dimensions First
         </button>
       }
     </div>
