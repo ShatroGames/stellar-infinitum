@@ -205,7 +205,22 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 ---
 
-## 5. Layer 2: Dimensional Echoes
+## 5. Stage 3 (to replace Dimensional Echoes)
+
+- **[Decided]** Stage 1 running only once is fine: every later stage has its own prestige loop, so each stage is "played again" in its own way.
+- **[Decided]** Stage 3 can build on Stage 2 or be a unique concept (still tree-like), with its own currency and reset.
+- **[Open] 5.0**: Concepts **[Proposed]**. Each adds about one new idea:
+  - Building on Stage 2:
+    - **S1. Grove**: 3 drafted trees at once; offers go to a tree of your choice; buy links between trees to share effects.
+    - **S2. Seeds and fusion**: keep a few seed nodes through resets; fuse two maxed nodes into a stronger one (all recipes visible).
+    - **S3. Build your own draft pool**: pick the cards in your pool before each run (deck-building).
+  - New concepts:
+    - **S4. Star life cycles**: stars age and go supernova, seeding 1-3 children; timing (age longer vs harvest early) is the choice.
+    - **S5. Research over time**: nodes researched over time in parallel slots; planning the queue is the choice; each era offers one of two branches.
+    - **S6. Roots**: a tree grows downward into a visible grid and taps deposits; choosing directions is the choice.
+  - Recommendation: S2 (building on Stage 2) or S4 (new concept); keep S5 in reserve for Stage 4.
+
+### Old Stage 3: Dimensional Echoes (for reference, to be replaced)
 
 - Unlocked when the Stellar Nexus is complete. **Echo Fragments (EF)** are record-based like SC: total EF = 74 × (1 + log10(best Energy / 1e32)). **[Implemented]**
 - Five dimensions (Void, Crystal, Quantum, Temporal, Prism), each a small tree of 7 to 10 nodes. Unlock costs are 0/10/20/30/40 EF. **[Implemented]**
