@@ -87,7 +87,7 @@ The pre-Collapse half would use T1-T5 plus a few new ones (N1-N7). The Quantum e
 
 - **[Decided]** The automation and accumulation rules above. **[Implemented]** for the Energy phase.
 - **[Decided] 2.1**: In every stage, time-based progress (production, timers, Overcharge) continues while away; nothing is bought or chosen automatically.
-- **[Open] 2.2**: Should returning players see a "while you were away" summary?
+- **[Decided] 2.2**: Returning players see a "while you were away" summary.
 
 ### Active vs idle **[Superseded]**
 
@@ -145,7 +145,8 @@ Current code, for reference (the decisions below change it):
 - **Archetypes**: pure idle, pure active and hybrid paths unlock different capstones.
 - **Balance rule** (replaces "all paths within ±10%"): each option is clearly better for its own play style; each path gets its matching player through Stage 1 in a similar time.
 - **The Nebula / Pulsar / Binary themes are replaced** by idle / active.
-- **Revisit in Stage 2**: concepts built for repeated runs (Overcharge, record-based Stellar Cores and Echo Fragments, the current Stellar Nexus). Overcharge could become an idle option in Stage 1.
+- **[Decided] 3.11**: **Overcharge becomes an idle-path option** (one of the warp choices), growing faster while visible (3.3).
+- Record-based Stellar Cores/Echo Fragments and the current Stellar Nexus are replaced by the new Stage 2/3 designs.
 
 ---
 
@@ -272,7 +273,7 @@ Current code, for reference (the decisions below change it):
 - Some achievements reward being away ("Return after 8 hours offline", "+5% offline production"), which contradicts pillar 3. **[Implemented]**
 
 - **[Decided]** No missable or conditional achievements (pillar 11); achievements of a stage come naturally while playing it.
-- **[Open] 7.1**: Should achievements carry gameplay rewards at all, or be mostly cosmetic?
+- **[Decided] 7.1**: Achievements give **no gameplay bonuses** (cosmetic only).
 - **[Decided] 7.2**: The achievement list is rebuilt for the new stages (old Quantum achievements dropped; nothing rewards being away, per pillar 3).
 
 ---
@@ -310,16 +311,13 @@ From the initial review. Not yet discussed:
 - Integer formatting, log-scale progress bars, and labels for unlabelled multipliers.
 - Starfield/nebula background and warp/collapse transitions.
 
-- **[Open] 10.1**: Is there a visual direction or reference you have in mind, and how high a priority is this compared with balance?
+- **[Decided] 10.1**: The UI needs a complete visual rebuild, done **after** the stages are rebuilt. Until then, UI is functional only.
 
 ---
 
 ## Remaining open questions
 
-- **2.2**: "While you were away" summary for returning players?
-- **3.x**: Role of Overcharge in the new Stage 1 (it was built for repeated runs; possibly an idle-path option).
+- **Stage 1 content**: the concrete nodes per tier and destination (drafted during implementation, reviewed before balancing).
 - **5.x**: Extra Stage 3 complexity (C1-C4), revisit when built.
-- **6**: Stage 3' design (after Stage 3 is settled).
-- **7.1**: Achievement rewards: gameplay or mostly cosmetic?
-- **10.1**: Visual direction and priority.
-- Stage currency names (keep proper nouns sparse, pillar note in 3.5).
+- **6**: Stage 3' design (after Stage 3 is settled), plus details of Stages 1' and 2'.
+- Stage currency names (keep proper nouns sparse).
