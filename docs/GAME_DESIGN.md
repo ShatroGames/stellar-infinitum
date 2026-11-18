@@ -24,7 +24,9 @@ The simulator (`npm run sim`, see `tools/balance-sim/README.md`) measures pacing
 7. **Cosmic Collapse is the ultimate prestige.** It fundamentally changes the game. **[Decided]**
 8. **New Game+** after victory, with a small perk per completion. **[Decided]** (details in section 9)
 9. **Escalating stages**: each new stage has more content, is a bit more complex and takes longer than the previous one. **[Decided]**
-10. **Idle vs active** means *how you play*: actively buying and making moves, versus checking in from time to time. It is not about whether the tab is visible. **[Decided]**
+10. **Stage chain**: each stage has its own currency. Beating a stage starts the next stage's currency at **+1/s**. A stage is beaten when its currency reaches a target, and targets grow each stage (naturally, since stages get longer and more complex). Previous currencies become redundant. **[Decided]**
+11. **No missable achievements**: achievements come from natural progression; nothing conditional ("buy every x node") that can lock you out. **[Decided]**
+12. **Idle vs active** means *how you play*: actively buying and making moves, versus checking in from time to time. It is not about whether the tab is visible. **[Decided]**
 
 - **[Decided] 1.1**: Playtime splits about 50/50 before and after Collapse, **provided** the Quantum era brings about 50% more (or different) skill tree mechanics, so the second half feels like a new game rather than more of the same.
 
@@ -141,7 +143,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **[Decided] 3.6b**: **Stage 2 is reworked (option 4)**. After the first transcend, the Stellar Network becomes a background generator, and Stage 2 has its own tree. Players return to Stage 1 to run new paths.
   - **[Decided]** Beating Stage 1 grants a **flat Energy production** in the background. There is no path collection (busy-work trial and error) and no up-front numbers per path (they would remove the choice). The map shows destinations (3.7), but not which path is best.
   - **[Decided] 3.9**: **Stage 1 is played once, not replayed.** The warp choices are between **idle and active play**, so decisions matter through how you want to play Stage 1. This works because Stage 1 is comparatively short.
-  - **[Decided] 3.10**: The reward for beating Stage 1 is a **fixed** Energy production (easy to balance).
+  - **[Decided] 3.10**: The reward for beating Stage 1 is fixed: **+1/s of Stage 2's currency** (stage chain, pillar 10). Stage 1 is beaten by reaching its Energy target (completing Tier 5).
 
 ### Consequences of 3.9 / 3.10 **[Proposed]**
 
@@ -155,7 +157,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 ## 4. Stage 2 (replaces Transcendence and the Stellar Nexus)
 
-- **[Decided] 4.1**: Stage 2 runs on Energy (Stage 1's fixed production plus Stage 2's own); a separate currency would just be a renamed number.
+- **[Decided] 4.1**: Stage 2 runs on **its own currency** (name TBD), starting at +1/s from beating Stage 1 (stage chain). Energy becomes redundant.
 - **[Decided] 4.3**: Stage 2 has **its own reset loop**.
 - **[Open] 4.2**: What kind of tree is it? Concepts **[Proposed]**:
   - **A. Drafted tree (roguelite)**: each step offers 3 nodes; you attach one. Every run's tree is different. "Supernova" resets it for a meta currency that adds node types or better offers.
@@ -163,7 +165,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
   - **C. Twin trees in tension**: two opposing trees share one budget; their balance gives bonuses at certain ratios, and some nodes need you to lean hard to one side. "Rebalance" resets both for a meta currency.
   - **D. Living tree**: branch tips appear over time; you choose what grows and prune to redirect. A "season" ends the tree for a meta currency.
   - Recommendation: A, possibly with C's two node families inside the draft pool.
-- **[Decided]** Concept **A (drafted tree)** is the direction; the reset needs to stay simple because later stages must escalate.
+- **[Decided]** Concept **A (drafted tree)** is the direction, with the R1 + R2 reset below. It must be **balanced** (simulator), and the reset stays simple because later stages must escalate.
 
 ### Concept A detail **[Proposed]**
 
@@ -186,9 +188,9 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
   - R2: record milestones add new node types to the pool.
   - R3: keep one seed node into the next tree (saved for a later stage).
   - Recommendation: **R1 + R2**. The reset screen shows e.g. "Reset now: ×4.6 → ×6.1, next unlock at 30 nodes".
-- **End of stage**: a record milestone (e.g., a 40-node tree) beats Stage 2 and unlocks Stage 3.
+- **End of stage**: Stage 2's currency reaches its target (larger than Stage 1's); that starts Stage 3's currency at +1/s.
 - **Complexity budget**: Stage 1 = buying + warp choice. Stage 2 adds drafting, placement and one reset number. Stage 3 can add a spending currency, seeds or interactions between stages.
-- **[Open] 4.4**: Does beating Stage 2 also grant a fixed reward ("beat a stage → fixed production" as a pattern)?
+- **[Decided] 4.4**: Yes, through the stage chain (pillar 10).
 
 ### Old Stage 2 (for reference, to be replaced)
 
@@ -246,6 +248,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - Two achievements can't be earned, because the entanglement system they refer to doesn't exist. **[Implemented]**
 - Some achievements reward being away ("Return after 8 hours offline", "+5% offline production"), which contradicts pillar 3. **[Implemented]**
 
+- **[Decided]** No missable or conditional achievements (pillar 11); achievements of a stage come naturally while playing it.
 - **[Open] 7.1**: Should achievements carry gameplay rewards at all, or be mostly cosmetic?
 - **[Open] 7.2**: Cut or retheme the entanglement and offline achievements?
 
