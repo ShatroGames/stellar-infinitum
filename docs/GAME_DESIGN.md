@@ -228,24 +228,22 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **Era currency** on reset = **total levels of all nodes**.
 - **New nodes unlock** when era currency reaches thresholds.
 
-### Stage 3 currency **[Proposed]**
+### Stage 3 decisions
 
-- **Produced by node levels**: the base node gives +1/s per level. Unlocked nodes attach to the tree with different effects:
+- **[Decided] 5.5**: A node's speed boost comes from its **best level ever** (record).
+- **[Decided] 5.6**: Era currency is **only an unlock threshold** (never spent).
+- **[Decided] 5.7**: **The Stage 3 currency is the total level** of all nodes. Nodes generate nothing; no node effects, no Overclock. The stage is beaten when the total level in one era reaches the target, starting Stage 4's currency at +1/s.
+- **[Decided] 5.8**: Nodes keep leveling while the game is closed.
+- **[Open] 5.9**: Unlock thresholds based on era currency **accumulated over all resets** (proposed) or earned in a single reset?
 
-| Node | Effect per level |
-|---|---|
-| Base | +1 currency/s |
-| Booster | parent node levels 5% faster |
-| Amplifier | ×1.1 currency from its branch |
-| Echo | +1 era currency per 10 levels in its branch at reset |
+### More complexity for Stage 3 **[Proposed]**
 
-- **Spent on Overclock**: one node levels twice as fast for 60 s (the active tool). Possible later addition: focus slots (only N nodes level at once).
-- **Resets each era**; the stage is beaten when **one era reaches the target** (as Stage 1's run reached its Energy goal). Each era is faster thanks to speed boosts and new nodes.
-- **Idle vs active**: timers run on their own (idle); Overclock timing and when to reset are active.
-- **[Open] 5.5**: Speed boost from the node's levels in the last era, or its best level ever (record)?
-- **[Open] 5.6**: Is era currency only an unlock threshold, or also spendable?
-- **[Open] 5.7**: Accept the currency proposal above?
-- **[Open] 5.8**: Do nodes keep leveling while the game is closed?
+- **C1. Focus**: one chosen node levels ×2 as fast; switch freely. Active choice, no currency.
+- **C2. Node rhythms**: "sprint" nodes level fast but slow down steeply; "steady" nodes are slow but slow down gently. All levels count equally (idle vs active built into the nodes).
+- **C3. Unlock choice**: at each threshold, unlock one of two nodes (permanent, or revisited each era?).
+- **C4. Tree dependency**: a child can't level beyond its parent's level.
+- **C5. Reset preview**: "Reset now: +412 era currency, next unlock at 1,000".
+- Recommendation: C1 + C2 + C5, plus C3 for an explicit choice moment; C4 is likely one rule too many.
 
 ### Old Stage 3: Dimensional Echoes (for reference, to be replaced)
 
