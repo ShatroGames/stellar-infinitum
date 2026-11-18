@@ -138,8 +138,16 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **[Decided] 3.6a**: Stage 1 is mainly active play: buying and warping by hand.
 - **[Decided] 3.6b**: **Stage 2 is reworked (option 4)**. After the first transcend, the Stellar Network becomes a background generator, and Stage 2 has its own tree. Players return to Stage 1 to run new paths.
   - **[Decided]** Beating Stage 1 grants a **flat Energy production** in the background. There is no path collection (busy-work trial and error) and no up-front numbers per path (they would remove the choice). The map shows destinations (3.7), but not which path is best.
-  - **[Open] 3.9**: Is Stage 1 played once, or replayed? If once, should the final path/archetype carry a lasting effect into Stage 2 so the choice matters beyond one run?
-  - **[Open] 3.10**: Is the flat production a fixed amount, or tied to something visible (e.g., the tier reached)?
+  - **[Decided] 3.9**: **Stage 1 is played once, not replayed.** The warp choices are between **idle and active play**, so decisions matter through how you want to play Stage 1. This works because Stage 1 is comparatively short.
+  - **[Decided] 3.10**: The reward for beating Stage 1 is a **fixed** Energy production (easy to balance).
+
+### Consequences of 3.9 / 3.10 **[Proposed]**
+
+- **Warp choices = idle vs active**: each warp offers an idle-leaning and an active-leaning expansion. Idle example: production that grows while away. Active example: bonuses that grow while visible.
+- **Archetypes**: pure idle, pure active and hybrid paths unlock different capstones.
+- **Balance rule** (replaces "all paths within ±10%"): each option is clearly better for its own play style; each path gets its matching player through Stage 1 in a similar time.
+- **The Nebula / Pulsar / Binary themes are replaced** by idle / active.
+- **Revisit in Stage 2**: concepts built for repeated runs (Overcharge, record-based Stellar Cores and Echo Fragments, the current Stellar Nexus). Overcharge could become an idle option in Stage 1.
 
 ---
 
