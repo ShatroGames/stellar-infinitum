@@ -188,3 +188,7 @@ button:disabled {
 .map-option.skipped {
   opacity: 0.4;
 }
+
+.choices.single {
+  grid-template-columns: 1fr;
+}

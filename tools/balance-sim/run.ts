@@ -15,14 +15,14 @@ const verbose = args.includes('-v');
 const wanted = args.filter(a => !a.startsWith('-'));
 
 if (args.includes('--tiers')) {
-  for (const path of [ALL_PATHS[0], ALL_PATHS[15]]) {
+  for (const path of ALL_PATHS) {
     console.log(`\n${pathLabel(path)}`);
     tierReport(path).forEach(l => console.log('  ' + l));
   }
 }
 
 if (!wanted.length || wanted.includes('stage1')) {
-  console.log('\n=== stage1: time to beat, per path (S = Saver, P = Spender; order = Tiers 2-5) ===');
+  console.log('\n=== stage1: time to beat, per path (S = Saver, P = Spender) ===');
   console.log('  path   ' + PROFILES.map(p => p.name.padStart(12)).join(''));
   for (const path of ALL_PATHS) {
     const results = PROFILES.map(p => simulateStage1(p, path));

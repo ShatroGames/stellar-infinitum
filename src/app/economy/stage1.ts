@@ -3,9 +3,7 @@
  * simulator (tools/balance-sim) uses exactly the same numbers as the game.
  */
 import { Decimal } from '../utils/numbers';
-import {
-  Archetype, CORE_NODES, EXPANSIONS, OVERCHARGE, Stage1NodeDef, TIERS, Theme,
-} from './stage1-content';
+import { CORE_NODES, EXPANSIONS, OVERCHARGE, Stage1NodeDef, TIERS, Theme } from './stage1-content';
 
 export const STAGE1_START_ENERGY = 10;
 export const FINAL_TIER = TIERS.length;
@@ -14,7 +12,7 @@ const SPENDER_CAPSTONE_DISCOUNT = 0.99;
 
 export interface Stage1State {
   tier: number;
-  /** Theme chosen at each warp so far (path[0] = Tier 2) */
+  /** Expansion theme of each tier so far (path[0] = Tier 2); always one theme, chosen at the first warp */
   path: Theme[];
   levels: Record<string, number>;
   energy: Decimal;
@@ -87,13 +85,14 @@ export function themeCount(path: readonly Theme[], theme: Theme): number {
   return path.filter(t => t === theme).length;
 }
 
-/** Capstone archetype; only active in Tier 5, once all four choices are made */
-export function archetype(state: Stage1State): Archetype | null {
-  if (state.tier !== FINAL_TIER || state.path.length < FINAL_TIER - 1) return null;
-  const savers = themeCount(state.path, 'saver');
-  if (savers >= 3) return 'saver';
-  if (savers <= 1) return 'spender';
-  return 'balanced';
+/** The theme chosen at the first warp, or null in Tier 1 */
+export function chosenTheme(state: Stage1State): Theme | null {
+  return state.path[0] ?? null;
+}
+
+/** Capstone theme; only active in Tier 5 */
+export function archetype(state: Stage1State): Theme | null {
+  return state.tier === FINAL_TIER ? chosenTheme(state) : null;
 }
 
 // --- warping -------------------------------------------------------------------------
@@ -106,11 +105,14 @@ export function canWarp(nodes: readonly Stage1NodeDef[], state: Stage1State): bo
   return allMaxed(nodes, state) && state.energy.gte(requirement(state.tier));
 }
 
-/** Warp to the next tier with the chosen expansion (Tiers 1-4) */
+/**
+ * Warp to the next tier (Tiers 1-4). The theme is chosen at the first warp;
+ * later warps continue it (the argument is ignored once a theme is chosen).
+ */
 export function warp(state: Stage1State, theme: Theme): Stage1State {
   return {
     tier: state.tier + 1,
-    path: [...state.path, theme],
+    path: [...state.path, chosenTheme(state) ?? theme],
     levels: {},
     energy: new Decimal(STAGE1_START_ENERGY),
     runBonus: state.runBonus * TIERS[state.tier - 1].warpBonus,
@@ -140,15 +142,23 @@ export function overchargeIntegral(t0: number, t1: number): number {
   return f(t1) - f(t0);
 }
 
-/** Interest bonus (Saver): based on unspent Energy */
+/** Energy held, measured in minutes of production (without Interest) */
+export function minutesHeld(nodes: readonly Stage1NodeDef[], state: Stage1State): number {
+  const rate = rawProduction(nodes, state);
+  if (rate.lte(0)) return 0;
+  return state.energy.div(rate).toNumber() / 60;
+}
+
+/**
+ * Interest bonus (Saver): grows with how many minutes of production you hold.
+ * Active players spend as soon as they can and hold little; idle players hold a lot.
+ */
 export function interestBonus(nodes: readonly Stage1NodeDef[], state: Stage1State): number {
   const interest = sumOf(nodes, state, 'interest');
   if (interest <= 0) return 1;
   const power = 1 + sumOf(nodes, state, 'interest_power') * themeCount(state.path, 'saver');
-  const arch = archetype(state);
-  const capstone = arch === 'saver' ? 2 : arch === 'balanced' ? 1.5 : 1;
-  const orders = Math.max(0, state.energy.max(1).log10().toNumber());
-  return 1 + interest * power * capstone * orders;
+  const capstone = archetype(state) === 'saver' ? 2 : 1;
+  return 1 + interest * power * capstone * Math.log2(1 + minutesHeld(nodes, state));
 }
 
 /** Tally bonus (Spender): based on node levels owned this tier */
@@ -156,12 +166,11 @@ export function tallyBonus(nodes: readonly Stage1NodeDef[], state: Stage1State):
   const tally = sumOf(nodes, state, 'level_count');
   if (tally <= 0) return 1;
   const power = 1 + sumOf(nodes, state, 'level_count_power') * themeCount(state.path, 'spender');
-  const capstone = archetype(state) === 'balanced' ? 1.5 : 1;
-  return 1 + tally * power * capstone * totalLevels(nodes, state);
+  return 1 + tally * power * totalLevels(nodes, state);
 }
 
-/** Energy per second without Overcharge */
-export function baseProduction(nodes: readonly Stage1NodeDef[], state: Stage1State): Decimal {
+/** Energy per second from nodes, warp bonus and Tally (no Interest, no Overcharge) */
+function rawProduction(nodes: readonly Stage1NodeDef[], state: Stage1State): Decimal {
   let base = 0;
   let mult = new Decimal(state.runBonus);
   for (const node of nodes) {
@@ -175,7 +184,12 @@ export function baseProduction(nodes: readonly Stage1NodeDef[], state: Stage1Sta
       mult = mult.times(Decimal.pow(1 + (node.value - 1) * (1 + boost), lvl));
     }
   }
-  return mult.times(base).times(interestBonus(nodes, state)).times(tallyBonus(nodes, state));
+  return mult.times(base).times(tallyBonus(nodes, state));
+}
+
+/** Energy per second without Overcharge */
+export function baseProduction(nodes: readonly Stage1NodeDef[], state: Stage1State): Decimal {
+  return rawProduction(nodes, state).times(interestBonus(nodes, state));
 }
 
 export function production(nodes: readonly Stage1NodeDef[], state: Stage1State): Decimal {

@@ -1,9 +1,9 @@
 /**
  * Stage 1 content (docs/GAME_DESIGN.md, section 3, "Stage 1 content (v2)").
  *
- * Tier 1 is a fixed core. At each warp the player picks the Saver (idle) or the
- * Spender (active) expansion for the next tier; expansions stay for the rest of
- * the stage. Numbers are tuned with tools/balance-sim.
+ * Tier 1 is a fixed core. At the first warp the player picks Saver (idle) or
+ * Spender (active); every later tier adds the next expansion of that theme
+ * (no mixing). Numbers are tuned with tools/balance-sim.
  */
 
 export type Theme = 'saver' | 'spender';
@@ -11,7 +11,7 @@ export type Theme = 'saver' | 'spender';
 export type Stage1EffectType =
   | 'production'        // +value Energy/s per level
   | 'multiplier'        // ×value per level
-  | 'interest'          // +value per level, per order of magnitude of Energy held (Saver)
+  | 'interest'          // +value per level × log2(1 + minutes of production held) (Saver)
   | 'bulk_discount'     // "Buy all": levels after the first in one purchase cost value per level less (Saver)
   | 'level_count'       // +value per level, per node level owned this tier (Spender)
   | 'interest_power'    // Interest ×(1 + value per level per Saver choice) (Saver, Tier 3)
@@ -93,38 +93,38 @@ function expansion(tier: number, theme: Theme, name: string, summary: string,
 export const EXPANSIONS: Record<number, Record<Theme, Expansion>> = {
   2: {
     saver: expansion(2, 'saver', 'Reserve', 'Interest on held Energy and discounts on buying in bulk', [
-      { id: 's2_interest', name: 'Interest', description: '+2% Energy per level for each order of magnitude of Energy held',
-        type: 'interest', value: 0.02, maxLevel: 5, cost: 1.2e06, costMultiplier: 2 },
-      { id: 's2_bulk', name: 'Bulk Order', description: '"Buy all": extra levels of a node cost 5% less per level',
-        type: 'bulk_discount', value: 0.05, maxLevel: 5, cost: 2.4e06, costMultiplier: 2 },
+      { id: 's2_interest', name: 'Interest', description: '+20% Energy per level, growing with how many minutes of production you hold',
+        type: 'interest', value: 0.2, maxLevel: 5, cost: 1.2e06, costMultiplier: 2 },
+      { id: 's2_bulk', name: 'Bulk Order', description: '"Buy all": extra levels of a node bought together cost 10% less per level of this node (up to 50%)',
+        type: 'bulk_discount', value: 0.1, maxLevel: 5, cost: 2.4e06, costMultiplier: 2 },
       { id: 's2_vault', name: 'Vault', description: '×1.5 Energy per level', type: 'multiplier', value: 1.5,
         maxLevel: 5, cost: 4.8e06, costMultiplier: 2.2 },
     ]),
     spender: expansion(2, 'spender', 'Momentum', 'Many cheap levels and bonuses for every level owned', [
       { id: 'p2_steps', name: 'Fine Steps', description: '×1.06 Energy per level', type: 'multiplier', value: 1.06,
-        maxLevel: 25, cost: 8.9e04, costMultiplier: 1.25 },
+        maxLevel: 25, cost: 2.7e04, costMultiplier: 1.25 },
       { id: 'p2_tally', name: 'Tally', description: '+0.2% Energy per level for each node level owned',
-        type: 'level_count', value: 0.002, maxLevel: 5, cost: 3e05, costMultiplier: 2 },
+        type: 'level_count', value: 0.002, maxLevel: 5, cost: 9e04, costMultiplier: 2 },
       { id: 'p2_spark', name: 'Spark', description: '×1.04 Energy per level', type: 'multiplier', value: 1.04,
-        maxLevel: 30, cost: 1.8e05, costMultiplier: 1.2 },
+        maxLevel: 30, cost: 5.4e04, costMultiplier: 1.2 },
     ]),
   },
   3: {
-    saver: expansion(3, 'saver', 'Deep Reserve', 'Interest grows with every Saver choice', [
-      { id: 's3_patience', name: 'Patience', description: 'Interest +25% per level for each Saver choice on your path',
+    saver: expansion(3, 'saver', 'Deep Reserve', 'Interest grows with every Saver tier', [
+      { id: 's3_patience', name: 'Patience', description: 'Interest +25% per level for each Saver tier you have',
         type: 'interest_power', value: 0.25, maxLevel: 4, cost: 7.3e07, costMultiplier: 2.2 },
       { id: 's3_vault', name: 'Strongroom', description: '×1.6 Energy per level', type: 'multiplier', value: 1.6,
         maxLevel: 5, cost: 2.2e08, costMultiplier: 2.4 },
-      { id: 's3_interest', name: 'Compound Interest', description: '+3% Energy per level for each order of magnitude of Energy held',
-        type: 'interest', value: 0.03, maxLevel: 5, cost: 4.4e08, costMultiplier: 2.2 },
+      { id: 's3_interest', name: 'Compound Interest', description: '+30% Energy per level, growing with how many minutes of production you hold',
+        type: 'interest', value: 0.3, maxLevel: 5, cost: 4.4e08, costMultiplier: 2.2 },
     ]),
-    spender: expansion(3, 'spender', 'Rhythm', 'Level bonuses grow with every Spender choice', [
-      { id: 'p3_rhythm', name: 'Rhythm', description: 'Tally effects +25% per level for each Spender choice on your path',
-        type: 'level_count_power', value: 0.25, maxLevel: 4, cost: 2.8e07, costMultiplier: 2.2 },
+    spender: expansion(3, 'spender', 'Rhythm', 'Level bonuses grow with every Spender tier', [
+      { id: 'p3_rhythm', name: 'Rhythm', description: 'Tally effects +25% per level for each Spender tier you have',
+        type: 'level_count_power', value: 0.25, maxLevel: 4, cost: 8.4e06, costMultiplier: 2.2 },
       { id: 'p3_steps', name: 'Finer Steps', description: '×1.05 Energy per level', type: 'multiplier', value: 1.05,
-        maxLevel: 30, cost: 1.4e07, costMultiplier: 1.22 },
+        maxLevel: 30, cost: 4.2e06, costMultiplier: 1.22 },
       { id: 'p3_tally', name: 'Ledger', description: '+0.3% Energy per level for each node level owned',
-        type: 'level_count', value: 0.003, maxLevel: 5, cost: 1.7e08, costMultiplier: 2.2 },
+        type: 'level_count', value: 0.003, maxLevel: 5, cost: 5.1e07, costMultiplier: 2.2 },
     ]),
   },
   4: {
@@ -133,16 +133,16 @@ export const EXPANSIONS: Record<number, Record<Theme, Expansion>> = {
         type: 'neighbor_mult', value: 0.05, maxLevel: 5, cost: 3.8e10, costMultiplier: 2.3 },
       { id: 's4_vault', name: 'Treasury', description: '×1.7 Energy per level', type: 'multiplier', value: 1.7,
         maxLevel: 5, cost: 9.6e10, costMultiplier: 2.5 },
-      { id: 's4_bulk', name: 'Wholesale', description: '"Buy all": extra levels of a node cost 5% less per level',
-        type: 'bulk_discount', value: 0.05, maxLevel: 4, cost: 1.9e11, costMultiplier: 2.3 },
+      { id: 's4_bulk', name: 'Wholesale', description: '"Buy all": extra levels of a node bought together cost 10% less per level of this node (up to 50%)',
+        type: 'bulk_discount', value: 0.1, maxLevel: 4, cost: 1.9e11, costMultiplier: 2.3 },
     ]),
     spender: expansion(4, 'spender', 'Relays', 'Gives connected nodes more levels', [
       { id: 'p4_relay', name: 'Relay', description: 'Connected nodes +2 max levels per level',
-        type: 'neighbor_levels', value: 2, maxLevel: 5, cost: 1.4e08, costMultiplier: 2.3 },
+        type: 'neighbor_levels', value: 2, maxLevel: 5, cost: 1.4e07, costMultiplier: 2.3 },
       { id: 'p4_steps', name: 'Micro Steps', description: '×1.05 Energy per level', type: 'multiplier', value: 1.05,
-        maxLevel: 30, cost: 7.2e07, costMultiplier: 1.25 },
+        maxLevel: 30, cost: 7.2e06, costMultiplier: 1.25 },
       { id: 'p4_spark', name: 'Flicker', description: '×1.04 Energy per level', type: 'multiplier', value: 1.04,
-        maxLevel: 40, cost: 2.2e08, costMultiplier: 1.2 },
+        maxLevel: 40, cost: 2.2e07, costMultiplier: 1.2 },
     ]),
   },
   5: {
@@ -151,27 +151,24 @@ export const EXPANSIONS: Record<number, Record<Theme, Expansion>> = {
         type: 'overcharge', value: 1, maxLevel: 1, cost: 9.7e12, costMultiplier: 1 },
       { id: 's5_vault', name: 'Sanctum', description: '×1.8 Energy per level', type: 'multiplier', value: 1.8,
         maxLevel: 5, cost: 1.9e13, costMultiplier: 2.5 },
-      { id: 's5_interest', name: 'Dividends', description: '+5% Energy per level for each order of magnitude of Energy held',
-        type: 'interest', value: 0.05, maxLevel: 5, cost: 3.2e13, costMultiplier: 2.4 },
+      { id: 's5_interest', name: 'Dividends', description: '+50% Energy per level, growing with how many minutes of production you hold',
+        type: 'interest', value: 0.5, maxLevel: 5, cost: 3.2e13, costMultiplier: 2.4 },
     ]),
     spender: expansion(5, 'spender', 'Cascade', 'The finest steps of all', [
       { id: 'p5_cascade', name: 'Cascade', description: '×1.04 Energy per level', type: 'multiplier', value: 1.04,
-        maxLevel: 50, cost: 2.7e12, costMultiplier: 1.15 },
+        maxLevel: 50, cost: 8.1e11, costMultiplier: 1.15 },
       { id: 'p5_tally', name: 'Census', description: '+0.4% Energy per level for each node level owned',
-        type: 'level_count', value: 0.004, maxLevel: 5, cost: 1.3e13, costMultiplier: 2.3 },
+        type: 'level_count', value: 0.004, maxLevel: 5, cost: 3.9e12, costMultiplier: 2.3 },
       { id: 'p5_steps', name: 'Nano Steps', description: '×1.05 Energy per level', type: 'multiplier', value: 1.05,
-        maxLevel: 40, cost: 5.3e12, costMultiplier: 1.2 },
+        maxLevel: 40, cost: 1.6e12, costMultiplier: 1.2 },
     ]),
   },
 };
 
-/** Capstone archetypes, decided from the four warp choices */
-export type Archetype = 'saver' | 'spender' | 'balanced';
-
-export const CAPSTONES: Record<Archetype, { name: string; description: string }> = {
+/** Tier 5 capstone of each theme */
+export const CAPSTONES: Record<Theme, { name: string; description: string }> = {
   saver: { name: 'Unbroken Vault', description: 'Interest counts double' },
   spender: { name: 'Endless Motion', description: 'Every node level owned makes all nodes 1% cheaper' },
-  balanced: { name: 'Equilibrium', description: 'Interest and Tally effects +50%' },
 };
 
 export const OVERCHARGE = { tau: 60, power: 2, visibleSpeed: 2 };

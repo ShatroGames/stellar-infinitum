@@ -196,9 +196,21 @@ Why this balances: an idle player holds a lot of Energy between check-ins (big I
 #### Open questions
 
 - **[Decided] 3.12**: Saver (Interest + Bulk discount) vs Spender (Fine steps + Level count).
-- **[Decided] 3.13**: Overcharge stays as Tier 5's Saver option: it is the last node before Stage 2, so idling there is fine.
-- **[Decided] 3.14**: Targets: about 45 min active (Spender), about 3 h idle (Saver, 45-min check-ins).
-- **[Decided] 3.15**: Capstone: 3+ of a theme → that capstone; 2 + 2 → Balanced.
+- **[Decided] 3.13**: Overcharge stays as Tier 5's Saver option.
+- **[Decided] 3.15 (revised)**: **No mixed paths.** Saver or Spender is chosen once, at the first warp; Tiers 3-5 automatically deepen that theme (no further choices). Only two paths exist; the Balanced capstone is removed.
+- **[Decided] 3.14 (revised)**: The idle target is raised (the 3 h target was not reachable because every warp resets Energy). Active target stays about 45 min.
+- **Interest** measures Energy held in **minutes of production**: active players hold little, idle players hold a lot. (Measuring orders of magnitude held did not separate the play styles.)
+
+#### Current balance (simulator)
+
+| Path | Active (acts every 5 s) | Idle (checks every 45 min) |
+|---|---|---|
+| Spender | **47 min** | 13.5 h |
+| Saver | 1.6 h | **12.75 h** |
+
+- Spender is clearly better for active play (2×).
+- Saver is only slightly better for idle play (about 6%). Idle play is limited by rebuilding each tier from zero: production climbs about 2-3 orders of magnitude per check-in, so every tier needs 3-4 check-ins regardless of theme.
+- **[Open] 3.16**: Accept this, or reduce how many check-ins a tier needs (fewer or cheaper levels per tier, or keeping part of the tree's levels on warp)?
 
 ---
 

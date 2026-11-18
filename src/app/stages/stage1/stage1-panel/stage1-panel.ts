@@ -13,7 +13,7 @@ import { Decimal, formatNumber } from '../../../utils/numbers';
 export class Stage1Panel {
   protected stage1 = inject(Stage1Service);
   private stageService = inject(StageService);
-  protected capstones = Object.values(CAPSTONES);
+  protected capstones = CAPSTONES;
 
   progress = computed(() => {
     const current = this.stage1.currency();
@@ -23,11 +23,11 @@ export class Stage1Panel {
     return { current, required, percentage: ratio * 100 };
   });
 
-  /** Every warp of the run with both options and the choice made (map, decision 3.7) */
+  /** Every tier of both paths, with the chosen path highlighted (map, decision 3.7) */
   map = computed(() => [2, 3, 4, 5].map(tier => ({
     tier,
     options: [EXPANSIONS[tier].saver, EXPANSIONS[tier].spender],
-    chosen: this.stage1.path()[tier - 2] as Theme | undefined,
+    chosen: this.stage1.theme() ?? undefined,
     current: this.stage1.tier() + 1 === tier,
   })));
 

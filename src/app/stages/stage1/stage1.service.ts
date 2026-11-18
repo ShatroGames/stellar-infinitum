@@ -52,12 +52,16 @@ export class Stage1Service implements StageModule {
   readonly overchargeMultiplier = computed(() => eco.overchargeMultiplier(this.state().overchargeTime));
   readonly interestBonus = computed(() => eco.interestBonus(this.nodes(), this.state()));
   readonly tallyBonus = computed(() => eco.tallyBonus(this.nodes(), this.state()));
-  /** The two expansions offered at the next warp */
+  /** Theme chosen at the first warp (null in Tier 1) */
+  readonly theme = computed(() => eco.chosenTheme(this.state()));
+  /** Expansions offered at the next warp: both themes at the first warp, then your theme only */
   readonly nextChoices = computed<Expansion[] | null>(() => {
     const next = EXPANSIONS[this.state().tier + 1];
-    return next ? [next.saver, next.spender] : null;
+    if (!next) return null;
+    const theme = this.theme();
+    return theme ? [next[theme]] : [next.saver, next.spender];
   });
-  /** Capstone that applies now (Tier 5) or that the path is heading for */
+  /** Capstone that applies in Tier 5 */
   readonly capstone = computed(() => {
     const arch = eco.archetype(this.state());
     return arch ? { archetype: arch, ...CAPSTONES[arch] } : null;
@@ -141,7 +145,7 @@ export class Stage1Service implements StageModule {
     return bought;
   }
 
-  /** Warp to the next tier with the chosen expansion (Tiers 1-4) */
+  /** Warp to the next tier; the theme only matters at the first warp */
   warp(theme: Theme): boolean {
     if (!this.canWarp() || this.isFinalTier()) return false;
     this.state.set(eco.warp(this.state(), theme));

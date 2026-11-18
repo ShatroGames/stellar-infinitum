@@ -34,8 +34,14 @@
     }
     <button class="action" [disabled]="!stage1.canWarp()" (click)="beatStage()">◇ Beat Stage 1</button>
   } @else if (stage1.nextChoices(); as choices) {
-    <p class="choose">Warp to {{ stage1.nextTierInfo().name }}: choose an expansion</p>
-    <div class="choices">
+    <p class="choose">
+      @if (choices.length > 1) {
+        Warp to {{ stage1.nextTierInfo().name }}: choose your path. This choice is for the whole stage.
+      } @else {
+        Warp to {{ stage1.nextTierInfo().name }}
+      }
+    </p>
+    <div class="choices" [class.single]="choices.length === 1">
       @for (choice of choices; track choice.theme) {
         <button class="choice" [class.saver]="choice.theme === 'saver'" [disabled]="!stage1.canWarp()" (click)="warp(choice.theme)">
           <span class="choice-theme">{{ choice.theme === 'saver' ? 'Saver' : 'Spender' }}</span>
@@ -64,9 +70,8 @@
       }
       <li>
         <span class="map-tier">Capstone (Tier 5)</span>
-        <div class="map-option"><strong>3+ Saver:</strong> {{ capstones[0].name }}, {{ capstones[0].description }}</div>
-        <div class="map-option"><strong>3+ Spender:</strong> {{ capstones[1].name }}, {{ capstones[1].description }}</div>
-        <div class="map-option"><strong>2 + 2:</strong> {{ capstones[2].name }}, {{ capstones[2].description }}</div>
+        <div class="map-option" [class.chosen]="stage1.theme() === 'saver'" [class.skipped]="stage1.theme() === 'spender'"><strong>Saver:</strong> {{ capstones.saver.name }}, {{ capstones.saver.description }}</div>
+        <div class="map-option" [class.chosen]="stage1.theme() === 'spender'" [class.skipped]="stage1.theme() === 'saver'"><strong>Spender:</strong> {{ capstones.spender.name }}, {{ capstones.spender.description }}</div>
       </li>
     </ol>
   </details>
