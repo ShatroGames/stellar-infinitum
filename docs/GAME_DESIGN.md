@@ -219,35 +219,33 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
     - **S5. Research over time**: nodes researched over time in parallel slots; planning the queue is the choice; each era offers one of two branches.
     - **S6. Roots**: a tree grows downward into a visible grid and taps deposits; choosing directions is the choice.
   - Recommendation: S2 (building on Stage 2) or S4 (new concept); keep S5 in reserve for Stage 4.
-- **[Decided]** Concept **S5 (research over time)** is the direction.
+- **[Decided]** Stage 3 is built on the S5 idea (time instead of cost), using **your concept** below. The earlier S5 detail (slots, queues, Accelerate, era fork) is superseded.
 
-### Concept S5 detail **[Proposed]**
+### Stage 3 concept (your design) **[Decided]**
 
-- **Core idea**: the tree is **fixed and fully visible**; nodes cost **time**, not currency. Choices are what to research, in which order, in how many parallel slots.
-- **Currency**: new (name TBD), starting at +1/s from beating Stage 2.
-- **Research**: each node has a research time (about 30 s early, hours late in an era). Research runs in **slots** (start with 1; more through research), and keeps running while away.
-- **Queue**: each slot has a short queue (starts at 1, extended through research). Queue length is the idle/active lever: idle players can only line up a few items.
-- **Spending**: **Accelerate** (cut a running research by 25%) and opening new slots.
-- **Node types**:
+- Start with a **base node** that levels up on its own timer (a few seconds); each level takes a bit longer than the previous one.
+- A node's levels give it a **speed boost in the next era**.
+- **Era currency** on reset = **total levels of all nodes**.
+- **New nodes unlock** when era currency reaches thresholds.
 
-| Node | Example | Time |
-|---|---|---|
-| Production | +2 currency/s | short |
-| Focus | this branch researches 20% faster | medium |
-| Slot | +1 research slot | long |
-| Queue | +1 queue length | medium |
-| Efficiency | Accelerate 50% cheaper | medium |
-| Breakthrough | ×3 production; needs 3 nodes in its branch | very long |
-| Era capstone | completes the era | very long |
+### Stage 3 currency **[Proposed]**
 
-- **Eras (reset)**: after the era capstone (or a milestone), start a new era. The tree resets; you keep a permanent research speed-up based on your best era (record-based, as in Stage 2).
-- **Era fork**: each era starts with a choice between two branches: **Steady** (long items, big payoffs, idle) vs **Rapid** (short items, small payoffs, benefits from Accelerate, active).
-- **End of stage**: the currency reaches its target (larger than Stage 2's), starting Stage 4's currency at +1/s.
-- **Escalation**: Stage 2 = random offers + placement + record reset; Stage 3 adds time as cost, parallel slots, queue planning, the era fork.
-- **[Open] 5.1**: Research continues while away, limited by the short queue?
-- **[Open] 5.2**: Accelerate (spend currency to shorten research), as long as it never feels like "pay to skip"?
-- **[Open] 5.3**: Era fork = 2 options, Steady (idle) vs Rapid (active)?
-- **[Open] 5.4**: Number of eras to beat the stage (proposed 4-6)?
+- **Produced by node levels**: the base node gives +1/s per level. Unlocked nodes attach to the tree with different effects:
+
+| Node | Effect per level |
+|---|---|
+| Base | +1 currency/s |
+| Booster | parent node levels 5% faster |
+| Amplifier | ×1.1 currency from its branch |
+| Echo | +1 era currency per 10 levels in its branch at reset |
+
+- **Spent on Overclock**: one node levels twice as fast for 60 s (the active tool). Possible later addition: focus slots (only N nodes level at once).
+- **Resets each era**; the stage is beaten when **one era reaches the target** (as Stage 1's run reached its Energy goal). Each era is faster thanks to speed boosts and new nodes.
+- **Idle vs active**: timers run on their own (idle); Overclock timing and when to reset are active.
+- **[Open] 5.5**: Speed boost from the node's levels in the last era, or its best level ever (record)?
+- **[Open] 5.6**: Is era currency only an unlock threshold, or also spendable?
+- **[Open] 5.7**: Accept the currency proposal above?
+- **[Open] 5.8**: Do nodes keep leveling while the game is closed?
 
 ### Old Stage 3: Dimensional Echoes (for reference, to be replaced)
 
