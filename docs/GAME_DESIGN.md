@@ -23,6 +23,8 @@ The simulator (`npm run sim`, see `tools/balance-sim/README.md`) measures pacing
 6. **No micromanagement settings**: automation follows fixed, simple rules, with no thresholds to configure. **[Decided]**
 7. **Cosmic Collapse is the ultimate prestige.** It fundamentally changes the game. **[Decided]**
 8. **New Game+** after victory, with a small perk per completion. **[Decided]** (details in section 9)
+9. **Escalating stages**: each new stage has more content, is a bit more complex and takes longer than the previous one. **[Decided]**
+10. **Idle vs active** means *how you play*: actively buying and making moves, versus checking in from time to time. It is not about whether the tab is visible. **[Decided]**
 
 - **[Decided] 1.1**: Playtime splits about 50/50 before and after Collapse, **provided** the Quantum era brings about 50% more (or different) skill tree mechanics, so the second half feels like a new game rather than more of the same.
 
@@ -151,7 +153,18 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 ---
 
-## 4. Layer 1: Transcendence and the Stellar Nexus
+## 4. Stage 2 (replaces Transcendence and the Stellar Nexus)
+
+- **[Decided] 4.1**: Stage 2 runs on Energy (Stage 1's fixed production plus Stage 2's own); a separate currency would just be a renamed number.
+- **[Decided] 4.3**: Stage 2 has **its own reset loop**.
+- **[Open] 4.2**: What kind of tree is it? Concepts **[Proposed]**:
+  - **A. Drafted tree (roguelite)**: each step offers 3 nodes; you attach one. Every run's tree is different. "Supernova" resets it for a meta currency that adds node types or better offers.
+  - **B. Orbits**: nodes sit on rotating rings and give bonuses when aligned. Fast rings give small, frequent bonuses; slow rings big, rare ones. Active players time locks or rotations. The reset unlocks rings.
+  - **C. Twin trees in tension**: two opposing trees share one budget; their balance gives bonuses at certain ratios, and some nodes need you to lean hard to one side. "Rebalance" resets both for a meta currency.
+  - **D. Living tree**: branch tips appear over time; you choose what grows and prune to redirect. A "season" ends the tree for a meta currency.
+  - Recommendation: A, possibly with C's two node families inside the draft pool.
+
+### Old Stage 2 (for reference, to be replaced)
 
 - **Stellar Cores (SC)**: record-based. Total SC ever earned = 0.4 × (1 + log10(best Energy / 3.5e20))², times bonuses. Each transcend pays out the difference, so repeating short runs gives nothing. **[Implemented]**
 - SC are spent in the **Stellar Nexus** (21 nodes, 72 SC in total) and also boost production by +100% per SC ever earned. **[Implemented]**
