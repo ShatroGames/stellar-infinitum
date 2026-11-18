@@ -163,6 +163,32 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
   - **C. Twin trees in tension**: two opposing trees share one budget; their balance gives bonuses at certain ratios, and some nodes need you to lean hard to one side. "Rebalance" resets both for a meta currency.
   - **D. Living tree**: branch tips appear over time; you choose what grows and prune to redirect. A "season" ends the tree for a meta currency.
   - Recommendation: A, possibly with C's two node families inside the draft pool.
+- **[Decided]** Concept **A (drafted tree)** is the direction; the reset needs to stay simple because later stages must escalate.
+
+### Concept A detail **[Proposed]**
+
+- **Loop**: start with a Core node. Pay Energy for a **draft**: see 3 node cards, attach one to a free slot (each node has 1-2 child slots). Draft cost rises per pick. Placed nodes level up with Energy like Stage 1. The only new ideas are random offers and placement.
+- **Starting node pool** (about 8):
+
+| Node | Effect |
+|---|---|
+| Generator | +Energy/s |
+| Amplifier | ×2 to everything below it in its branch |
+| Splitter | +1 child slot |
+| Mirror | copies 50% of its parent's effect |
+| Catalyst | drafts 10% cheaper |
+| Seedling | grows over time (idle pick) |
+| Spark | strong while you keep buying (active pick) |
+| Keystone | big bonus if its branch has 5+ nodes |
+
+- **Reset options**:
+  - R1: a permanent multiplier based on the largest tree ever grown (record-based, one number).
+  - R2: record milestones add new node types to the pool.
+  - R3: keep one seed node into the next tree (saved for a later stage).
+  - Recommendation: **R1 + R2**. The reset screen shows e.g. "Reset now: ×4.6 → ×6.1, next unlock at 30 nodes".
+- **End of stage**: a record milestone (e.g., a 40-node tree) beats Stage 2 and unlocks Stage 3.
+- **Complexity budget**: Stage 1 = buying + warp choice. Stage 2 adds drafting, placement and one reset number. Stage 3 can add a spending currency, seeds or interactions between stages.
+- **[Open] 4.4**: Does beating Stage 2 also grant a fixed reward ("beat a stage → fixed production" as a pattern)?
 
 ### Old Stage 2 (for reference, to be replaced)
 
