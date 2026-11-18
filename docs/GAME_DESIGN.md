@@ -262,25 +262,19 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 ---
 
-## 6. Layer 3: Cosmic Collapse and the Quantum era
+## 6. Cosmic Collapse (second half)
 
-- **Collapse**: requires every dimension node maxed. It's one-way: everything before it is gone, and the game switches to the Quantum era. **[Implemented]** It's the ultimate prestige and changes the game fundamentally. **[Decided]**
-- **Quanta** come from three trees (Matter, Energy, Time; 21 nodes) with additive production and multipliers, plus 7 synergies (node combinations). **[Implemented]**
-- **Artifacts** unlock at 50M Quanta in total: three branches of 10 tiers, and only the highest tier of each branch counts. **[Implemented]**
-- **Probability Forge** unlocks at 1e18 total Quanta with every artifact branch at tier 10:
-  - Fate Tokens buy random pulls (100 outcomes in 5 rarities), and every pull multiplies Quanta production.
-  - Fate Weights shift the odds (rarity shift, rerolls, pity, duplicate protection, streaks).
-  - **[Implemented]**
-- **Victory**: 1e170 total Quanta. Reaching it relies almost entirely on Forge pulls compounding (about 300 pulls). **[Implemented]**
-- Quanta and the Forge multiplier still use plain JS numbers, which can overflow. **[Implemented]**
-- No simulator coverage yet.
-
-- **[Open] 6.1**: Does the Quantum era need prestige-like steps (bucket principle), or is it a final sprint where progress just accumulates?
-- **[Open] 6.2**: Artifacts: keep the ladder, or turn them into a choice (equip N of M)?
-- **[Open] 6.3**: Forge: should the multiplier come from distinct discoveries (a collection) rather than every pull? Which Fate Weights should we keep?
-- **[Open] 6.4**: Victory threshold: where should it be, and what should the last hours feel like?
-
----
+- **[Decided]** Collapse is a **transformation, not a numbers reset**: stages already reset their own numbers. (Before, every layer boosted Energy until you could collapse; that structure no longer exists.)
+- **[Decided] Option B**: after the last pre-Collapse stage, Collapse replays Stages 1-3 in a **quantum-transformed** form. Each transformed stage adds new mechanics (the "50% more mechanics" from section 1A) while staying familiar.
+- **[Decided]** The old Quantum content is **dropped**: Quantum trees, Artifacts, Probability Forge (and their achievements).
+- **Direction per transformed stage**:
+  - **Stage 1'**: more complex, or simply much more content. **[Decided]**
+  - **Stage 2'**: a more involved card system, possibly deck-building (see S3 idea). **[Decided]**
+  - **Stage 3'**: decided once Stage 3's own complexity is settled. **[Open]**
+- **[Open] 6.1**: Is there one Collapse (first half → second half), with replays afterwards handled by New Game+? Or can you Collapse repeatedly?
+- **[Open] 6.2**: Does Collapse grant anything itself (a currency or permanent upgrades), or is the transformation the reward?
+- **[Open] 6.3**: Does the escalation pillar apply across the boundary (Stage 1' longer and more complex than Stage 3), or only within each half?
+- **[Open] 6.4**: Victory = beating the last transformed stage (Stage 3')?
 
 ## 7. Achievements
 
