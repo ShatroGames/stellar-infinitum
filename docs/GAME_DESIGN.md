@@ -1,0 +1,171 @@
+# Stellar Infinitum: Game Design Document
+
+Status: **draft for review.** We go through it section by section. Every point is tagged:
+
+- **[Decided]**: agreed in discussion; the code should follow it.
+- **[Implemented]**: true in the current code (`claude/upbeat-cray-zuxj54`), not yet confirmed as the intended design.
+- **[Proposed]**: a suggestion that needs approval.
+- **[Open]**: a question to answer.
+
+Balance numbers live in `src/app/economy/economy.ts` and the config files in `src/app/models/`.
+The simulator (`npm run sim`, see `tools/balance-sim/README.md`) measures pacing.
+
+---
+
+## 1. Vision and pillars
+
+1. **Genre**: browser idle/incremental game with layered prestige systems. Space theme. **[Implemented]**
+2. **Length**: playtime is measured in game time, not real days. A loose target is around 50 h for a dedicated player and around 100 h for a casual one. These are guidelines; balance comes first. **[Decided]**
+3. **Active play is clearly better than idling.** Not watching the game is the drawback: nothing is bought automatically while the game is hidden or closed. **[Decided]**
+4. **The bucket principle**: idle time fills a bucket (resources, Overcharge) with diminishing returns. Emptying it, by buying, warping or transcending, takes the player. Idle time never skips a chunk of progression, and there are no caps that punish being away. **[Decided]**
+5. **Transparency**: the game shows what an action will give ("+12 Stellar Cores · next at 1e41 Energy"). No hidden formulas the player has to guess. **[Decided]**
+6. **No micromanagement settings**: automation follows fixed, simple rules, with no thresholds to configure. **[Decided]**
+7. **Cosmic Collapse is the ultimate prestige.** It fundamentally changes the game. **[Decided]**
+8. **New Game+** after victory, with a small perk per completion. **[Decided]** (details in section 9)
+
+- **[Open] 1.1**: Is "around 50% of the playtime before Collapse, around 50% after" the right split?
+
+---
+
+## 2. Player activity model
+
+| State | Production | Overcharge | Auto-buy / auto-warp | Manual actions |
+|---|---|---|---|---|
+| Watching (tab visible) | yes | grows | yes, once unlocked | yes |
+| Tab hidden (other tab, minimized) | yes | grows | **paused** | n/a |
+| Game closed | yes, credited on return (uncapped) | grows (credited on return) | **paused** | n/a |
+
+- **[Decided]** The automation and accumulation rules above. **[Implemented]** for the Energy phase.
+- **[Implemented]** The Quantum phase gets no offline progress (a closed tab earns nothing). This doesn't match the table.
+- **[Open] 2.1**: Should closed-tab progress in the Quantum phase work the same way (Quanta accumulate, nothing is bought)?
+- **[Open] 2.2**: Should returning players see a "while you were away" summary?
+
+### Known gap: why active play isn't clearly better yet
+
+The simulator shows a casual player (looking for 30 s every 15 min) reaching Collapse about as fast as an active one (25 h vs 26 h). Once automation is unlocked, a whole run (Tiers 1 to 5) completes within the 30 seconds of watching. After that, Tier 5 has nothing left to buy, and Overcharge grows whether or not anyone watches.
+
+So pillar 3 needs **things worth doing while watching, during Overcharge**. Options:
+
+- **[Proposed] A. Overdrive**: a repeatable Tier 5 upgrade, available during Overcharge, bought with Energy (×N production, cost rises steeply). Auto-buy buys it only while the game is visible, so watching keeps compounding. Idle time still fills Overcharge, but only active time keeps buying.
+- **[Proposed] B. Choices, not clicks**: mutually exclusive Stellar Nexus or dimension options. Attentive players optimize better, but this doesn't reward attention over time.
+- **[Proposed] C. Active-only boosts**: for example, Overcharge grows faster while visible.
+
+- **[Open] 2.3**: Which of these (or something else)? My recommendation is A, possibly combined with B later.
+
+---
+
+## 3. Layer 0: Stellar Network (Energy)
+
+**Loop**: buy skill nodes with Energy, then warp to the next tier. Five tiers; each tier contains all nodes of the previous tier plus new ones (4, 6, 9, 13, 18 nodes). **[Implemented]**
+
+- **Warp** (Tiers 1 to 4): requires all nodes maxed plus an Energy requirement. Resets Energy and nodes, grants ×2 production for the rest of the run, and moves to the next tier. **[Implemented]**
+- **Transcend** (Tier 5): same requirements; returns to Tier 1 and pays out Stellar Cores and Echo Fragments (section 4). **[Implemented]**
+- **Overcharge**: once every Tier 5 node is maxed, production grows ×(1 + t/60 s)². Resets on transcend; keeps growing while away. **[Implemented]**
+- Nodes are almost all flat multipliers (×1.2 to ×1.7 per level), plus one production node. **[Implemented]**
+- The first loop takes about 25 to 40 min for an active player; later tiers are no longer faster than earlier ones. **[Implemented]**
+
+- **[Open] 3.1**: Nodes that aren't flat multipliers (your TODO list: Energy-based, time-based, based on the number of maxed nodes). Do we want them in this layer, and how many?
+- **[Open] 3.2**: Should a tier's content stay "fixed nodes with caps", or should Tier 5 get repeatable content (see 2.3A)?
+
+---
+
+## 4. Layer 1: Transcendence and the Stellar Nexus
+
+- **Stellar Cores (SC)**: record-based. Total SC ever earned = 0.4 × (1 + log10(best Energy / 3.5e20))², times bonuses. Each transcend pays out the difference, so repeating short runs gives nothing. **[Implemented]**
+- SC are spent in the **Stellar Nexus** (21 nodes, 72 SC in total) and also boost production by +100% per SC ever earned. **[Implemented]**
+- **Automation**: auto-buy unlocks on the first warp (achievement); auto-warp (Tiers 1 to 4) unlocks after 5 warps. Transcending is always manual. **[Implemented]**
+- The Nexus nodes "Automated Systems" and "Automated Warping" duplicate the achievement automation, so they're effectively dead purchases. **[Implemented]**
+
+- **[Open] 4.1**: Where should automation come from: achievements (free, guaranteed) or Nexus purchases (a spending choice)? Whichever we don't pick should be replaced with something meaningful.
+- **[Open] 4.2**: Is +100% production per SC ever earned the intended strength? It's the main reason later runs speed up.
+- **[Proposed] 4.3**: Some Nexus branches become mutually exclusive choices (pillar 3, option B).
+
+---
+
+## 5. Layer 2: Dimensional Echoes
+
+- Unlocked when the Stellar Nexus is complete. **Echo Fragments (EF)** are record-based like SC: total EF = 74 × (1 + log10(best Energy / 1e32)). **[Implemented]**
+- Five dimensions (Void, Crystal, Quantum, Temporal, Prism), each a small tree of 7 to 10 nodes. Unlock costs are 0/10/20/30/40 EF. **[Implemented]**
+- Each maxed dimension adds about +7 to +12 orders of magnitude of production. Node costs are proportional to what a node adds, at a flat cost per level. Effects: production multipliers, "multiplier effects stronger", skill caps, Stellar Core gain, per-node synergies, and Prism's "all aspects". **[Implemented]**
+- The dimension themes ("expensive with exponential returns", "time-based", "uncertainty") are only names; mechanically they're all the same. **[Implemented]**
+
+- **[Open] 5.1**: Should each dimension get a real identity? Suggestions:
+  - **Temporal**: makes Overcharge grow faster.
+  - **Void**: boosts the ×2 warp bonus.
+  - **Quantum**: a random bonus rolled each transcend.
+  - **Crystal**: paired nodes where buying one locks out the other.
+  - **Prism**: synergies across dimensions.
+- **[Open] 5.2**: Keep all five dimensions, or cut to fewer, deeper ones?
+
+---
+
+## 6. Layer 3: Cosmic Collapse and the Quantum era
+
+- **Collapse**: requires every dimension node maxed. It's one-way: everything before it is gone, and the game switches to the Quantum era. **[Implemented]** It's the ultimate prestige and changes the game fundamentally. **[Decided]**
+- **Quanta** come from three trees (Matter, Energy, Time; 21 nodes) with additive production and multipliers, plus 7 synergies (node combinations). **[Implemented]**
+- **Artifacts** unlock at 50M Quanta in total: three branches of 10 tiers, and only the highest tier of each branch counts. **[Implemented]**
+- **Probability Forge** unlocks at 1e18 total Quanta with every artifact branch at tier 10:
+  - Fate Tokens buy random pulls (100 outcomes in 5 rarities), and every pull multiplies Quanta production.
+  - Fate Weights shift the odds (rarity shift, rerolls, pity, duplicate protection, streaks).
+  - **[Implemented]**
+- **Victory**: 1e170 total Quanta. Reaching it relies almost entirely on Forge pulls compounding (about 300 pulls). **[Implemented]**
+- Quanta and the Forge multiplier still use plain JS numbers, which can overflow. **[Implemented]**
+- No simulator coverage yet.
+
+- **[Open] 6.1**: Does the Quantum era need prestige-like steps (bucket principle), or is it a final sprint where progress just accumulates?
+- **[Open] 6.2**: Artifacts: keep the ladder, or turn them into a choice (equip N of M)?
+- **[Open] 6.3**: Forge: should the multiplier come from distinct discoveries (a collection) rather than every pull? Which Fate Weights should we keep?
+- **[Open] 6.4**: Victory threshold: where should it be, and what should the last hours feel like?
+
+---
+
+## 7. Achievements
+
+- 65 achievements across several categories. Most rewards are small multipliers to one system (+5% to +25%); two unlock automation. **[Implemented]**
+- Two achievements can't be earned, because the entanglement system they refer to doesn't exist. **[Implemented]**
+- Some achievements reward being away ("Return after 8 hours offline", "+5% offline production"), which contradicts pillar 3. **[Implemented]**
+
+- **[Open] 7.1**: Should achievements carry gameplay rewards at all, or be mostly cosmetic?
+- **[Open] 7.2**: Cut or retheme the entanglement and offline achievements?
+
+---
+
+## 8. Economy principles (how balance works)
+
+These explain the numbers; they're not player-facing.
+
+1. **One source of truth**: formulas live in `economy.ts`, and the services and the simulator both use them. **[Implemented]**
+2. **Feedback just below 1**: one order of magnitude of production should earn slightly less currency than it costs to buy that order again. Above 1, a phase runs away; well below 1, it stalls. **[Implemented]**
+3. **No lump purchases**: saving for a big purchase stalls the loop, so unlocks and big nodes are kept cheap. **[Implemented]**
+4. **Record-based meta currencies** with visible "next at" thresholds. **[Implemented]**
+5. **Retune with the simulator after content changes.** Pacing is sensitive: a ±7% change in a currency scale can move a phase by about 2×. **[Implemented]**
+
+---
+
+## 9. Victory and New Game+
+
+- **[Implemented]** At victory, the victory screen appears; you can keep playing. Eternal progress counts victories and survives a full reset.
+- **[Decided]** New Game+ grants a small perk per completion. The early game speeds up first, and each further NG+ speeds up a later stage.
+- **[Proposed]** NG+1 makes the first loop faster, NG+2 the Nexus phase, NG+3 Dimensions, NG+4 the Quantum era. Each is a modest boost (around 1.5 to 2× for that stage).
+- **[Open] 9.1**: What carries over into NG+ (achievements? cosmetics?), and does it have an end?
+
+---
+
+## 10. Presentation (UI and visuals)
+
+From the initial review. Not yet discussed:
+
+- Compact, queued achievement toasts instead of large yellow cards covering the tabs.
+- Skill trees drawn as trees, with connection lines.
+- A sticky resource bar on mobile.
+- The Quantum page fitting all three trees.
+- Integer formatting, log-scale progress bars, and labels for unlabelled multipliers.
+- Starfield/nebula background and warp/collapse transitions.
+
+- **[Open] 10.1**: Is there a visual direction or reference you have in mind, and how high a priority is this compared with balance?
+
+---
+
+## Review order
+
+We go through it one section at a time: 1 → 2 → 3 → 4 → 5 → 6 → 9 → 7 → 10. Decisions get tagged **[Decided]** here before any code changes.
