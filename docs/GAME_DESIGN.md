@@ -72,7 +72,7 @@ The pre-Collapse half would use T1-T5 plus a few new ones (N1-N7). The Quantum e
 
 - **Player feedback**: "the game doesn't have any choices". **[Decided]** Meaningful choices should be a recurring theme across stages.
 - **[Decided] N2 (exclusive branches)** is accepted; where it goes is decided per stage.
-- **[Open] N1 (Overdrive)**: solves the active-play gap. During Overcharge there is nothing to buy, so watching gains nothing; Overdrive is bought only while watching. Alternatives: N14 Mastery, or Overcharge growing faster while visible.
+- **[Superseded] N1 (Overdrive)**: dropped in favor of Overcharge growing faster while visible (3.3).
 - The other mechanics are decided per stage (sections 3-6).
 
 ---
@@ -86,25 +86,19 @@ The pre-Collapse half would use T1-T5 plus a few new ones (N1-N7). The Quantum e
 | Game closed | yes, credited on return (uncapped) | grows (credited on return) | **paused** | n/a |
 
 - **[Decided]** The automation and accumulation rules above. **[Implemented]** for the Energy phase.
-- **[Implemented]** The Quantum phase gets no offline progress (a closed tab earns nothing). This doesn't match the table.
-- **[Open] 2.1**: Should closed-tab progress in the Quantum phase work the same way (Quanta accumulate, nothing is bought)?
+- **[Decided] 2.1**: In every stage, time-based progress (production, timers, Overcharge) continues while away; nothing is bought or chosen automatically.
 - **[Open] 2.2**: Should returning players see a "while you were away" summary?
 
-### Known gap: why active play isn't clearly better yet
+### Active vs idle **[Superseded]**
 
-The simulator shows a casual player (looking for 30 s every 15 min) reaching Collapse about as fast as an active one (25 h vs 26 h). Once automation is unlocked, a whole run (Tiers 1 to 5) completes within the 30 seconds of watching. After that, Tier 5 has nothing left to buy, and Overcharge grows whether or not anyone watches.
+The earlier "active play gap" analysis (casual players matching active ones once automation was unlocked) is resolved by the new structure: Stage 1 is played once and mainly actively (3.6a), its choices are idle-vs-active (3.9), and Overcharge grows faster while visible (3.3).
 
-So pillar 3 needs **things worth doing while watching, during Overcharge**. Options:
-
-- **[Proposed] A. Overdrive**: a repeatable Tier 5 upgrade, available during Overcharge, bought with Energy (×N production, cost rises steeply). Auto-buy buys it only while the game is visible, so watching keeps compounding. Idle time still fills Overcharge, but only active time keeps buying.
-- **[Proposed] B. Choices, not clicks**: mutually exclusive Stellar Nexus or dimension options. Attentive players optimize better, but this doesn't reward attention over time.
-- **[Proposed] C. Active-only boosts**: for example, Overcharge grows faster while visible.
-
-- **[Open] 2.3**: Which of these (or something else)? My recommendation is A, possibly combined with B later.
 
 ---
 
-## 3. Layer 0: Stellar Network (Energy)
+## 3. Stage 1: Stellar Network (Energy)
+
+Current code, for reference (the decisions below change it):
 
 **Loop**: buy skill nodes with Energy, then warp to the next tier. Five tiers; each tier contains all nodes of the previous tier plus new ones (4, 6, 9, 13, 18 nodes). **[Implemented]**
 
@@ -159,7 +153,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 - **[Decided] 4.1**: Stage 2 runs on **its own currency** (name TBD), starting at +1/s from beating Stage 1 (stage chain). Energy becomes redundant.
 - **[Decided] 4.3**: Stage 2 has **its own reset loop**.
-- **[Open] 4.2**: What kind of tree is it? Concepts **[Proposed]**:
+- **[Decided] 4.2**: concept A (drafted tree), see below. Options considered:
   - **A. Drafted tree (roguelite)**: each step offers 3 nodes; you attach one. Every run's tree is different. "Supernova" resets it for a meta currency that adds node types or better offers.
   - **B. Orbits**: nodes sit on rotating rings and give bonuses when aligned. Fast rings give small, frequent bonuses; slow rings big, rare ones. Active players time locks or rotations. The reset unlocks rings.
   - **C. Twin trees in tension**: two opposing trees share one budget; their balance gives bonuses at certain ratios, and some nodes need you to lean hard to one side. "Rebalance" resets both for a meta currency.
@@ -199,8 +193,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **Automation**: auto-buy unlocks on the first warp (achievement); auto-warp (Tiers 1 to 4) unlocks after 5 warps. Transcending is always manual. **[Implemented]**
 - The Nexus nodes "Automated Systems" and "Automated Warping" duplicate the achievement automation, so they're effectively dead purchases. **[Implemented]**
 
-- **[Open] 4.1**: Where should automation come from: achievements (free, guaranteed) or Nexus purchases (a spending choice)? Whichever we don't pick should be replaced with something meaningful.
-- **[Open] 4.2**: Is +100% production per SC ever earned the intended strength? It's the main reason later runs speed up.
+- **[Obsolete]** Questions about the old Nexus (automation source, Stellar Core strength) no longer apply.
 - **[Proposed] 4.3**: Some Nexus branches become mutually exclusive choices (pillar 3, option B).
 
 ---
@@ -209,7 +202,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 - **[Decided]** Stage 1 running only once is fine: every later stage has its own prestige loop, so each stage is "played again" in its own way.
 - **[Decided]** Stage 3 can build on Stage 2 or be a unique concept (still tree-like), with its own currency and reset.
-- **[Open] 5.0**: Concepts **[Proposed]**. Each adds about one new idea:
+- **[Decided] 5.0**: S5 (time instead of cost), then reshaped into your concept below. Options considered:
   - Building on Stage 2:
     - **S1. Grove**: 3 drafted trees at once; offers go to a tree of your choice; buy links between trees to share effects.
     - **S2. Seeds and fusion**: keep a few seed nodes through resets; fuse two maxed nodes into a stronger one (all recipes visible).
@@ -252,13 +245,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - Each maxed dimension adds about +7 to +12 orders of magnitude of production. Node costs are proportional to what a node adds, at a flat cost per level. Effects: production multipliers, "multiplier effects stronger", skill caps, Stellar Core gain, per-node synergies, and Prism's "all aspects". **[Implemented]**
 - The dimension themes ("expensive with exponential returns", "time-based", "uncertainty") are only names; mechanically they're all the same. **[Implemented]**
 
-- **[Open] 5.1**: Should each dimension get a real identity? Suggestions:
-  - **Temporal**: makes Overcharge grow faster.
-  - **Void**: boosts the ×2 warp bonus.
-  - **Quantum**: a random bonus rolled each transcend.
-  - **Crystal**: paired nodes where buying one locks out the other.
-  - **Prism**: synergies across dimensions.
-- **[Open] 5.2**: Keep all five dimensions, or cut to fewer, deeper ones?
+- **[Obsolete]** Questions about the old dimensions (identities, how many) no longer apply.
 
 ---
 
@@ -286,7 +273,7 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 
 - **[Decided]** No missable or conditional achievements (pillar 11); achievements of a stage come naturally while playing it.
 - **[Open] 7.1**: Should achievements carry gameplay rewards at all, or be mostly cosmetic?
-- **[Open] 7.2**: Cut or retheme the entanglement and offline achievements?
+- **[Decided] 7.2**: The achievement list is rebuilt for the new stages (old Quantum achievements dropped; nothing rewards being away, per pillar 3).
 
 ---
 
@@ -327,6 +314,12 @@ From the initial review. Not yet discussed:
 
 ---
 
-## Review order
+## Remaining open questions
 
-We go through it one section at a time: 1 → 2 → 3 → 4 → 5 → 6 → 9 → 7 → 10. Decisions get tagged **[Decided]** here before any code changes.
+- **2.2**: "While you were away" summary for returning players?
+- **3.x**: Role of Overcharge in the new Stage 1 (it was built for repeated runs; possibly an idle-path option).
+- **5.x**: Extra Stage 3 complexity (C1-C4), revisit when built.
+- **6**: Stage 3' design (after Stage 3 is settled).
+- **7.1**: Achievement rewards: gameplay or mostly cosmetic?
+- **10.1**: Visual direction and priority.
+- Stage currency names (keep proper nouns sparse, pillar note in 3.5).
