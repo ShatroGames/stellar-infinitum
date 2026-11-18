@@ -17,13 +17,22 @@
   color: #c4b5fd;
 }
 
-.tier, .hint, .bonus {
+.muted {
   color: #a3a3a3;
   font-size: 0.8rem;
 }
 
-.bonus {
-  margin-top: 4px;
+.bonuses {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #a3a3a3;
+}
+
+.bonuses strong {
   color: #fbbf24;
 }
 
@@ -52,7 +61,7 @@
 
 .requirements {
   list-style: none;
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   font-size: 0.85rem;
   color: #a3a3a3;
 }
@@ -61,23 +70,121 @@
   color: #4ade80;
 }
 
-.action {
+button {
   width: 100%;
   padding: 10px;
   border: none;
   border-radius: 8px;
-  background: #7c3aed;
-  color: white;
   font-weight: 600;
   cursor: pointer;
 }
 
-.action:disabled {
-  background: #262626;
-  color: #737373;
+button:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
-.hint {
+.action {
   margin-top: 8px;
+  background: #7c3aed;
+  color: white;
+}
+
+.secondary {
+  background: #262626;
+  color: #e5e5e5;
+}
+
+.choose {
+  margin: 16px 0 8px;
+  font-size: 0.85rem;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  background: #1e1b4b;
+  color: #e5e5e5;
+  border: 1px solid #4338ca;
+}
+
+.choice.saver {
+  background: #172554;
+  border-color: #2563eb;
+}
+
+.choice small {
+  font-weight: 400;
+  color: #a3a3a3;
+  font-size: 0.75rem;
+}
+
+.choice-theme {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #93c5fd;
+}
+
+.capstone {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  color: #fde68a;
+}
+
+.map {
+  margin-top: 16px;
+  font-size: 0.8rem;
+}
+
+.map summary {
+  cursor: pointer;
+  color: #a3a3a3;
+}
+
+.map ol {
+  list-style: none;
+  margin-top: 8px;
+}
+
+.map > ol > li {
+  padding: 8px 0;
+  border-top: 1px solid #262626;
+}
+
+.map li.current .map-tier {
+  color: #c4b5fd;
+}
+
+.map-tier {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.map-option {
+  margin: 4px 0 6px;
+}
+
+.map-option ul {
+  list-style: disc;
+  margin-left: 18px;
+  color: #a3a3a3;
+}
+
+.map-option.chosen strong {
+  color: #4ade80;
+}
+
+.map-option.skipped {
+  opacity: 0.4;
 }

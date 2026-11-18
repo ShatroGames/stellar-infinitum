@@ -9,5 +9,8 @@
     "rootDir": "../..",
     "outDir": "out"
   },
-  "files": ["run.ts"]
+  "files": [
+    "run.ts",
+    "calibrate.ts"
+  ]
 }

@@ -1,24 +1,22 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Decimal } from '../../utils/numbers';
-import { SkillNode, SkillTreeTier } from '../../models/skill-node.model';
-import { SKILL_TREE_TIERS } from '../../models/skill-trees.config';
+import { SkillNode } from '../../models/skill-node.model';
 import { StageModule, SummaryValue } from '../../core/stage';
-import {
-  STAGE1_START_ENERGY, energyProduction, isUnlocked, skillCost, warpBonus, warpRequirement
-} from '../../economy/stage1';
+import { CAPSTONES, EXPANSIONS, Expansion, TIERS, Theme } from '../../economy/stage1-content';
+import * as eco from '../../economy/stage1';
 
 interface Stage1Save {
   tier: number;
-  runBonus: number;
-  energy: string;
+  path: Theme[];
   levels: Record<string, number>;
+  energy: string;
+  runBonus: number;
+  overchargeTime: number;
 }
 
-const FINAL_TIER = SKILL_TREE_TIERS.length;
-
 /**
- * Stage 1: Stellar Network. Buy nodes with Energy, warp through five tiers by
- * hand, and beat the stage in Tier 5. Played once (docs/GAME_DESIGN.md, section 3).
+ * Stage 1: Stellar Network. Buy nodes with Energy, choose Saver or Spender at
+ * each warp, and beat the stage in Tier 5. Played once (docs/GAME_DESIGN.md, section 3).
  */
 @Injectable({ providedIn: 'root' })
 export class Stage1Service implements StageModule {
@@ -26,127 +24,134 @@ export class Stage1Service implements StageModule {
   readonly name = 'Stellar Network';
   readonly currencyName = 'Energy';
 
-  readonly tier = signal(1);
-  private readonly runBonus = signal(1);
-  private readonly energy = signal(new Decimal(STAGE1_START_ENERGY));
-  private readonly skillMap = signal(new Map<string, SkillNode>());
+  private readonly state = signal<eco.Stage1State>(eco.initialState());
 
-  readonly skills = computed(() => Array.from(this.skillMap().values()));
-  readonly production = computed(() => energyProduction(this.skills(), this.runBonus()));
-  readonly tierInfo = computed<SkillTreeTier>(() => SKILL_TREE_TIERS[this.tier() - 1]);
-  readonly nextTierInfo = computed<SkillTreeTier | undefined>(() => SKILL_TREE_TIERS[this.tier()]);
-  readonly requirement = computed(() => warpRequirement(this.tier()));
-  readonly allMaxed = computed(() => this.skills().every(s => s.level >= s.maxLevel));
-  readonly canWarp = computed(() => this.allMaxed() && this.energy().gte(this.requirement()));
-  readonly isFinalTier = computed(() => this.tier() === FINAL_TIER);
-  readonly prestigeBonus = computed(() => this.runBonus());
-
-  constructor() {
-    this.buildTier(1);
-  }
+  readonly tier = computed(() => this.state().tier);
+  readonly path = computed(() => this.state().path);
+  readonly nodes = computed(() => eco.buildTree(this.state().tier, this.state().path));
+  readonly skills = computed<SkillNode[]>(() => {
+    const state = this.state();
+    const nodes = this.nodes();
+    return nodes.map(n => ({
+      id: n.id, name: n.name, description: n.description,
+      level: eco.level(state, n.id), maxLevel: eco.maxLevel(n, nodes, state),
+      cost: new Decimal(n.cost), costMultiplier: n.costMultiplier,
+      unlocked: eco.isUnlocked(n, nodes, state), prerequisites: n.requires,
+      position: n.position, effect: { type: n.type, value: n.value },
+    }));
+  });
+  readonly production = computed(() => eco.production(this.nodes(), this.state()));
+  readonly tierInfo = computed(() => TIERS[this.state().tier - 1]);
+  readonly nextTierInfo = computed(() => TIERS[this.state().tier]);
+  readonly requirement = computed(() => eco.requirement(this.state().tier));
+  readonly allMaxed = computed(() => eco.allMaxed(this.nodes(), this.state()));
+  readonly canWarp = computed(() => eco.canWarp(this.nodes(), this.state()));
+  readonly isFinalTier = computed(() => this.state().tier === eco.FINAL_TIER);
+  readonly prestigeBonus = computed(() => this.state().runBonus);
+  readonly isOvercharging = computed(() => eco.isOvercharging(this.nodes(), this.state()));
+  readonly overchargeMultiplier = computed(() => eco.overchargeMultiplier(this.state().overchargeTime));
+  readonly interestBonus = computed(() => eco.interestBonus(this.nodes(), this.state()));
+  readonly tallyBonus = computed(() => eco.tallyBonus(this.nodes(), this.state()));
+  /** The two expansions offered at the next warp */
+  readonly nextChoices = computed<Expansion[] | null>(() => {
+    const next = EXPANSIONS[this.state().tier + 1];
+    return next ? [next.saver, next.spender] : null;
+  });
+  /** Capstone that applies now (Tier 5) or that the path is heading for */
+  readonly capstone = computed(() => {
+    const arch = eco.archetype(this.state());
+    return arch ? { archetype: arch, ...CAPSTONES[arch] } : null;
+  });
 
   // --- StageModule -------------------------------------------------------------
 
-  currency(): Decimal { return this.energy(); }
+  currency(): Decimal { return this.state().energy; }
   rate(): Decimal { return this.production(); }
-  target(): Decimal { return warpRequirement(FINAL_TIER); }
+  target(): Decimal { return eco.requirement(eco.FINAL_TIER); }
   isComplete(): boolean { return this.isFinalTier() && this.canWarp(); }
 
   start(): void {
-    this.tier.set(1);
-    this.runBonus.set(1);
-    this.energy.set(new Decimal(STAGE1_START_ENERGY));
-    this.buildTier(1);
+    this.state.set(eco.initialState());
   }
 
-  tick(seconds: number): void {
-    this.addEnergy(this.production().times(seconds));
+  tick(seconds: number, visible: boolean): void {
+    this.mutate(s => eco.advance(this.nodes(), s, seconds, visible));
   }
 
   advanceTime(seconds: number): void {
-    this.addEnergy(this.production().times(seconds));
+    this.mutate(s => eco.advance(this.nodes(), s, seconds, false));
   }
 
   summary(): SummaryValue[] {
-    return [{ label: 'Energy', value: this.energy() }];
+    return [{ label: 'Energy', value: this.state().energy }];
   }
 
   serialize(): Stage1Save {
-    const levels: Record<string, number> = {};
-    this.skillMap().forEach((s, id) => (levels[id] = s.level));
-    return { tier: this.tier(), runBonus: this.runBonus(), energy: this.energy().toString(), levels };
+    const s = this.state();
+    return { tier: s.tier, path: s.path, levels: s.levels, energy: s.energy.toString(),
+      runBonus: s.runBonus, overchargeTime: s.overchargeTime };
   }
 
   deserialize(data: unknown): void {
     const save = data as Partial<Stage1Save> | undefined;
-    if (!save) return;
-    const tier = Math.min(Math.max(1, save.tier ?? 1), FINAL_TIER);
-    this.tier.set(tier);
-    this.runBonus.set(save.runBonus ?? 1);
-    this.energy.set(new Decimal(save.energy ?? STAGE1_START_ENERGY));
-    this.buildTier(tier, save.levels ?? {});
+    if (!save || !Array.isArray(save.path)) return;
+    const tier = Math.min(Math.max(1, save.tier ?? 1), eco.FINAL_TIER);
+    this.state.set({
+      tier,
+      path: save.path.slice(0, tier - 1),
+      levels: { ...(save.levels ?? {}) },
+      energy: new Decimal(save.energy ?? eco.STAGE1_START_ENERGY),
+      runBonus: save.runBonus ?? 1,
+      overchargeTime: save.overchargeTime ?? 0,
+    });
   }
 
   // --- player actions ------------------------------------------------------------
 
   getSkill(id: string): SkillNode | undefined {
-    return this.skillMap().get(id);
+    return this.skills().find(s => s.id === id);
   }
 
   isUnlocked(id: string): boolean {
-    const skill = this.skillMap().get(id);
-    return !!skill && isUnlocked(skill, this.skillMap());
+    return this.getSkill(id)?.unlocked ?? false;
   }
 
   getUpgradeCost(id: string): Decimal {
-    const skill = this.skillMap().get(id);
-    return skill ? skillCost(skill, skill.level) : new Decimal(Infinity);
+    const node = this.nodes().find(n => n.id === id);
+    return node ? eco.cost(node, eco.level(this.state(), id), this.nodes(), this.state()) : new Decimal(Infinity);
   }
 
   canUpgrade(id: string): boolean {
-    const skill = this.skillMap().get(id);
-    return !!skill && skill.level < skill.maxLevel && this.isUnlocked(id)
-      && this.energy().gte(this.getUpgradeCost(id));
+    const node = this.nodes().find(n => n.id === id);
+    return !!node && eco.canBuy(node, this.nodes(), this.state());
   }
 
   upgrade(id: string): boolean {
-    if (!this.canUpgrade(id)) return false;
-    const cost = this.getUpgradeCost(id);
-    this.energy.update(e => e.minus(cost));
-    this.skillMap.update(map => {
-      const next = new Map(map);
-      const skill = next.get(id)!;
-      next.set(id, { ...skill, level: skill.level + 1 });
-      return next;
-    });
-    return true;
+    const node = this.nodes().find(n => n.id === id);
+    if (!node) return false;
+    let bought = false;
+    this.mutate(s => (bought = eco.buy(node, this.nodes(), s)));
+    return bought;
   }
 
-  /** Warp to the next tier (Tiers 1-4). Beating Tier 5 is handled by the stage service. */
-  warp(): boolean {
+  /** Buy the cheapest affordable levels until nothing is affordable (bulk discount applies) */
+  buyAll(): number {
+    let bought = 0;
+    this.mutate(s => (bought = eco.buyAll(this.nodes(), s)));
+    return bought;
+  }
+
+  /** Warp to the next tier with the chosen expansion (Tiers 1-4) */
+  warp(theme: Theme): boolean {
     if (!this.canWarp() || this.isFinalTier()) return false;
-    this.runBonus.update(b => b * warpBonus(this.tier()));
-    this.tier.update(t => t + 1);
-    this.energy.set(new Decimal(STAGE1_START_ENERGY));
-    this.buildTier(this.tier());
+    this.state.set(eco.warp(this.state(), theme));
     return true;
   }
 
-  // --- internals -------------------------------------------------------------------
-
-  private addEnergy(amount: Decimal): void {
-    if (amount.gt(0)) this.energy.update(e => e.plus(amount));
-  }
-
-  private buildTier(tier: number, levels: Record<string, number> = {}): void {
-    const map = new Map<string, SkillNode>();
-    for (const config of SKILL_TREE_TIERS[tier - 1].skills) {
-      map.set(config.id, {
-        ...config,
-        cost: new Decimal(config.cost),
-        level: Math.min(levels[config.id] ?? 0, config.maxLevel),
-      });
-    }
-    this.skillMap.set(map);
+  private mutate(change: (s: eco.Stage1State) => void): void {
+    const current = this.state();
+    const copy: eco.Stage1State = { ...current, path: [...current.path], levels: { ...current.levels } };
+    change(copy);
+    this.state.set(copy);
   }
 }

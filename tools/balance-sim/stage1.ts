@@ -1,68 +1,51 @@
-/** Stage 1 (Stellar Network) simulation, using the game's own formulas */
-import { Decimal } from '../../src/app/utils/numbers';
-import { SkillNode } from '../../src/app/models/skill-node.model';
-import { SKILL_TREE_TIERS } from '../../src/app/models/skill-trees.config';
+/** Stage 1 (Stellar Network) simulation for every path, using the game's own formulas */
+import { Theme } from '../../src/app/economy/stage1-content';
 import {
-  STAGE1_START_ENERGY, energyProduction, isUnlocked, skillCost, warpBonus, warpRequirement,
+  FINAL_TIER, Stage1State, advance, buildTree, buyAll, canWarp, initialState, warp,
 } from '../../src/app/economy/stage1';
 import { Profile, StageResult } from './profiles';
 
-const MAX_SECONDS = 500 * 3600;
+const MAX_SECONDS = 200 * 3600;
+/** Time is advanced in steps of at most this long, so Interest follows Energy */
+const STEP_SECONDS = 30;
 
-export function simulateStage1(profile: Profile): StageResult {
+export const ALL_PATHS: Theme[][] = [];
+for (let i = 0; i < 16; i++) {
+  ALL_PATHS.push([0, 1, 2, 3].map(b => ((i >> (3 - b)) & 1 ? 'spender' : 'saver')));
+}
+
+export const pathLabel = (path: Theme[]) => path.map(t => (t === 'saver' ? 'S' : 'P')).join('');
+
+export function simulateStage1(profile: Profile, path: Theme[] = ['spender', 'spender', 'spender', 'spender']): StageResult {
+  const state: Stage1State = initialState();
+  let nodes = buildTree(1, state.path);
   let t = 0;
-  let tier = 1;
-  let runBonus = 1;
-  let energy = new Decimal(STAGE1_START_ENERGY);
-  let skills = buildTier(1);
   let actions = 0;
   const milestones: [string, number][] = [];
-
-  const map = () => new Map(skills.map(s => [s.id, s]));
-  const production = () => energyProduction(skills, runBonus);
-  const allMaxed = () => skills.every(s => s.level >= s.maxLevel);
-
-  /** Buy cheapest-first until nothing is affordable */
-  const buyAll = (): boolean => {
-    let bought = false;
-    for (;;) {
-      const m = map();
-      const options = skills.filter(s => s.level < s.maxLevel && isUnlocked(s, m))
-        .map(s => ({ s, cost: skillCost(s, s.level) }))
-        .sort((a, b) => a.cost.cmp(b.cost));
-      const next = options[0];
-      if (!next || energy.lt(next.cost)) return bought;
-      energy = energy.minus(next.cost);
-      next.s.level++;
-      bought = true;
-    }
-  };
+  const visible = profile.checkInterval < 60;
 
   while (t < MAX_SECONDS) {
-    // Check-in: buy, warp as far as possible, or beat the stage
-    let acted = buyAll();
-    while (allMaxed() && energy.gte(warpRequirement(tier))) {
-      if (tier === SKILL_TREE_TIERS.length) {
+    let acted = buyAll(nodes, state) > 0;
+    while (canWarp(nodes, state)) {
+      if (state.tier === FINAL_TIER) {
         milestones.push(['beat stage', t]);
         return { seconds: t, milestones, actions: actions + 1 };
       }
-      runBonus *= warpBonus(tier);
-      tier++;
-      energy = new Decimal(STAGE1_START_ENERGY);
-      skills = buildTier(tier);
-      milestones.push([`reach tier ${tier}`, t]);
+      Object.assign(state, warp(state, path[state.tier - 1]));
+      nodes = buildTree(state.tier, state.path);
+      milestones.push([`reach tier ${state.tier}`, t]);
       acted = true;
-      buyAll();
+      buyAll(nodes, state);
     }
     if (acted) actions++;
 
-    // Wait until the next check-in
-    energy = energy.plus(production().times(profile.checkInterval));
+    let remaining = profile.checkInterval;
+    while (remaining > 0) {
+      const step = Math.min(STEP_SECONDS, remaining);
+      advance(nodes, state, step, visible);
+      remaining -= step;
+    }
     t += profile.checkInterval;
   }
   return { seconds: Infinity, milestones, actions };
-}
-
-function buildTier(tier: number): SkillNode[] {
-  return SKILL_TREE_TIERS[tier - 1].skills.map(s => ({ ...s, cost: new Decimal(s.cost), level: 0 }));
 }

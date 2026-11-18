@@ -1,9 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { Stage1Service } from '../stage1.service';
 import { StageService } from '../../../core/stage.service';
+import { CAPSTONES, EXPANSIONS, Theme } from '../../../economy/stage1-content';
 import { Decimal, formatNumber } from '../../../utils/numbers';
 
-/** Warp progress, requirements and the warp / beat-stage button for Stage 1 */
+/** Warp progress, warp choices, the run map and the beat-stage button for Stage 1 */
 @Component({
   selector: 'app-stage1-panel',
   templateUrl: './stage1-panel.html',
@@ -12,6 +13,7 @@ import { Decimal, formatNumber } from '../../../utils/numbers';
 export class Stage1Panel {
   protected stage1 = inject(Stage1Service);
   private stageService = inject(StageService);
+  protected capstones = Object.values(CAPSTONES);
 
   progress = computed(() => {
     const current = this.stage1.currency();
@@ -21,12 +23,28 @@ export class Stage1Panel {
     return { current, required, percentage: ratio * 100 };
   });
 
+  /** Every warp of the run with both options and the choice made (map, decision 3.7) */
+  map = computed(() => [2, 3, 4, 5].map(tier => ({
+    tier,
+    options: [EXPANSIONS[tier].saver, EXPANSIONS[tier].spender],
+    chosen: this.stage1.path()[tier - 2] as Theme | undefined,
+    current: this.stage1.tier() + 1 === tier,
+  })));
+
   format(value: Decimal | number): string {
     return formatNumber(value, 0);
   }
 
-  warp(): void {
-    this.stage1.warp();
+  bonus(value: number): string {
+    return formatNumber(value, 2);
+  }
+
+  warp(theme: Theme): void {
+    this.stage1.warp(theme);
+  }
+
+  buyAll(): void {
+    this.stage1.buyAll();
   }
 
   beatStage(): void {

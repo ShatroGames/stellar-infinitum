@@ -22,7 +22,7 @@ export class PlaceholderStage implements StageModule {
     this.income.set(baseIncome);
   }
 
-  tick(seconds: number): void { this.advanceTime(seconds); }
+  tick(seconds: number, _visible: boolean): void { this.advanceTime(seconds); }
 
   advanceTime(seconds: number): void {
     this.amount.update(a => a.plus(this.income() * seconds));

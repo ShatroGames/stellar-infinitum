@@ -29,7 +29,7 @@ export interface StageModule {
   /** Begin the stage from scratch; baseIncome is the +X/s granted by the previous stage */
   start(baseIncome: number): void;
   /** Simulation step while the game is running */
-  tick(seconds: number): void;
+  tick(seconds: number, visible: boolean): void;
   /**
    * Time passed while the player was away (tab closed, hidden or the computer asleep).
    * Only time-based progress happens; nothing is bought or chosen.

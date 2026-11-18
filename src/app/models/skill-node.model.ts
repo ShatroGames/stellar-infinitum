@@ -15,16 +15,7 @@ export interface SkillNode {
 }
 
 export interface SkillEffect {
-  type: 'production' | 'multiplier' | 'unlock' | 'automation';
+  type: string;
   value: number;
   resource?: string;
-}
-
-export interface SkillTreeTier {
-  id: number;
-  name: string;
-  description: string;
-  requiredPoints: Decimal; // Skill points needed to ascend
-  skills: SkillNode[];
-  prestigeBonus: number; // Multiplier bonus for completing this tier
 }

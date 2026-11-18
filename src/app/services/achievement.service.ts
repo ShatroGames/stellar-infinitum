@@ -63,7 +63,7 @@ export class AchievementService {
     this.unlockIf('stage1_beaten', beaten >= 1);
     if (inStage1) {
       const energy = this.stage1.currency();
-      this.unlockIf('first_node', this.stage1.skills().some(s => s.level > 0));
+      this.unlockIf('first_node', this.stage1.skills().some(s => s.level > 0) || this.stage1.tier() > 1);
       this.unlockIf('energy_1m', energy.gte(1e6));
       this.unlockIf('energy_1t', energy.gte(1e12));
       this.unlockIf('first_warp', this.stage1.tier() >= 2);

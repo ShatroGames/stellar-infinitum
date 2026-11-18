@@ -88,7 +88,7 @@ export class StageService {
     if (seconds > AWAY_GAP_SECONDS) {
       this.current().advanceTime(seconds);
     } else {
-      this.current().tick(seconds);
+      this.current().tick(seconds, !document.hidden);
       if (!document.hidden) this.playTime.update(t => t + seconds);
     }
 
