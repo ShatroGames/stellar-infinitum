@@ -11,6 +11,23 @@ import { ArtifactService } from '../../services/artifact.service';
 import { ProbabilityForgeService } from '../../services/probability-forge.service';
 import { TutorialService } from '../../services/tutorial.service';
 import { EternalProgress } from '../../services/eternal-progress';
+import { SaveManagerService } from '../../services/save-manager.service';
+import { IMPORT_ACHIEVEMENT_FLAG } from '../../services/achievement.service';
+
+/** Export field name -> localStorage key, for every system that saves state */
+const SAVE_KEYS: Record<string, string> = {
+  gameState: 'treefinite_save',
+  skills: 'treefinite_skills',
+  prestige: 'treefinite_prestige',
+  ascension: 'ascensionTree',
+  achievements: 'treefinite_achievements',
+  dimensions: 'stellarInfinitum_dimensions',
+  quantum: 'stellarInfinitum_quantum',
+  tutorials: 'stellarInfinitum_tutorials',
+  artifacts: 'stellarInfinitum_artifacts',
+  forge: 'probabilityForgeState',
+  eternal: 'stellarInfinitum_eternal'
+};
 
 @Component({
   selector: 'app-options',
@@ -29,6 +46,7 @@ export class OptionsComponent {
   private probabilityForgeService = inject(ProbabilityForgeService);
   private tutorialService = inject(TutorialService);
   private eternalProgress = inject(EternalProgress);
+  private saveManager = inject(SaveManagerService);
 
   showImportDialog = false;
   importText = '';
@@ -47,19 +65,18 @@ export class OptionsComponent {
       this.skillTreeService.savePrestige();
       this.ascensionService.saveState();
       this.dimensionService.saveState();
-      // Note: achievements, quantum, and tutorials auto-save
+      this.quantumService.saveState();
+      this.probabilityForgeService.saveState();
+      // Note: achievements, artifacts and tutorials save on every change
+
+      // Write pending saves now so the export is current
+      this.saveManager.flushAll();
 
       // Now gather all save data from localStorage
-      const saveData = {
-        gameState: localStorage.getItem('treefinite_save'),
-        skills: localStorage.getItem('treefinite_skills'),
-        prestige: localStorage.getItem('treefinite_prestige'),
-        ascension: localStorage.getItem('ascensionTree'),
-        achievements: localStorage.getItem('treefinite_achievements'),
-        dimensions: localStorage.getItem('stellarInfinitum_dimensions'),
-        quantum: localStorage.getItem('stellarInfinitum_quantum'),
-        tutorials: localStorage.getItem('stellarInfinitum_tutorials')
-      };
+      const saveData: Record<string, string | null> = {};
+      for (const [field, key] of Object.entries(SAVE_KEYS)) {
+        saveData[field] = localStorage.getItem(key);
+      }
 
       // Encode to base64 (handle Unicode properly)
       const jsonString = JSON.stringify(saveData);
@@ -114,31 +131,16 @@ export class OptionsComponent {
         throw new Error('Invalid save data format');
       }
 
+      // Stop pending saves from overwriting the imported data on reload
+      this.saveManager.suspend();
+
       // Import each piece of save data
-      if (saveData.gameState) {
-        localStorage.setItem('treefinite_save', saveData.gameState);
+      for (const [field, key] of Object.entries(SAVE_KEYS)) {
+        if (saveData[field]) {
+          localStorage.setItem(key, saveData[field]);
+        }
       }
-      if (saveData.skills) {
-        localStorage.setItem('treefinite_skills', saveData.skills);
-      }
-      if (saveData.prestige) {
-        localStorage.setItem('treefinite_prestige', saveData.prestige);
-      }
-      if (saveData.ascension) {
-        localStorage.setItem('ascensionTree', saveData.ascension);
-      }
-      if (saveData.achievements) {
-        localStorage.setItem('treefinite_achievements', saveData.achievements);
-      }
-      if (saveData.dimensions) {
-        localStorage.setItem('stellarInfinitum_dimensions', saveData.dimensions);
-      }
-      if (saveData.quantum) {
-        localStorage.setItem('stellarInfinitum_quantum', saveData.quantum);
-      }
-      if (saveData.tutorials) {
-        localStorage.setItem('stellarInfinitum_tutorials', saveData.tutorials);
-      }
+      localStorage.setItem(IMPORT_ACHIEVEMENT_FLAG, '1');
 
       this.importMessage = '[✓] Save imported successfully! Reloading...';
       setTimeout(() => {
@@ -164,6 +166,7 @@ export class OptionsComponent {
   resetGame(): void {
     if (confirm('Are you sure you want to COMPLETELY reset the game? This will erase ALL progress including warps and ascension points!')) {
       if (confirm('This action cannot be undone! Are you absolutely sure?')) {
+        this.saveManager.suspend();
         this.gameService.resetGame();
         this.skillTreeService.resetAll();
         this.ascensionService.reset();
@@ -192,6 +195,7 @@ export class OptionsComponent {
       if (confirm('FINAL WARNING: This cannot be undone! Continue with full reset?')) {
         // Record the reset in eternal progress
         this.eternalProgress.recordReset();
+        this.saveManager.suspend();
         
         // Reset all game systems
         this.gameService.resetGame();
@@ -213,6 +217,7 @@ export class OptionsComponent {
   skipToPostCollapse(): void {
     if (confirm('Skip to Post-Collapse state? This will reset all progress except achievements.')) {
       // Reset all pre-quantum systems
+      this.saveManager.suspend();
       this.gameService.resetGame();
       this.skillTreeService.resetAll();
       this.ascensionService.reset();

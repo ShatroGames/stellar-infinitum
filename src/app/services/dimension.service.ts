@@ -30,6 +30,14 @@ export class DimensionService {
     return false;
   });
 
+  // Achievement reward factor for all dimensional bonuses (set by AchievementService,
+  // which cannot be injected here without a circular dependency)
+  readonly dimensionBonusFactor = signal(1);
+
+  setDimensionBonusFactor(factor: number): void {
+    this.dimensionBonusFactor.set(factor);
+  }
+
   // Computed bonuses
   totalProductionBonus = computed(() => {
     let bonus = 1;
@@ -42,7 +50,7 @@ export class DimensionService {
         }
       });
     });
-    return bonus;
+    return 1 + (bonus - 1) * this.dimensionBonusFactor();
   });
 
   totalMultiplierPower = computed(() => {
@@ -54,9 +62,14 @@ export class DimensionService {
         if (node.level > 0 && node.effect.type === 'multiplier_power') {
           power += node.effect.value * node.level;
         }
+        // Crystal Harmony: +1% multiplier power per purchased Crystal node
+        if (node.level > 0 && node.effect.special === 'crystal_synergy') {
+          const crystalNodes = dimension.nodes.filter(n => n.level > 0).length;
+          power += node.effect.value * crystalNodes;
+        }
       });
     });
-    return power;
+    return power * this.dimensionBonusFactor();
   });
 
   totalSkillCapIncrease = computed(() => {
@@ -106,12 +119,9 @@ export class DimensionService {
               bonus *= (1 + value * voidNodes);
               break;
             }
-            case 'crystal_synergy': {
-              // +1% to all multipliers per Crystal node
-              const crystalNodes = this.getNodesInDimension('crystal').filter(n => n.level > 0).length;
-              // Applied separately in multiplier calculation
+            case 'crystal_synergy':
+              // Applied as multiplier power in totalMultiplierPower
               break;
-            }
             case 'quantum_synergy': {
               // +3% production per Quantum node
               const quantumNodes = this.getNodesInDimension('quantum').filter(n => n.level > 0).length;
@@ -138,7 +148,7 @@ export class DimensionService {
       });
     });
     
-    return bonus;
+    return 1 + (bonus - 1) * this.dimensionBonusFactor();
   });
 
   // Prism "all aspects" bonus
@@ -170,6 +180,21 @@ export class DimensionService {
       ...state,
       dimensions: dimensionMap
     }));
+  }
+
+  /**
+   * Unlock every node whose prerequisites are all maxed. Unlock flags are not
+   * persisted, so this must run after loading as well as after upgrades.
+   */
+  private applyNodeUnlocks(nodes: DimensionNode[]): DimensionNode[] {
+    return nodes.map(node => {
+      if (node.unlocked || node.prerequisites.length === 0) return node;
+      const prereqsMet = node.prerequisites.every(prereqId => {
+        const prereq = nodes.find(n => n.id === prereqId);
+        return prereq && prereq.level >= prereq.maxLevel;
+      });
+      return prereqsMet ? { ...node, unlocked: true } : node;
+    });
   }
 
   private getNodesInDimension(dimensionId: string): DimensionNode[] {
@@ -261,18 +286,7 @@ export class DimensionService {
       });
       
       // Check and unlock nodes that now meet prerequisites
-      const finalNodes = updatedNodes.map(node => {
-        if (!node.unlocked && node.prerequisites.length > 0) {
-          const prereqsMet = node.prerequisites.every(prereqId => {
-            const prereq = updatedNodes.find(n => n.id === prereqId);
-            return prereq && prereq.level >= prereq.maxLevel;
-          });
-          if (prereqsMet) {
-            return { ...node, unlocked: true };
-          }
-        }
-        return node;
-      });
+      const finalNodes = this.applyNodeUnlocks(updatedNodes);
       
       updatedDimensions.set(dimensionId, { ...dimension, nodes: finalNodes });
       
@@ -358,11 +372,14 @@ export class DimensionService {
           dimensionMap.set(configDim.id, {
             ...configDim,
             unlocked: savedDim.unlocked ?? false,
-            nodes: restoredNodes
+            nodes: this.applyNodeUnlocks(restoredNodes)
           });
         } else {
           // New dimension not in save
-          dimensionMap.set(configDim.id, { ...configDim });
+          dimensionMap.set(configDim.id, {
+            ...configDim,
+            nodes: configDim.nodes.map(node => ({ ...node }))
+          });
         }
       });
       

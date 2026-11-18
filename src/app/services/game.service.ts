@@ -1,4 +1,4 @@
-import { Injectable, signal, inject, Injector } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Resource, INITIAL_RESOURCES } from '../models/resource.model';
 import { Decimal } from '../utils/numbers';
 import { SaveManagerService } from './save-manager.service';
@@ -10,25 +10,22 @@ import { ProbabilityForgeService } from './probability-forge.service';
 })
 export class GameService {
   private saveManager = inject(SaveManagerService);
-  private injector = inject(Injector);
   private quantumService = inject(QuantumService);
   private probabilityForgeService = inject(ProbabilityForgeService);
   private resources = signal<Map<string, Resource>>(new Map());
   private lastUpdate = Date.now();
   private gameLoopInterval?: number;
   private saveCounter = 0;
-  private readonly SAVE_INTERVAL = 100; // Save every 10 seconds (100 ticks at 100ms)
-  private _achievementService?: any; // Lazy loaded to avoid circular dependency
-  
-  private get achievementService(): any {
-    if (!this._achievementService) {
-      try {
-        this._achievementService = this.injector.get('AchievementService' as any, null, { optional: true });
-      } catch (e) {
-        return null;
-      }
-    }
-    return this._achievementService;
+  private readonly SAVE_INTERVAL = 200; // Save every 10 seconds (200 ticks at 50ms)
+  // Offline time measured on load; picked up by AchievementService (which injects
+  // this service, so it cannot be called from here)
+  private pendingOfflineSeconds = 0;
+
+  /** Returns the offline time measured on load, once */
+  consumeOfflineSeconds(): number {
+    const seconds = this.pendingOfflineSeconds;
+    this.pendingOfflineSeconds = 0;
+    return seconds;
   }
 
   constructor() {
@@ -188,11 +185,9 @@ export class GameService {
         this.resources.set(resourceMap);
         this.lastUpdate = Date.now();
         
-        // Notify achievement service of offline time (lazy loaded to avoid circular dependency)
+        // Picked up by AchievementService on construction
         if (offlineTime > 0) {
-          setTimeout(() => {
-            this.achievementService?.recordOfflineTime(offlineTime);
-          }, 100);
+          this.pendingOfflineSeconds = offlineTime;
         }
       } catch (e) {
         console.error('Failed to load game state:', e);

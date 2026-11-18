@@ -36,6 +36,8 @@ export interface PrestigeData {
   totalPrestigeBonus: number; // Cumulative bonus from all ascensions
   currentRunPrestigeBonus: number; // Bonus for the current cycle (resets on Tier 5 completion)
   tierCompletions: Map<number, number>; // How many times each tier was completed
+  stellarCoreProgress?: number; // Fractional Stellar Core carried over between transcendences
+  echoFragmentProgress?: number; // Fractional Echo Fragment carried over between transcendences
 }
 
 export interface GameState {

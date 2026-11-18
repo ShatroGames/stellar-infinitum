@@ -373,7 +373,7 @@ export const ARTIFACTS: Artifact[] = [
     requiredTotalQuanta: 2500000000, // 2.5B
     prerequisites: ['res_5'],
     effects: [
-      { type: ArtifactEffectType.RESONANCE, value: 100, description: '+100% per artifact from other branches (doubles per artifact!)' }
+      { type: ArtifactEffectType.RESONANCE, value: 100, description: '+100% production per artifact from other branches' }
     ],
     position: { x: 2, y: 5 }
   },
@@ -387,7 +387,7 @@ export const ARTIFACTS: Artifact[] = [
     requiredTotalQuanta: 5000000000, // 5B
     prerequisites: ['res_6'],
     effects: [
-      { type: ArtifactEffectType.RESONANCE, value: 200, description: '+200% per artifact from other branches (triples per artifact!)' }
+      { type: ArtifactEffectType.RESONANCE, value: 200, description: '+200% production per artifact from other branches' }
     ],
     position: { x: 2, y: 6 }
   },
@@ -401,7 +401,7 @@ export const ARTIFACTS: Artifact[] = [
     requiredTotalQuanta: 10000000000, // 10B
     prerequisites: ['res_7'],
     effects: [
-      { type: ArtifactEffectType.RESONANCE, value: 400, description: '+400% per artifact from other branches (5x per artifact!)' }
+      { type: ArtifactEffectType.RESONANCE, value: 400, description: '+400% production per artifact from other branches' }
     ],
     position: { x: 2, y: 7 }
   },
@@ -415,7 +415,7 @@ export const ARTIFACTS: Artifact[] = [
     requiredTotalQuanta: 25000000000, // 25B
     prerequisites: ['res_8'],
     effects: [
-      { type: ArtifactEffectType.RESONANCE, value: 1000, description: '+1000% per artifact from other branches (11x per artifact!)' }
+      { type: ArtifactEffectType.RESONANCE, value: 1000, description: '+1000% production per artifact from other branches' }
     ],
     position: { x: 2, y: 8 }
   },
@@ -429,7 +429,7 @@ export const ARTIFACTS: Artifact[] = [
     requiredTotalQuanta: 50000000000, // 50B
     prerequisites: ['res_9'],
     effects: [
-      { type: ArtifactEffectType.RESONANCE, value: 5000, description: '+5000% per artifact from other branches (51x per artifact!)' }
+      { type: ArtifactEffectType.RESONANCE, value: 5000, description: '+5000% production per artifact from other branches' }
     ],
     position: { x: 2, y: 9 }
   }

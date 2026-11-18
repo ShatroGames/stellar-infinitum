@@ -28,6 +28,8 @@ export class QuantumService {
   });
   
   private readonly VICTORY_THRESHOLD = 1e170; // 1e170 Quanta
+  private saveTimer = 0;
+  private readonly SAVE_INTERVAL = 10; // seconds
 
   // Computed signals
   quanta = computed(() => this.state().quanta);
@@ -59,6 +61,18 @@ export class QuantumService {
 
   // Node access
   private nodeDefinitions = new Map<string, QuantumNode>();
+
+  // Achievement reward multiplier, provided by AchievementService (which injects this
+  // service, so it cannot be injected here)
+  private achievementMultiplier = 1;
+
+  setAchievementMultiplier(multiplier: number): void {
+    if (this.achievementMultiplier === multiplier) return;
+    this.achievementMultiplier = multiplier;
+    if (this.state().hasCollapsed) {
+      this.calculateProduction();
+    }
+  }
 
   constructor() {
     // Initialize node definitions
@@ -134,6 +148,9 @@ export class QuantumService {
     // Apply artifact multiplier
     multiplier *= artifactBonuses.productionMultiplier;
 
+    // Apply achievement rewards
+    multiplier *= this.achievementMultiplier;
+
     const totalProduction = (baseProduction + productionBonus) * multiplier;
 
     this.state.update(s => ({
@@ -153,6 +170,13 @@ export class QuantumService {
       quanta: s.quanta + amount,
       totalQuantaGenerated: s.totalQuantaGenerated + amount
     }));
+
+    // Quanta are otherwise only saved on purchases, so persist them periodically
+    this.saveTimer += deltaTime;
+    if (this.saveTimer >= this.SAVE_INTERVAL) {
+      this.saveTimer = 0;
+      this.saveState();
+    }
 
     this.checkMilestones();
     
@@ -393,7 +417,7 @@ export class QuantumService {
   }
 
   // Save state to localStorage
-  private saveState(): void {
+  saveState(): void {
     const state = this.state();
     const victory = this.victoryState();
     // Only save node IDs and levels (level 0 = locked)

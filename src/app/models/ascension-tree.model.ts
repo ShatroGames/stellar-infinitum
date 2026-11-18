@@ -51,12 +51,12 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'start_energy',
     name: 'Momentum Start',
-    description: 'Start each warp with 1M Energy instead of 10',
+    description: 'Start each warp with 1,000 Energy instead of 10',
     cost: 1,
     purchased: false,
     position: { x: 0, y: 1 },
     requires: ['auto_buy'],
-    effect: { type: 'start_bonus', value: 1000000 }
+    effect: { type: 'start_bonus', value: 1000 }
   },
   {
     id: 'production_25',
@@ -233,7 +233,7 @@ export const ASCENSION_TREE_NODES: AscensionNode[] = [
   {
     id: 'mega_boost',
     name: 'Transcendent Power',
-    description: 'All production and multipliers increased by 300%',
+    description: 'Increase all production by 300%',
     cost: 8,
     purchased: false,
     position: { x: 0, y: 7 },

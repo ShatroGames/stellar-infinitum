@@ -41,9 +41,9 @@ export class SkillTreeService {
   });
   
   // Cache for expensive calculations
-  private productionCache: { value: number; timestamp: number } | null = null;
+  private productionCache: { value: Decimal; timestamp: number } | null = null;
   private readonly PRODUCTION_CACHE_MS = 50; // Cache production for 50ms
-  private costCache: Map<string, { cost: Decimal; level: number }> = new Map();
+  private costCache: Map<string, { cost: Decimal; key: string }> = new Map();
 
   currentTier = computed(() => this.prestige().currentTier);
   totalAscensions = computed(() => this.prestige().currentRunAscensions);
@@ -59,7 +59,8 @@ export class SkillTreeService {
       return 0;
     }
     const currentEnergy = this.gameService.getResource('knowledge')?.amount || new Decimal(0);
-    return this.calculateEchoFragments(currentEnergy);
+    const progress = this.prestige().echoFragmentProgress ?? 0;
+    return Math.floor(this.calculateEchoFragments(currentEnergy) + progress + 1e-9);
   });
 
   constructor() {
@@ -73,7 +74,7 @@ export class SkillTreeService {
       this.autoBuySkills(this.ascensionService);
       
       // Check for auto-warp (Tiers 1-4) - now using achievement service
-      if (this.achievementService?.hasAutoWarp() && this.canAscend()) {
+      if (this.hasAutoWarp() && this.canAscend()) {
         // Only auto-warp if not on Tier 5 (to prevent auto-transcending)
         if (this.prestige().currentTier < 5) {
           this.ascend(this.ascensionService);
@@ -84,6 +85,15 @@ export class SkillTreeService {
     }, 200); // Run every 200ms instead of 100ms
   }
 
+  /** Automation can come from an achievement or from the Stellar Nexus node */
+  private hasAutoBuy(): boolean {
+    return !!this.achievementService?.hasAutoBuy() || this.ascensionService.hasAutoBuy();
+  }
+
+  private hasAutoWarp(): boolean {
+    return !!this.achievementService?.hasAutoWarp() || this.ascensionService.hasAutoWarp();
+  }
+
   private initializeSkillTree(): void {
     const currentTierData = SKILL_TREE_TIERS.find(t => t.id === this.prestige().currentTier);
     if (!currentTierData) return;
@@ -91,9 +101,7 @@ export class SkillTreeService {
     const skillMap = new Map<string, SkillNode>();
     currentTierData.skills.forEach(skill => {
       // Apply skill cap increases from ascension and dimensions
-      let maxLevel = skill.maxLevel;
-      maxLevel += this.ascensionService.skillCapIncrease();
-      maxLevel += this.dimensionService.totalSkillCapIncrease();
+      const maxLevel = skill.maxLevel + this.skillCapBonus();
       
       // Ensure cost is a Decimal when initializing
       skillMap.set(skill.id, { 
@@ -127,13 +135,23 @@ export class SkillTreeService {
     const skill = this.skills().get(skillId);
     if (!skill) return new Decimal(0);
     
-    // Check cache first
+    // Cache is keyed on level and active discounts so it never goes stale
+    const ascensionReduction = this.ascensionService.costReduction();
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+    const key = `${skill.level}|${ascensionReduction}|${prismBonus}`;
     const cached = this.costCache.get(skillId);
-    if (cached && cached.level === skill.level) {
+    if (cached && cached.key === key) {
       return cached.cost;
     }
     
-    let cost = skill.cost.times(Decimal.pow(skill.costMultiplier, skill.level)).floor();
+    const cost = this.costAtLevel(skill, skill.level);
+    this.costCache.set(skillId, { cost, key });
+    return cost;
+  }
+
+  /** Cost of buying the given level of a skill, including all discounts */
+  private costAtLevel(skill: SkillNode, level: number): Decimal {
+    let cost = new Decimal(skill.cost).times(Decimal.pow(skill.costMultiplier, level)).floor();
     
     // Apply ascension cost reduction
     const ascensionReduction = this.ascensionService.costReduction();
@@ -147,10 +165,12 @@ export class SkillTreeService {
       cost = cost.times(1 - prismBonus);
     }
     
-    // Cache the result
-    this.costCache.set(skillId, { cost, level: skill.level });
-    
     return cost;
+  }
+
+  /** Skill level cap bonus from the Stellar Nexus and dimensions */
+  private skillCapBonus(): number {
+    return this.ascensionService.skillCapIncrease() + this.dimensionService.totalSkillCapIncrease();
   }
 
   upgradeSkill(skillId: string): boolean {
@@ -195,13 +215,12 @@ export class SkillTreeService {
       if (!currentTierData) return skillMap;
 
       // Recalculate max levels for all skills based on current bonuses
-      const ascensionBonus = this.ascensionService.skillCapIncrease();
-      const dimensionBonus = this.dimensionService.totalSkillCapIncrease();
+      const capBonus = this.skillCapBonus();
 
       currentTierData.skills.forEach(configSkill => {
         const existingSkill = updatedMap.get(configSkill.id);
         if (existingSkill) {
-          const newMaxLevel = configSkill.maxLevel + ascensionBonus + dimensionBonus;
+          const newMaxLevel = configSkill.maxLevel + capBonus;
           // Only update if the max level changed
           if (existingSkill.maxLevel !== newMaxLevel) {
             updatedMap.set(configSkill.id, {
@@ -220,104 +239,92 @@ export class SkillTreeService {
   recalculateProduction(): void {
     // Clear cache when recalculating
     this.productionCache = null;
-    
+
+    const skills = Array.from(this.skills().values());
+
+    // Achievement rewards (AchievementService is lazy-loaded; default to no bonus)
+    const energyAchievementMult = this.achievementService?.energyProductionMultiplier() ?? 1;
+    // Scales every bonus that comes from a Stellar Nexus node
+    const nexusFactor = this.achievementService?.ascensionBonusMultiplier() ?? 1;
+
     // Calculate base production from all production skills
     let baseProduction = 0;
-    this.skills().forEach(skill => {
+    skills.forEach(skill => {
       if (skill.effect.type === 'production' && skill.effect.resource === 'knowledge') {
         baseProduction += skill.effect.value * skill.level;
       }
     });
 
-    // Calculate total multiplier from all multiplier skills (MULTIPLICATIVE)
-    let totalMultiplier = 1;
-    this.skills().forEach(skill => {
-      if (skill.effect.type === 'multiplier' && skill.effect.resource === 'knowledge') {
+    // Strength boosts applied to every multiplier skill
+    const multiplierBoost = this.ascensionService.multiplierBoost() * nexusFactor;
+    const dimensionMultiplierPower = this.dimensionService.totalMultiplierPower();
+    const prismBonus = this.dimensionService.prismAllAspectsBonus();
+
+    // Total multiplier is a Decimal: late-game values can exceed the range of a JS number
+    let totalMultiplier = new Decimal(1);
+    skills.forEach(skill => {
+      if (skill.effect.type === 'multiplier' && skill.effect.resource === 'knowledge' && skill.level > 0) {
         // Each level multiplies by the effect value
         // e.g., 1.5x multiplier at level 3 = 1.5^3 = 3.375x total
         let effectValue = skill.effect.value;
-        
-        // Apply ascension multiplier boost
-        const multiplierBoost = this.ascensionService.multiplierBoost();
         if (multiplierBoost > 0) {
           effectValue = 1 + (effectValue - 1) * (1 + multiplierBoost);
         }
-        
-        // Apply dimension multiplier power
-        const dimensionMultiplierPower = this.dimensionService.totalMultiplierPower();
         if (dimensionMultiplierPower > 0) {
           effectValue = 1 + (effectValue - 1) * (1 + dimensionMultiplierPower);
         }
-        
-        // Apply Prism "all aspects" bonus
-        const prismBonus = this.dimensionService.prismAllAspectsBonus();
         if (prismBonus > 0) {
           effectValue = 1 + (effectValue - 1) * (1 + prismBonus);
         }
-        
-        // Multiply by the effect value raised to the skill level
-        totalMultiplier *= Math.pow(effectValue, skill.level);
+        totalMultiplier = totalMultiplier.times(Decimal.pow(effectValue, skill.level));
       }
     });
 
     // Apply prestige bonus to multiplier (use current run bonus, not total)
-    const prestigeBonus = this.prestige().currentRunPrestigeBonus;
-    totalMultiplier *= prestigeBonus;
+    totalMultiplier = totalMultiplier.times(this.prestige().currentRunPrestigeBonus);
     
     // Apply ascension production boost
-    const productionBoost = this.ascensionService.productionBoost();
+    const productionBoost = this.ascensionService.productionBoost() * nexusFactor;
     if (productionBoost > 0) {
-      totalMultiplier *= (1 + productionBoost);
+      totalMultiplier = totalMultiplier.times(1 + productionBoost);
     }
 
-    // Apply global ascension points multiplier (0.1 per total point earned)
-    const globalMultiplier = this.ascensionService.globalMultiplier();
-    totalMultiplier *= globalMultiplier;
+    // Apply global multiplier: +100% per Stellar Core ever earned
+    totalMultiplier = totalMultiplier.times(this.ascensionService.globalMultiplier());
 
     // Apply skill efficiency bonus (bonus per maxed skill)
-    const skillEfficiencyBonus = this.ascensionService.skillEfficiencyBonus();
+    const skillEfficiencyBonus = this.ascensionService.skillEfficiencyBonus() * nexusFactor;
     if (skillEfficiencyBonus > 0) {
-      const maxedSkills = Array.from(this.skills().values()).filter(
-        skill => skill.level >= skill.maxLevel
-      ).length;
-      if (maxedSkills > 0) {
-        totalMultiplier *= (1 + skillEfficiencyBonus * maxedSkills);
-      }
+      const maxedSkills = skills.filter(skill => skill.level >= skill.maxLevel).length;
+      totalMultiplier = totalMultiplier.times(1 + skillEfficiencyBonus * maxedSkills);
     }
 
     // Apply stellar core multiplier (bonus per Stellar Core owned)
-    const stellarCoreMult = this.ascensionService.stellarCoreMult();
+    const stellarCoreMult = this.ascensionService.stellarCoreMult() * nexusFactor;
     if (stellarCoreMult > 0) {
-      const stellarCores = this.ascensionService.totalPoints();
-      if (stellarCores > 0) {
-        totalMultiplier *= (1 + stellarCoreMult * stellarCores);
-      }
+      totalMultiplier = totalMultiplier.times(1 + stellarCoreMult * this.ascensionService.totalPoints());
     }
 
     // Apply warp momentum bonus (bonus per warp in current run)
-    const warpMomentumBonus = this.ascensionService.warpMomentumBonus();
+    const warpMomentumBonus = this.ascensionService.warpMomentumBonus() * nexusFactor;
     if (warpMomentumBonus > 0) {
-      const warpsThisRun = this.prestige().currentRunAscensions;
-      if (warpsThisRun > 0) {
-        totalMultiplier *= (1 + warpMomentumBonus * warpsThisRun);
-      }
+      totalMultiplier = totalMultiplier.times(1 + warpMomentumBonus * this.prestige().currentRunAscensions);
     }
 
     // Apply dimension bonuses
-    const dimensionProductionBonus = this.dimensionService.totalProductionBonus();
-    totalMultiplier *= dimensionProductionBonus;
-    
-    const dimensionCrossDimensionBonus = this.dimensionService.crossDimensionBonus();
-    totalMultiplier *= dimensionCrossDimensionBonus;
+    totalMultiplier = totalMultiplier
+      .times(this.dimensionService.totalProductionBonus())
+      .times(this.dimensionService.crossDimensionBonus());
     
     // Apply Prism "all aspects" bonus to production
-    const prismBonus = this.dimensionService.prismAllAspectsBonus();
     if (prismBonus > 0) {
-      totalMultiplier *= (1 + prismBonus);
+      totalMultiplier = totalMultiplier.times(1 + prismBonus);
     }
 
-    // Set final production rate
-    const finalProduction = baseProduction * totalMultiplier;
+    // Apply achievement rewards
+    totalMultiplier = totalMultiplier.times(energyAchievementMult);
+
+    const finalProduction = totalMultiplier.times(baseProduction);
     
     // Cache the result
     this.productionCache = {
@@ -358,7 +365,7 @@ export class SkillTreeService {
   }
 
   autoBuySkills(ascensionService?: any): void {
-    if (!this.achievementService?.hasAutoBuy()) {
+    if (!this.hasAutoBuy()) {
       return;
     }
 
@@ -384,13 +391,9 @@ export class SkillTreeService {
       
       while (bought < bulkAmount && currentSkill.level < currentSkill.maxLevel) {
         // Calculate cost based on current level in this batch
-        let cost = currentSkill.cost.times(Decimal.pow(currentSkill.costMultiplier, currentSkill.level)).floor();
-        const reduction = this.ascensionService.costReduction();
-        if (reduction > 0) {
-          cost = cost.times(1 - reduction);
-        }
+        const cost = this.costAtLevel(currentSkill, currentSkill.level);
         
-        if (this.gameService.canAfford('knowledge', cost) && this.gameService.spend('knowledge', cost)) {
+        if (this.gameService.spend('knowledge', cost)) {
           currentSkill = { ...currentSkill, level: currentSkill.level + 1 };
           updates.set(skill.id, currentSkill);
           bought++;
@@ -453,6 +456,9 @@ export class SkillTreeService {
           const savedSkill = savedSkills.find((s: any) => s.id === configSkill.id);
           skillMap.set(configSkill.id, {
             ...configSkill,
+            // Level caps from the Nexus/dimensions are not part of the config
+            maxLevel: configSkill.maxLevel + this.skillCapBonus(),
+            cost: new Decimal(configSkill.cost),
             level: savedSkill?.level ?? 0,
             unlocked: savedSkill?.unlocked ?? configSkill.unlocked
           });
@@ -581,10 +587,16 @@ export class SkillTreeService {
 
     // Grant ascension point if completing Tier 5
     const isTier5 = prestigeData.currentTier === 5;
+    let coreProgress = prestigeData.stellarCoreProgress ?? 0;
+    let echoProgress = prestigeData.echoFragmentProgress ?? 0;
     if (isTier5) {
-      // Calculate Stellar Core bonus from dimensions
+      // Stellar Core gain: dimension bonuses plus achievement rewards. Fractions are
+      // carried over to the next transcendence instead of being rounded away.
       const stellarCoreBonus = this.dimensionService.totalStellarCoreBonus();
-      const stellarCoresGranted = Math.floor(1 * (1 + stellarCoreBonus));
+      const achievementCoreMult = this.achievementService?.stellarCoreMultiplier() ?? 1;
+      const coreGain = (1 + stellarCoreBonus) * achievementCoreMult + (prestigeData.stellarCoreProgress ?? 0);
+      const stellarCoresGranted = Math.floor(coreGain + 1e-9);
+      coreProgress = Math.max(0, coreGain - stellarCoresGranted);
       
       for (let i = 0; i < stellarCoresGranted; i++) {
         this.ascensionService.grantAscensionPoint();
@@ -593,7 +605,9 @@ export class SkillTreeService {
       // Grant Echo Fragments based on Energy (only if ascension tree is complete)
       if (this.ascensionService.isTreeComplete()) {
         const currentEnergy = this.gameService.getResource('knowledge')?.amount || new Decimal(0);
-        const echoFragments = this.calculateEchoFragments(currentEnergy);
+        const echoGain = this.calculateEchoFragments(currentEnergy) + echoProgress;
+        const echoFragments = Math.floor(echoGain + 1e-9);
+        echoProgress = Math.max(0, echoGain - echoFragments);
         if (echoFragments > 0) {
           this.dimensionService.grantEchoFragments(echoFragments);
         }
@@ -626,8 +640,13 @@ export class SkillTreeService {
       currentRunAscensions: newRunAscensions,
       totalPrestigeBonus: newTotalPrestigeBonus,
       currentRunPrestigeBonus: newRunPrestigeBonus,
-      tierCompletions: completions
+      tierCompletions: completions,
+      stellarCoreProgress: coreProgress,
+      echoFragmentProgress: echoProgress
     });
+
+    // Start timing the next warp (for the speed achievement)
+    this.achievementService?.onWarpStart();
 
     // Calculate starting energy
     const startingEnergy = this.ascensionService.startingEnergy();
@@ -649,26 +668,23 @@ export class SkillTreeService {
   }
 
   private calculateEchoFragments(energy: Decimal): number {
-    // Base threshold: 10 trillion (10e12)
+    // Base threshold: 1e35 Energy
     const baseThreshold = new Decimal(1e35);
     
-    // If energy is less than threshold, grant 1 EF
-    if (energy.lt(baseThreshold)) {
-      return 1;
+    // Formula: 1 + floor(log10(energy / baseThreshold)), minimum 1
+    // - below 1e35 Energy: 1 EF
+    // - 1e36 Energy: 2 EF
+    // - 1e37 Energy: 3 EF
+    let baseEF = 1;
+    if (energy.gte(baseThreshold)) {
+      const bonusEF = Math.floor(energy.div(baseThreshold).log10().toNumber());
+      baseEF = Math.max(1, 1 + bonusEF);
     }
     
-    // Calculate bonus EF based on how much energy exceeds the threshold
-    // Formula: 1 + floor(log10(energy / baseThreshold))
-    // Examples with maxed tree (~100x base threshold):
-    // - 10T Energy: 1 EF
-    // - 100T Energy: 2 EF (10x threshold)
-    // - 1Q Energy: 3 EF (100x threshold)
-    // - 10Q Energy: 4 EF (1000x threshold)
-    const ratio = energy.div(baseThreshold);
-    const logValue = ratio.log10();
-    const bonusEF = Math.floor(logValue.toNumber());
-    
-    return Math.max(1, 1 + bonusEF);
+    // Achievement rewards. The result may be fractional; fractions are carried
+    // over between transcendences (see echoFragmentProgress).
+    const achievementMult = this.achievementService?.echoFragmentMultiplier() ?? 1;
+    return baseEF * achievementMult;
   }
 
   private applyPrestigeBonus(): void {
@@ -690,7 +706,9 @@ export class SkillTreeService {
       currentRunAscensions: 0,
       totalPrestigeBonus: 1,
       currentRunPrestigeBonus: 1,
-      tierCompletions: new Map()
+      tierCompletions: new Map(),
+      stellarCoreProgress: 0,
+      echoFragmentProgress: 0
     });
     this.initializeSkillTree();
   }

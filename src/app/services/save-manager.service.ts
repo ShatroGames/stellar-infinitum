@@ -13,6 +13,7 @@ export class SaveManagerService {
   private readonly DEBOUNCE_MS = 1000; // Wait 1 second before saving
   private lastSaveTime = 0;
   private readonly MIN_SAVE_INTERVAL_MS = 5000; // Minimum 5 seconds between saves
+  private suspended = false;
 
   constructor() {
     // Save on page unload to ensure no data loss
@@ -27,6 +28,7 @@ export class SaveManagerService {
    * @param saveFn Function that performs the actual save
    */
   scheduleSave(key: string, saveFn: () => void): void {
+    if (this.suspended) return;
     this.pendingSaves.set(key, saveFn);
     
     // Clear existing timeout
@@ -41,24 +43,40 @@ export class SaveManagerService {
   }
 
   /**
-   * Immediately execute all pending save operations
+   * Immediately execute all pending save operations, ignoring the minimum interval
+   * (used on page unload and before exporting)
    */
   flushAll(): void {
     if (this.saveTimeout !== null) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = null;
     }
-    this.flush();
+    this.flush(true);
+  }
+
+  /**
+   * Drop pending saves and ignore all further ones until the page reloads.
+   * Call before resetting or importing, otherwise pending saves (built from the
+   * old state) are written back on unload.
+   */
+  suspend(): void {
+    this.suspended = true;
+    this.pendingSaves.clear();
+    if (this.saveTimeout !== null) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
   }
 
   /**
    * Execute pending saves if enough time has passed
    */
-  private flush(): void {
+  private flush(force = false): void {
+    if (this.suspended) return;
     const now = Date.now();
     
     // Respect minimum save interval
-    if (now - this.lastSaveTime < this.MIN_SAVE_INTERVAL_MS && this.pendingSaves.size > 0) {
+    if (!force && now - this.lastSaveTime < this.MIN_SAVE_INTERVAL_MS && this.pendingSaves.size > 0) {
       // Reschedule for later
       this.saveTimeout = window.setTimeout(() => {
         this.flush();

@@ -8,6 +8,9 @@ import { QuantumService } from './quantum.service';
 import { QuantumTreeType } from '../models/quantum.model';
 import { Decimal } from '../utils/numbers';
 
+/** Set by the options screen when a save is imported; read once on the next load */
+export const IMPORT_ACHIEVEMENT_FLAG = 'stellarInfinitum_importedSave';
+
 export interface AchievementNotification {
   achievement: Achievement;
   timestamp: number;
@@ -44,7 +47,7 @@ export class AchievementService {
   private notifications = signal<AchievementNotification[]>([]);
   private playTime = signal<number>(0); // in seconds
   private sessionStartTime = Date.now();
-  private warpStartTime?: number;
+  private warpStartTime: number | undefined = Date.now();
   private hasWarped = signal<boolean>(false);
 
   // Computed values
@@ -147,6 +150,20 @@ export class AchievementService {
     return multiplier;
   });
 
+  // Bonus to quantum production from quantum achievements
+  quantumProductionMultiplier = computed(() => {
+    let multiplier = 1;
+    const achievements = this.achievements();
+    if (achievements.get('all_synergies')?.unlocked) multiplier *= 1.5;
+    if (achievements.get('quantum_trinity')?.unlocked) multiplier *= 2;
+    return multiplier;
+  });
+
+  // Bonus to offline Energy gains
+  offlineProductionMultiplier = computed(() => {
+    return this.achievements().get('progression_100hours')?.unlocked ? 1.05 : 1;
+  });
+
   // Automation unlocks from achievements
   hasAutoBuy = computed(() => {
     const achievement = this.achievements().get('tier5_complete');
@@ -162,9 +179,26 @@ export class AchievementService {
     this.initializeAchievements();
     this.loadSaveDataInternal();
     this.startTracking();
+
+    // Services this one depends on cannot inject it back (circular dependency),
+    // so hand them the reward values they need.
+    this.dimensionService.setDimensionBonusFactor(this.dimensionBonusMultiplier());
+    this.quantumService.setAchievementMultiplier(this.quantumProductionMultiplier());
+
+    // Offline time measured by GameService when the save was loaded
+    const offlineSeconds = this.gameService.consumeOfflineSeconds();
+    if (offlineSeconds > 0) {
+      this.recordOfflineTime(offlineSeconds);
+    }
     
     // Welcome achievement
     setTimeout(() => this.checkAchievement('welcome'), 1000);
+
+    // Secret achievement for importing a save
+    if (localStorage.getItem(IMPORT_ACHIEVEMENT_FLAG)) {
+      localStorage.removeItem(IMPORT_ACHIEVEMENT_FLAG);
+      setTimeout(() => this.checkAchievement('save_import'), 1000);
+    }
   }
 
   private loadSaveDataInternal(): void {
@@ -206,7 +240,7 @@ export class AchievementService {
     const stellarCores = this.ascensionService.totalPoints();
     const echoFragments = this.dimensionService.totalEchoFragments();
     const totalWarps = this.skillTreeService?.allTimeAscensions() || 0;
-    const totalTranscends = this.dimensionService.totalEchoFragments(); // Use total fragments as proxy for transcends
+    const totalTranscends = this.skillTreeService?.getPrestigeData().tierCompletions.get(5) ?? 0;
     const currentTier = this.skillTreeService?.currentTier() || 1;
 
     // Energy milestones
@@ -334,6 +368,20 @@ export class AchievementService {
       }
       return newMap;
     });
+
+    if (this.achievements().get(id)?.reward?.type === 'multiplier') {
+      this.applyRewardEffects();
+    }
+  }
+
+  /** Push current reward values to the systems that use them and recalculate production */
+  private applyRewardEffects(): void {
+    this.dimensionService.setDimensionBonusFactor(this.dimensionBonusMultiplier());
+    this.quantumService.setAchievementMultiplier(this.quantumProductionMultiplier());
+    this.skillTreeService?.recalculateProduction();
+    if (this.quantumService.hasCollapsed()) {
+      this.quantumService.calculateProduction();
+    }
   }
 
   getAchievements() {
@@ -377,6 +425,14 @@ export class AchievementService {
   // Track offline time
   recordOfflineTime(seconds: number): void {
     this.playTime.update(time => time + seconds);
+
+    // Offline production reward: grant the extra share of what was earned offline
+    const bonus = this.offlineProductionMultiplier() - 1;
+    const rate = this.gameService.getResource('knowledge')?.productionRate;
+    if (bonus > 0 && rate && rate.gt(0) && !this.quantumService.hasCollapsed()) {
+      this.gameService.addResource('knowledge', rate.times(seconds).times(bonus));
+    }
+
     if (seconds >= 28800) { // 8 hours
       this.checkAchievement('offline_8hours');
     }
@@ -486,8 +542,7 @@ export class AchievementService {
 
   // Check if a quantum tree is fully maxed
   private isQuantumTreeMaxed(treeName: string): boolean {
-    const tree = treeName as keyof typeof QuantumTreeType;
-    const treeType = QuantumTreeType[tree];
+    const treeType = Object.values(QuantumTreeType).find(t => t === treeName);
     if (!treeType) return false;
 
     const nodes = this.quantumService.getNodesForTree(treeType);
@@ -504,11 +559,12 @@ export class AchievementService {
     // Reset tracking data
     this.playTime.set(0);
     this.sessionStartTime = Date.now();
-    this.warpStartTime = undefined;
+    this.warpStartTime = Date.now();
     this.hasWarped.set(false);
     
     // Clear notifications
     this.notifications.set([]);
+    this.applyRewardEffects();
     
     // Clear saved data
     localStorage.removeItem('treefinite_achievements');

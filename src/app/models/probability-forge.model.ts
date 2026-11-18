@@ -56,6 +56,8 @@ export interface ProbabilityForgeState {
   currentStreak: number;
   bestStreak: number;
   pullsSinceMythic: number; // For pity system
+  pullsSinceEpic?: number;
+  pullsSinceRare?: number;
   
   // Statistics
   rarityPullCounts: Map<OutcomeRarity, number>;
@@ -184,9 +186,9 @@ export const FATE_WEIGHTS: FateWeight[] = [
   { id: 'shift_mythic', name: 'Mythic Convergence', description: 'Increase Mythic chance by 0.2% per level', type: 'rarity_shift', cost: 3000, level: 0, maxLevel: 15, effect: { rarity: OutcomeRarity.MYTHIC, increase: 0.2 }, unlocked: false },
   
   // Reroll system
-  { id: 'reroll_1', name: 'Second Chance', description: 'Reroll once per pull', type: 'reroll', cost: 100, level: 0, maxLevel: 1, effect: { rerolls: 1 }, unlocked: false },
-  { id: 'reroll_2', name: 'Third Chance', description: 'Reroll twice per pull', type: 'reroll', cost: 500, level: 0, maxLevel: 1, effect: { rerolls: 2 }, unlocked: false },
-  { id: 'reroll_3', name: 'Infinite Chances', description: 'Reroll until satisfied', type: 'reroll', cost: 2000, level: 0, maxLevel: 1, effect: { rerolls: -1 }, unlocked: false },
+  { id: 'reroll_1', name: 'Second Chance', description: 'Roll rarity twice per pull and keep the best', type: 'reroll', cost: 100, level: 0, maxLevel: 1, effect: { rerolls: 1 }, unlocked: false },
+  { id: 'reroll_2', name: 'Third Chance', description: 'Roll rarity three times per pull and keep the best', type: 'reroll', cost: 500, level: 0, maxLevel: 1, effect: { rerolls: 2 }, unlocked: false },
+  { id: 'reroll_3', name: 'Fourth Chance', description: 'Roll rarity four times per pull and keep the best', type: 'reroll', cost: 2000, level: 0, maxLevel: 1, effect: { rerolls: 3 }, unlocked: false },
   
   // Pity system
   { id: 'pity_rare', name: 'Rare Guarantee', description: 'Guaranteed Rare after 50 pulls without one', type: 'pity', cost: 400, level: 0, maxLevel: 1, effect: { rarity: OutcomeRarity.RARE, threshold: 50 }, unlocked: false },

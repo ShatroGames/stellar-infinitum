@@ -66,8 +66,41 @@ export class ProbabilityForgeService {
   
   public canAffordPull = computed(() => this.fateTokens() >= this.pullCost());
   
-  private outcomes: ProbabilityOutcome[] = [...PROBABILITY_OUTCOMES];
-  private fateWeights: FateWeight[] = [...FATE_WEIGHTS];
+  // Outcome and weight definitions always come from the config; only the player's
+  // progress (discoveries, unlocks, levels) is stored in state and saved.
+  private outcomesView = computed<ProbabilityOutcome[]>(() => {
+    const s = this.state();
+    return PROBABILITY_OUTCOMES.map(o => ({
+      ...o,
+      discovered: s.discoveredOutcomes.has(o.id),
+      obtainedCount: s.outcomeObtainedCounts.get(o.id) || 0
+    }));
+  });
+
+  private weightsView = computed<FateWeight[]>(() => {
+    const s = this.state();
+    return FATE_WEIGHTS.map(w => {
+      const unlocked = s.unlockedWeights.has(w.id);
+      return { ...w, unlocked, level: unlocked ? this.levelOf(s, w.id) : 0 };
+    });
+  });
+
+  private get outcomes(): ProbabilityOutcome[] {
+    return this.outcomesView();
+  }
+
+  private get fateWeights(): FateWeight[] {
+    return this.weightsView();
+  }
+
+  // Unlocking a weight grants level 1
+  private levelOf(s: ProbabilityForgeState, weightId: string): number {
+    if (!s.unlockedWeights.has(weightId)) return 0;
+    return Math.max(1, s.weightLevels.get(weightId) || 0);
+  }
+
+  private tokenSaveTimer = 0;
+  private readonly TOKEN_SAVE_INTERVAL = 10; // seconds
 
   // Base probabilities
   private baseProbabilities = {
@@ -106,6 +139,13 @@ export class ProbabilityForgeService {
       ...s,
       fateTokens: s.fateTokens + tokensGained
     }));
+
+    // Tokens are otherwise only saved on purchases, so persist them periodically
+    this.tokenSaveTimer += deltaTime;
+    if (this.tokenSaveTimer >= this.TOKEN_SAVE_INTERVAL) {
+      this.tokenSaveTimer = 0;
+      this.saveState();
+    }
   }
 
   // Calculate current probabilities with all modifiers
@@ -171,8 +211,8 @@ export class ProbabilityForgeService {
     // Check pity systems
     const forcedRarity = this.checkPity();
     
-    // Roll for rarity
-    const rarity = forcedRarity || this.rollRarity(probs);
+    // Roll for rarity (rerolls keep the best of several rolls)
+    const rarity = forcedRarity || this.rollRarityWithRerolls(probs);
     
     // Select outcome from that rarity tier
     const outcome = this.selectOutcome(rarity);
@@ -208,6 +248,9 @@ export class ProbabilityForgeService {
       const newBestStreak = Math.max(s.bestStreak, newStreak);
 
       const pullsSinceM = rarity === OutcomeRarity.MYTHIC ? 0 : s.pullsSinceMythic + 1;
+      const isEpicOrBetter = rarity === OutcomeRarity.EPIC || rarity === OutcomeRarity.MYTHIC;
+      const pullsSinceE = isEpicOrBetter ? 0 : (s.pullsSinceEpic ?? 0) + 1;
+      const pullsSinceR = isRareOrBetter ? 0 : (s.pullsSinceRare ?? 0) + 1;
 
       return {
         ...s,
@@ -218,19 +261,11 @@ export class ProbabilityForgeService {
         currentStreak: newStreak,
         bestStreak: newBestStreak,
         pullsSinceMythic: pullsSinceM,
+        pullsSinceEpic: pullsSinceE,
+        pullsSinceRare: pullsSinceR,
         totalMultiplierGained: s.totalMultiplierGained * finalMultiplier
       };
     });
-
-    // Update outcome object
-    const outcomeIndex = this.outcomes.findIndex(o => o.id === outcome.id);
-    if (outcomeIndex >= 0) {
-      this.outcomes[outcomeIndex] = {
-        ...this.outcomes[outcomeIndex],
-        discovered: true,
-        obtainedCount: this.state().outcomeObtainedCounts.get(outcome.id) || 0
-      };
-    }
 
     this.saveState();
 
@@ -244,16 +279,44 @@ export class ProbabilityForgeService {
 
   private checkPity(): OutcomeRarity | null {
     const state = this.state();
-    
-    // Check mythic pity
-    const mythicPity = this.fateWeights.find(w => w.id === 'pity_mythic');
-    if (mythicPity?.unlocked && state.pullsSinceMythic >= mythicPity.effect.threshold) {
-      return OutcomeRarity.MYTHIC;
-    }
+    const pityChecks: [string, number, OutcomeRarity][] = [
+      ['pity_mythic', state.pullsSinceMythic, OutcomeRarity.MYTHIC],
+      ['pity_epic', state.pullsSinceEpic ?? 0, OutcomeRarity.EPIC],
+      ['pity_rare', state.pullsSinceRare ?? 0, OutcomeRarity.RARE]
+    ];
 
-    // Similar checks for epic and rare pity could be added
+    // Highest rarity guarantee wins
+    for (const [weightId, pullsSince, rarity] of pityChecks) {
+      const pity = this.fateWeights.find(w => w.id === weightId);
+      if (pity?.unlocked && pullsSince >= pity.effect.threshold) {
+        return rarity;
+      }
+    }
     
     return null;
+  }
+
+  private static readonly RARITY_ORDER = [
+    OutcomeRarity.COMMON, OutcomeRarity.UNCOMMON, OutcomeRarity.RARE, OutcomeRarity.EPIC, OutcomeRarity.MYTHIC
+  ];
+
+  /** Number of extra rarity rolls from the best unlocked reroll weight */
+  private rerollCount(): number {
+    let rerolls = 0;
+    this.fateWeights
+      .filter(w => w.type === 'reroll' && w.unlocked)
+      .forEach(w => rerolls = Math.max(rerolls, w.effect.rerolls));
+    return rerolls;
+  }
+
+  private rollRarityWithRerolls(probs: Map<OutcomeRarity, number>): OutcomeRarity {
+    const order = ProbabilityForgeService.RARITY_ORDER;
+    let best = this.rollRarity(probs);
+    for (let i = 0; i < this.rerollCount(); i++) {
+      const roll = this.rollRarity(probs);
+      if (order.indexOf(roll) > order.indexOf(best)) best = roll;
+    }
+    return best;
   }
 
   private rollRarity(probs: Map<OutcomeRarity, number>): OutcomeRarity {
@@ -294,25 +357,23 @@ export class ProbabilityForgeService {
   // Unlock and upgrade fate weights
   unlockWeight(weightId: string): boolean {
     const weight = this.fateWeights.find(w => w.id === weightId);
-    if (!weight) return false;
+    if (!weight || weight.unlocked) return false;
 
     if (this.state().fateTokens < weight.cost) return false;
 
     this.state.update(s => {
       const newUnlocked = new Set(s.unlockedWeights);
       newUnlocked.add(weightId);
+      const newLevels = new Map(s.weightLevels);
+      newLevels.set(weightId, 1);
       
       return {
         ...s,
         unlockedWeights: newUnlocked,
+        weightLevels: newLevels,
         fateTokens: s.fateTokens - weight.cost
       };
     });
-
-    const weightIndex = this.fateWeights.findIndex(w => w.id === weightId);
-    if (weightIndex >= 0) {
-      this.fateWeights[weightIndex] = { ...this.fateWeights[weightIndex], unlocked: true };
-    }
 
     this.saveState();
     return true;
@@ -322,7 +383,7 @@ export class ProbabilityForgeService {
     const weight = this.fateWeights.find(w => w.id === weightId);
     if (!weight || !weight.unlocked) return false;
 
-    const currentLevel = this.state().weightLevels.get(weightId) || 0;
+    const currentLevel = weight.level;
     if (currentLevel >= weight.maxLevel) return false;
 
     const upgradeCost = weight.cost * Math.pow(2, currentLevel);
@@ -338,14 +399,6 @@ export class ProbabilityForgeService {
         fateTokens: s.fateTokens - upgradeCost
       };
     });
-
-    const weightIndex = this.fateWeights.findIndex(w => w.id === weightId);
-    if (weightIndex >= 0) {
-      this.fateWeights[weightIndex] = { 
-        ...this.fateWeights[weightIndex], 
-        level: currentLevel + 1 
-      };
-    }
 
     this.saveState();
     return true;
@@ -376,7 +429,7 @@ export class ProbabilityForgeService {
   }
 
   // Save/Load
-  private saveState(): void {
+  saveState(): void {
     const state = this.state();
     localStorage.setItem('probabilityForgeState', JSON.stringify({
       ...state,
@@ -387,9 +440,6 @@ export class ProbabilityForgeService {
       rarityPullCounts: Array.from(state.rarityPullCounts.entries())
     }));
 
-    // Save outcome states
-    localStorage.setItem('probabilityOutcomes', JSON.stringify(this.outcomes));
-    localStorage.setItem('fateWeights', JSON.stringify(this.fateWeights));
   }
 
   private loadState(): void {
@@ -406,19 +456,16 @@ export class ProbabilityForgeService {
       });
     }
 
-    const savedOutcomes = localStorage.getItem('probabilityOutcomes');
-    if (savedOutcomes) {
-      this.outcomes = JSON.parse(savedOutcomes);
-    }
-
-    const savedWeights = localStorage.getItem('fateWeights');
-    if (savedWeights) {
-      this.fateWeights = JSON.parse(savedWeights);
-    }
+    // Older saves stored full outcome/weight definitions, which froze balance changes.
+    // Definitions now always come from the config; drop the stale copies.
+    localStorage.removeItem('probabilityOutcomes');
+    localStorage.removeItem('fateWeights');
   }
 
   reset(): void {
-    localStorage.removeItem('stellarInfinitum_probabilityForge');
+    localStorage.removeItem('probabilityForgeState');
+    localStorage.removeItem('probabilityOutcomes');
+    localStorage.removeItem('fateWeights');
     this.state.set({
       systemUnlocked: false,
       fateTokens: 0,
@@ -430,6 +477,8 @@ export class ProbabilityForgeService {
       currentStreak: 0,
       bestStreak: 0,
       pullsSinceMythic: 0,
+      pullsSinceEpic: 0,
+      pullsSinceRare: 0,
       rarityPullCounts: new Map<OutcomeRarity, number>([
         [OutcomeRarity.COMMON, 0],
         [OutcomeRarity.UNCOMMON, 0],
@@ -439,8 +488,5 @@ export class ProbabilityForgeService {
       ]),
       totalMultiplierGained: 1
     });
-
-    this.outcomes = [...PROBABILITY_OUTCOMES];
-    this.fateWeights = [...FATE_WEIGHTS];
   }
 }
