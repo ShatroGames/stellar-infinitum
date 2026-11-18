@@ -137,13 +137,9 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **[Decided] 3.8**: **Two options per warp** (16 paths per run). Each warp offers two of the three themes; the map shows which.
 - **[Decided] 3.6a**: Stage 1 is mainly active play: buying and warping by hand.
 - **[Decided] 3.6b**: **Stage 2 is reworked (option 4)**. After the first transcend, the Stellar Network becomes a background generator, and Stage 2 has its own tree. Players return to Stage 1 to run new paths.
-  - Concern: if only the *best* path counts, players will trial-and-error all 16 paths for the top number.
-  - **[Proposed]** to avoid that:
-    1. **Collection**: every *different* completed path becomes a "charted path" that keeps producing; the generator is the sum. Replays mean exploring, not re-optimizing.
-    2. **Different reward kinds per path** (optional): e.g., Nebula charts boost production, Pulsar charts speed up Stage 2, hybrid charts boost synergies.
-    3. **Show numbers up front**: the map shows each path's expected contribution before choosing.
-    - Recommendation: 1 + 3, with 2 optional.
-  - Rejected alternatives (for reference): automation from the Nexus, fewer repetitions, buy-max/path-replay shortcuts.
+  - **[Decided]** Beating Stage 1 grants a **flat Energy production** in the background. There is no path collection (busy-work trial and error) and no up-front numbers per path (they would remove the choice). The map shows destinations (3.7), but not which path is best.
+  - **[Open] 3.9**: Is Stage 1 played once, or replayed? If once, should the final path/archetype carry a lasting effect into Stage 2 so the choice matters beyond one run?
+  - **[Open] 3.10**: Is the flat production a fixed amount, or tied to something visible (e.g., the tier reached)?
 
 ---
 
