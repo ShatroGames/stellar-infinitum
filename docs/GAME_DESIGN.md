@@ -219,6 +219,35 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
     - **S5. Research over time**: nodes researched over time in parallel slots; planning the queue is the choice; each era offers one of two branches.
     - **S6. Roots**: a tree grows downward into a visible grid and taps deposits; choosing directions is the choice.
   - Recommendation: S2 (building on Stage 2) or S4 (new concept); keep S5 in reserve for Stage 4.
+- **[Decided]** Concept **S5 (research over time)** is the direction.
+
+### Concept S5 detail **[Proposed]**
+
+- **Core idea**: the tree is **fixed and fully visible**; nodes cost **time**, not currency. Choices are what to research, in which order, in how many parallel slots.
+- **Currency**: new (name TBD), starting at +1/s from beating Stage 2.
+- **Research**: each node has a research time (about 30 s early, hours late in an era). Research runs in **slots** (start with 1; more through research), and keeps running while away.
+- **Queue**: each slot has a short queue (starts at 1, extended through research). Queue length is the idle/active lever: idle players can only line up a few items.
+- **Spending**: **Accelerate** (cut a running research by 25%) and opening new slots.
+- **Node types**:
+
+| Node | Example | Time |
+|---|---|---|
+| Production | +2 currency/s | short |
+| Focus | this branch researches 20% faster | medium |
+| Slot | +1 research slot | long |
+| Queue | +1 queue length | medium |
+| Efficiency | Accelerate 50% cheaper | medium |
+| Breakthrough | ×3 production; needs 3 nodes in its branch | very long |
+| Era capstone | completes the era | very long |
+
+- **Eras (reset)**: after the era capstone (or a milestone), start a new era. The tree resets; you keep a permanent research speed-up based on your best era (record-based, as in Stage 2).
+- **Era fork**: each era starts with a choice between two branches: **Steady** (long items, big payoffs, idle) vs **Rapid** (short items, small payoffs, benefits from Accelerate, active).
+- **End of stage**: the currency reaches its target (larger than Stage 2's), starting Stage 4's currency at +1/s.
+- **Escalation**: Stage 2 = random offers + placement + record reset; Stage 3 adds time as cost, parallel slots, queue planning, the era fork.
+- **[Open] 5.1**: Research continues while away, limited by the short queue?
+- **[Open] 5.2**: Accelerate (spend currency to shorten research), as long as it never feels like "pay to skip"?
+- **[Open] 5.3**: Era fork = 2 options, Steady (idle) vs Rapid (active)?
+- **[Open] 5.4**: Number of eras to beat the stage (proposed 4-6)?
 
 ### Old Stage 3: Dimensional Echoes (for reference, to be replaced)
 
