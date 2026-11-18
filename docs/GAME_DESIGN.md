@@ -234,16 +234,16 @@ So pillar 3 needs **things worth doing while watching, during Overcharge**. Opti
 - **[Decided] 5.6**: Era currency is **only an unlock threshold** (never spent).
 - **[Decided] 5.7**: **The Stage 3 currency is the total level** of all nodes. Nodes generate nothing; no node effects, no Overclock. The stage is beaten when the total level in one era reaches the target, starting Stage 4's currency at +1/s.
 - **[Decided] 5.8**: Nodes keep leveling while the game is closed.
-- **[Open] 5.9**: Unlock thresholds based on era currency **accumulated over all resets** (proposed) or earned in a single reset?
+- **[Decided] 5.9**: Unlock thresholds use era currency **accumulated over all resets**.
 
-### More complexity for Stage 3 **[Proposed]**
+### More complexity for Stage 3
 
 - **C1. Focus**: one chosen node levels ×2 as fast; switch freely. Active choice, no currency.
 - **C2. Node rhythms**: "sprint" nodes level fast but slow down steeply; "steady" nodes are slow but slow down gently. All levels count equally (idle vs active built into the nodes).
 - **C3. Unlock choice**: at each threshold, unlock one of two nodes (permanent, or revisited each era?).
 - **C4. Tree dependency**: a child can't level beyond its parent's level.
-- **C5. Reset preview**: "Reset now: +412 era currency, next unlock at 1,000".
-- Recommendation: C1 + C2 + C5, plus C3 for an explicit choice moment; C4 is likely one rule too many.
+- **C5. Reset preview** **[Decided]**: "Reset now: +412 era currency, next unlock at 1,000".
+- **[Open, revisit later]** C1-C4. Stages are self-contained, so extra complexity can be added when Stage 3 is built and playtested.
 
 ### Old Stage 3: Dimensional Echoes (for reference, to be replaced)
 
