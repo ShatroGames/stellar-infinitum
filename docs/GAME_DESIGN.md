@@ -66,7 +66,10 @@ Every tree mechanic the game uses or could use, so each layer can introduce some
 
 The pre-Collapse half would use T1-T5 plus a few new ones (N1-N7). The Quantum era would bring T6-T8 plus several of N8-N13, which is the "50% more mechanics" the split depends on.
 
-- **[Open] 1A.1**: Which of N1-N14 do you like, dislike, or want changed? We'll assign them to layers in sections 3-6.
+- **Player feedback**: "the game doesn't have any choices". **[Decided]** Meaningful choices should be a recurring theme across stages.
+- **[Decided] N2 (exclusive branches)** is accepted; where it goes is decided per stage.
+- **[Open] N1 (Overdrive)**: solves the active-play gap. During Overcharge there is nothing to buy, so watching gains nothing; Overdrive is bought only while watching. Alternatives: N14 Mastery, or Overcharge growing faster while visible.
+- The other mechanics are decided per stage (sections 3-6).
 
 ---
 
